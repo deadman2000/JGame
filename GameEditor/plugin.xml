@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+	<extension point="org.eclipse.ui.editors">
+		<editor
+			class="com.deadman.gameeditor.editors.GameResourcesEditor"
+			contributorClass="com.deadman.gameeditor.editors.GameEditorContributor"
+			icon="icons/file.png"
+			id="com.deadman.gameeditor.editors.GameResourcesEditor"
+			name="Game Resourse Editor">
+			<contentTypeBinding contentTypeId="com.deadman.gameeditor.gameResources">
+			</contentTypeBinding>
+		</editor>
+	</extension>
+	<extension point="org.eclipse.core.contenttype.contentTypes">
+		<content-type
+			base-type="org.eclipse.core.runtime.xml"
+			describer="com.deadman.gameeditor.editors.ResourcesDescriber"
+			file-extensions="xml"
+			id="gameResources"
+			name="Game Resources"
+			priority="normal">
+		</content-type>
+	</extension>
+</plugin>
