@@ -1,0 +1,8 @@
+package com.deadman.walker;
+
+public enum Shift
+{
+	HERE, NEAR_LEFT, NEAR_RIGHT,
+	AHEAD_LEFT, AHEAD, AHEAD_RIGHT,
+	FAR_LEFT_LEFT, FAR_LEFT, FAR, FAR_RIGHT, FAR_RIGHT_RIGHT 
+}

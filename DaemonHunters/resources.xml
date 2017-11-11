@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<game-resources
+	path="/res"
+	package="com.deadman.dh">
+	
+	<isosprites>
+		<unit id="0" name="human_leather">
+			<pal id="hair" source="ebdabe,dacbb3,cfbea2,bfaf94">
+				<custom id="black">4c4c4c,3b3b3b,292929,171717</custom>
+				<custom id="white">b9b9b9,b0b0b0,a6a6a6,9c9c9c</custom>
+				<custom id="yellow">ddce98,d7c586,d1bd76,cbb462</custom>
+				<custom id="brown">6c4200,5e3a00,5a3700,523200</custom>
+			</pal>
+			<pal id="skin" source="9d7941,c19246,d3a04f,d7a453,cfa055,c79a52">
+				<custom id="light">b7874f,c99961,d9a567,dca96c,d5a56d,cfa16b</custom>
+				<custom id="lighter">be9c62,cfad71,ddb877,e0bb7a,dab87c,d4b37a</custom>
+				<custom id="dark">664c1a,805b14,996709,9f6b07,96670e,8b6213</custom>
+			</pal>
+			<pal id="bracers" source="b05300,a04d04,854105,723600">
+				<custom id="red">873731,7b3631,6b2f2b,5f2723</custom>
+				<custom id="yellow">a08506,917909,796509,685604</custom>
+				<custom id="blue">3e4a74,3b456b,343d5e,2c3350</custom>
+				<custom id="cyan">315c61,30565a,2a4a4e,224044</custom>
+				<custom id="brown">73450f,684010,58360e,4a2d0a</custom>
+			</pal>
+		</unit>
+		<unit id="1" name="body0"/>
+	
+		<floor id="0" name="Grass" material="grass"/>
+		<floor id="1" name="WoodFloor" material="wood"/>
+		<floor id="2" name="RockFloor" material="rock"/>
+		<floor id="3" name="RoofFloor" material="rock"/>
+		<floor id="4" name="Dirt" material="dirt"/>
+		<floor id="5" name="Sea"/>
+		<floor id="6" name="Sand" material="grass"/>
+		<floor id="7" name="BigGrass" drawOnTop="true" material="grass"/>
+		<floor id="8" name="CaveFloor" material="rock"/>
+		
+		<wall id="0" name="WoodWall"/>
+		<wall id="1" name="WoodWallWnd" lightrate="0.8"/>
+		<wall id="2" name="WoodLight"/>
+		<wall id="3" name="WoodLWnd" lightrate="0.8"/>
+		<wall id="4" name="RedBrick"/>
+		<wall id="5" name="Door" subtype="1"/>
+		<wall id="6" name="WhiteWood"/>
+		<wall id="7" name="WhWoodWnd" lightrate="0.8"/>
+		<wall id="8" name="Planks"/>
+		<wall id="9" name="PlWnd" lightrate="0.6"/>
+		<wall id="10" name="BlueBrick"/>
+		<wall id="11" name="RedWood"/>
+		<wall id="12" name="RedWoodWnd" lightrate="0.8"/>
+		<wall id="13" name="CaveWall"/>
+		<wall id="14" name="ShadowWall"/>
+		<wall id="15" name="CartWall" lightrate="0.8"/>
+		
+		<object id="1" name="Roof"/>
+		<object id="2" name="Roof2" lightrate="0.5"/>
+		<object id="3" name="Roof2_2"/>
+		<object id="4" name="Stairs" lightrate="0.5" zheight="12" material="wood"/>
+		<object id="5" name="Stairs2" zheight="24" material="wood"/>
+		<object id="6" name="Torch" lightrate="1" lightsource="10"/>
+		<object id="7" name="Barrel" lightrate="0.9"/>
+		<object id="8" name="BigTree" lightrate="0.5"/>
+		<object id="9" name="BigTree_L2" lightrate="0.5"/>
+		<object id="10" name="SmallTree" lightrate="0.9"/>
+		<object id="11" name="SmallTree_L2" lightrate="0.9"/>
+		<object id="12" name="SmallTree2" lightrate="0.9"/>
+		<object id="13" name="Bonfire" lightrate="1" lightsource="3" width="2" height="2"/>
+		<object id="14" name="CaveStairs" lightrate="0.5" zheight="12" mirror="true" material="rock"/>
+		<object id="15" name="CaveStairs2" zheight="24"  mirror="true" material="rock"/>
+		<object id="16" name="Cabinet" width="2" height="1"  mirror="true"/>
+		<object id="17" name="WorkTable" width="2" height="1"  mirror="true"/>
+		<object id="18" name="Fireplace" width="2" height="1"  mirror="true"/>
+		<object id="19" name="CartPlatform" lightrate="0.7" zheight="9" material="wood"/>
+		
+		<object id="10003" name="Filler" lightrate="1"/>
+		<object id="10004" name="CellSelect"/>
+		<object id="10005" name="Build"/>
+		
+		<object id="20000" name="Test2x2" mirror="true"/>
+		<object id="20001" name="Test2x1" mirror="true"/>
+		<object id="20002" name="Test2x1small" mirror="true"/>
+		
+		<wallobject id="0" name="Candle" lightrate="1" lightsource="4"/>
+		<wallobject id="1" name="Window1" lightrate="0.8"/>
+		<wallobject id="2" name="Balk1" lightrate="1"/>
+		<wallobject id="3" name="Balk2" lightrate="1"/>
+		<wallobject id="4" name="Balk3" lightrate="1"/>
+		<wallobject id="5" name="Balk4" lightrate="1"/>
+		<wallobject id="6" name="Image" lightrate="1"/>
+		<wallobject id="7" name="Gobelen" lightrate="1"/>
+		<wallobject id="8" name="CartWheel" lightrate="1"/>
+		
+		<helper id="0" name="Gate"/>
+		<helper id="1" name="Next"/>
+	</isosprites>
+</game-resources>

@@ -1,0 +1,4 @@
+Manifest-Version: 1.0
+Sealed: true
+Main-Class: com.deadman.dh.Game
+Class-Path: lib/jogg-0.0.7.jar lib/jorbis-0.0.15.jar lib/easyogg.jar lib/jogamp-all-platforms/jar/jogl-all.jar lib/jogamp-all-platforms/jar/gluegen-rt.jar lib/jogamp-all-platforms/jar/joal.jar

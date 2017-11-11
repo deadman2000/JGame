@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="lib/easyogg.jar"/>
+	<classpathentry kind="lib" path="lib/jogg-0.0.7.jar"/>
+	<classpathentry kind="lib" path="lib/jorbis-0.0.15.jar"/>
+	<classpathentry kind="src" path="gen/src"/>
+	<classpathentry kind="lib" path="lib/jogamp-all-platforms/jar/gluegen-rt.jar"/>
+	<classpathentry kind="lib" path="lib/jogamp-all-platforms/jar/jogl-all.jar" sourcepath="lib/jogamp-all-platforms/jogl-java-src.zip"/>
+	<classpathentry kind="lib" path="lib/jogamp-all-platforms/jar/joal.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

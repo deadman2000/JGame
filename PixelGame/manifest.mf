@@ -1,0 +1,4 @@
+Manifest-Version: 1.1
+Sealed: true
+Main-Class: com.deadman.pixelgame.Main
+Class-Path: lib/easyogg.jar lib/jogg-0.0.7.jar lib/jorbis-0.0.15.jar
