@@ -8,7 +8,7 @@ import com.deadman.jgame.io.DataOutputStream;
 
 public abstract class MapFormat
 {
-	protected static int HEADER = 0x4d415033; // MAP3
+	protected static int HEADER = 0x3350414d;
 
 	private static MapFormat[] ALL = { new MapFormat1() };
 	private static MapFormat0 MF_ZERO = new MapFormat0();

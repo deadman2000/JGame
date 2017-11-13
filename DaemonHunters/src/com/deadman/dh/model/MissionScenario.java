@@ -10,12 +10,11 @@ import com.deadman.dh.battle.PlayerSide;
 import com.deadman.dh.global.GlobalEngine;
 import com.deadman.dh.isometric.IsoMap;
 import com.deadman.dh.isometric.MapCell;
+import com.deadman.dh.model.items.Item;
+import com.deadman.dh.model.itemtypes.ItemType;
 
 public class MissionScenario
 {
-	private final static int ID_PLAYER1 = 10001;
-	private final static int ID_PLAYER2 = 10002;
-
 	public String name;
 	public int minLevel, maxLevel; // Допустимые уровни игры для появления миссии
 	private int mapId;
@@ -70,22 +69,20 @@ public class MissionScenario
 				for (int y = 0; y < map.height; y++)
 				{
 					MapCell c = lvl[x][y];
-					if (c.obj != null)
+					for (int i = 0; i < c.items.size(); i++)
 					{
-						switch (c.obj.sprite.id)
+						Item it = c.items.get(i);
+						if (it.type == ItemType.player1)
 						{
-							case ID_PLAYER1: // Ставим сюда юнита, если есть в отряде
-								c.obj.remove();
-								c.setUnit(units[0].popUnit());
-								break;
-
-							case ID_PLAYER2:
-								c.obj.remove();
-								c.setUnit(units[1].popUnit());
-								break;
-
-							default:
-								continue;
+							c.items.remove(i);
+							i--;
+							c.setUnit(units[0].popUnit());
+						}
+						else if (it.type == ItemType.player2)
+						{
+							c.items.remove(i);
+							i--;
+							c.setUnit(units[1].popUnit());
 						}
 					}
 				}
@@ -104,7 +101,7 @@ public class MissionScenario
 				}
 			}
 		}
-		
+
 		map.setLight(GlobalEngine.currentBrightness());
 
 		System.out.println("Scenario generate end");

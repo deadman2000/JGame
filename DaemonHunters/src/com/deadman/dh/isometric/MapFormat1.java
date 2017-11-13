@@ -53,7 +53,7 @@ public class MapFormat1 extends MapFormat
 	protected static final byte P_FLOOR = 0;
 	protected static final byte P_WALL = 1;
 	protected static final byte P_OBJECT = 2;
-	protected static final byte P_WOBJECT = 3; // TODO Проверить что объекты сохраняются в нужную сторону
+	protected static final byte P_WOBJECT = 3;
 
 	protected void writeCell(MapCell c, DataOutputStream out) throws IOException
 	{

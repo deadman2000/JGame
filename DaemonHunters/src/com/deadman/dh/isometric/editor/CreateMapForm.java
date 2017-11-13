@@ -47,7 +47,7 @@ public class CreateMapForm extends IEWindow
 		tbZHeight.background = tbFileName.background;
 		tbZHeight.filter = TextBox.FILTER_INT;
 
-		Button btCreate = new Button(R.editor.ie_button_9p, R.editor.ie_button_pr_9p);
+		EditorButton btCreate = new EditorButton();
 		btCreate.setBounds(width - 8 - BTN_W * 2 - 4, height - 8 - BTN_H, BTN_W, BTN_H, ANCHOR_BOTTOM | ANCHOR_RIGHT);
 		btCreate.setLabel(IsoEditor.fnt_light_3x5, 3, "CREATE");
 		btCreate.addControlListener(new ControlListener()
@@ -60,7 +60,7 @@ public class CreateMapForm extends IEWindow
 		});
 		addControl(btCreate);
 
-		Button btCancel = new Button(R.editor.ie_button_9p, R.editor.ie_button_pr_9p);
+		EditorButton btCancel = new EditorButton();
 		btCancel.setBounds(width - 8 - BTN_W, height - 8 - BTN_H, BTN_W, BTN_H, ANCHOR_BOTTOM | ANCHOR_RIGHT);
 		btCancel.setLabel(IsoEditor.fnt_light_3x5, 3, "CANCEL");
 		btCancel.addControlListener(new ControlListener()

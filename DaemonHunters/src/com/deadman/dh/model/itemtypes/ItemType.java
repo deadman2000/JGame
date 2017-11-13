@@ -105,4 +105,7 @@ public class ItemType
 	public static final ItemType torch = new TorchType(8, R.items.torch, 10).setIso(R.iso.SmallTorh);
 	public static final ItemType dead_unit = new ItemType(9, R.items.dead_unit);
 
+	public static final ItemType player1 = new ItemType(10001, R.items.player1).setIso(R.iso.Player1);
+	public static final ItemType player2 = new ItemType(10002, R.items.player2).setIso(R.iso.Player2);
+
 }

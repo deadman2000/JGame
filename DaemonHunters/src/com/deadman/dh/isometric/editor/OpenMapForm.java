@@ -39,7 +39,7 @@ public class OpenMapForm extends IEWindow
 		infoPanel.addControl(laHeight = new Label(IsoEditor.fnt_light_3x5, 37, 10));
 		infoPanel.addControl(laZHeight = new Label(IsoEditor.fnt_light_3x5, 37, 20));
 		
-		Button btOpen = new Button(R.editor.ie_button_9p, R.editor.ie_button_pr_9p);
+		EditorButton btOpen = new EditorButton();
 		btOpen.setBounds(width - 8 - BTN_W * 2 - 4, height - 8 - BTN_H, BTN_W, BTN_H, ANCHOR_BOTTOM | ANCHOR_RIGHT);
 		btOpen.setLabel(IsoEditor.fnt_light_3x5, 3, "OPEN");
 		btOpen.addControlListener(new ControlListener()
@@ -57,7 +57,7 @@ public class OpenMapForm extends IEWindow
 		});
 		addControl(btOpen);
 
-		Button btCancel = new Button(R.editor.ie_button_9p, R.editor.ie_button_pr_9p);
+		EditorButton btCancel = new EditorButton();
 		btCancel.setBounds(width - 8 - BTN_W, height - 8 - BTN_H, BTN_W, BTN_H, ANCHOR_BOTTOM | ANCHOR_RIGHT);
 		btCancel.setLabel(IsoEditor.fnt_light_3x5, 3, "CANCEL");
 		btCancel.addControlListener(new ControlListener()

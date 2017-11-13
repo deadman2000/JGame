@@ -33,6 +33,7 @@ import com.deadman.jgame.ui.TextBox;
 
 public class IsoEditor extends GameEngine implements IMainMenuListener
 {
+	private static final int RIGHT_PANEL_WIDTH = 100;
 	private IsoMap map;
 	private IsoViewer mapViewer;
 
@@ -50,6 +51,7 @@ public class IsoEditor extends GameEngine implements IMainMenuListener
 	private HListView lvItems;
 	private Label laStatus;
 	private TextBox tbSearch;
+	private EditorButton btSelect, btBrush;
 
 	private MapCell bound_beg, bound_end;
 
@@ -60,6 +62,13 @@ public class IsoEditor extends GameEngine implements IMainMenuListener
 	private Drawable CURSOR_MOVE_XY = getDrawable(R.cursors.move_xy);
 	private boolean resizing = false;
 
+	enum EditorMode {
+		SELECTION,
+		PAINT
+	};
+	
+	private EditorMode mode;
+	
 	public IsoEditor()
 	{
 		init();
@@ -126,9 +135,44 @@ public class IsoEditor extends GameEngine implements IMainMenuListener
 		mapViewer.allow_drag = false;
 		mapViewer.show_all = true;
 		mapViewer.wall_blending = false;
-		mapViewer.setBounds(0, mm.height, GameScreen.GAME_WIDTH, GameScreen.GAME_HEIGHT - ctBottomLeft.height - mm.height, Control.ANCHOR_ALL);
+		mapViewer.setBounds(0, mm.height, GameScreen.GAME_WIDTH - RIGHT_PANEL_WIDTH, GameScreen.GAME_HEIGHT - ctBottomLeft.height - mm.height, Control.ANCHOR_ALL);
 		mapViewer.addControlListener(mapViewer_listener);
 		mapViewer.selectionInBounds = true;
+
+		{ // Right panel
+			Control ctRight = new Control();
+			ctRight.bgrColor = 0x916a02;
+			ctRight.setBounds(GameScreen.GAME_WIDTH - RIGHT_PANEL_WIDTH, mm.height, RIGHT_PANEL_WIDTH, mapViewer.height, Control.ANCHOR_TOP | Control.ANCHOR_BOTTOM | Control.ANCHOR_RIGHT);
+			addControl(ctRight);
+
+			btSelect = new EditorButton();
+			btSelect.setBounds(10, 2, 14, 14);
+			btSelect.addControl(new Control(Drawable.get(R.editor.ic_select), 2, 2));
+			ctRight.addControl(btSelect);
+			btSelect.addControlListener(new ControlListener()
+			{
+				@Override
+				public void onClick(Object sender, Point p, MouseEvent e)
+				{
+					setMode(EditorMode.SELECTION);
+				}
+			});
+
+			btBrush = new EditorButton();
+			btBrush.setBounds(26, 2, 14, 14);
+			btBrush.addControl(new Control(Drawable.get(R.editor.ic_brush), 2, 2));
+			ctRight.addControl(btBrush);
+			btBrush.addControlListener(new ControlListener()
+			{
+				@Override
+				public void onClick(Object sender, Point p, MouseEvent e)
+				{
+					setMode(EditorMode.PAINT);
+				}
+			});
+			
+			setMode(EditorMode.SELECTION);
+		}
 
 		for (int i = 0; i < TAB_COUNT; i++)
 		{
@@ -170,6 +214,7 @@ public class IsoEditor extends GameEngine implements IMainMenuListener
 		btSearchCancel.setPosition(searchWidth - 9 - 2, 3);
 		btSearchCancel.addControlListener(search_cancel_listener);
 		ctSearchBgr.addControl(btSearchCancel);
+
 	}
 
 	@Override
@@ -273,9 +318,9 @@ public class IsoEditor extends GameEngine implements IMainMenuListener
 		{
 			ListViewItem[] arr = items[current_page];
 			lvItems.setItems(arr);
-			for (int i =0;i<arr.length;i++)
+			for (int i = 0; i < arr.length; i++)
 			{
-				if(arr[i].tag == curr_instr)
+				if (arr[i].tag == curr_instr)
 				{
 					lvItems.selectIndex(i);
 					return;
@@ -314,7 +359,7 @@ public class IsoEditor extends GameEngine implements IMainMenuListener
 	protected void selectPage(int ind)
 	{
 		if (current_page == ind) return;
-		
+
 		tbSearch.isFocused = false;
 		current_page = ind;
 		for (int i = 0; i < TAB_COUNT; i++)
@@ -362,6 +407,24 @@ public class IsoEditor extends GameEngine implements IMainMenuListener
 	public IsoMap getMap()
 	{
 		return map;
+	}
+	
+	public void setMode(EditorMode newMode)
+	{
+		mode = newMode;
+		switch (mode)
+		{
+			case SELECTION:
+				btBrush.setChecked(false);
+				btSelect.setChecked(true);
+				
+				break;
+
+			case PAINT:
+				btBrush.setChecked(true);
+				btSelect.setChecked(false);
+				break;
+		}
 	}
 
 	private ControlListener lvInstr_listener = new ControlListener()
@@ -426,7 +489,7 @@ public class IsoEditor extends GameEngine implements IMainMenuListener
 			lvItems.selectItem(null);
 		else if (lvItems.selectedItem() != null && lvItems.selectedItem().tag != instr)
 			lvItems.selectByTag(instr);
-		
+
 		selectPage(curr_instr.type); // Меняем выбранную вкладку
 	}
 

@@ -46,7 +46,7 @@ public class SaveMapForm extends IEWindow
 		infoPanel.addControl(laHeight = new Label(IsoEditor.fnt_light_3x5, 37, 10));
 		infoPanel.addControl(laZHeight = new Label(IsoEditor.fnt_light_3x5, 37, 20));
 		
-		Button btSave = new Button(R.editor.ie_button_9p, R.editor.ie_button_pr_9p);
+		EditorButton btSave = new EditorButton();
 		btSave.setBounds(width - 8 - BTN_W * 2 - 4, height - 8 - BTN_H, BTN_W, BTN_H, ANCHOR_BOTTOM | ANCHOR_RIGHT);
 		btSave.setLabel(IsoEditor.fnt_light_3x5, 3, "SAVE");
 		btSave.addControlListener(new ControlListener()
@@ -57,6 +57,9 @@ public class SaveMapForm extends IEWindow
 				String fileName = tbFileName.text.trim();
 				if (fileName.isEmpty()) return;
 				
+				if (!fileName.contains("."))
+					fileName = fileName + ".map";
+				
 				File f = new File(fw.currentDir(), fileName);
 				_editor.getMap().saveMap(f.getAbsolutePath());
 				close();
@@ -64,7 +67,7 @@ public class SaveMapForm extends IEWindow
 		});
 		addControl(btSave);
 
-		Button btCancel = new Button(R.editor.ie_button_9p, R.editor.ie_button_pr_9p);
+		EditorButton btCancel = new EditorButton();
 		btCancel.setBounds(width - 8 - BTN_W, height - 8 - BTN_H, BTN_W, BTN_H, ANCHOR_BOTTOM | ANCHOR_RIGHT);
 		btCancel.setLabel(IsoEditor.fnt_light_3x5, 3, "CANCEL");
 		btCancel.addControlListener(new ControlListener()
