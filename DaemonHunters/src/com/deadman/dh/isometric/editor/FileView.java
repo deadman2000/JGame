@@ -22,15 +22,12 @@ public class FileView extends VListView
 	private Drawable ic_folder, ic_file;
 	private File _currentDir;
 
-	public FileView(int x, int y, int width, int height)
+	public FileView()
 	{
-		super(x, y, width, height);
-
 		ic_folder = getDrawable(R.editor.fb_folder);
 		ic_file = getDrawable(R.editor.fb_file);
 
 		bgrColor = 0xFF000000;
-		item_height = 8;
 		setScrollBar(Game.createVScrollInfo());
 
 		setPath(new File("").getAbsoluteFile());
@@ -156,6 +153,7 @@ public class FileView extends VListView
 
 		public FileItem(File f, String name)
 		{
+			height = 8;
 			file = f;
 
 			Drawable icon;

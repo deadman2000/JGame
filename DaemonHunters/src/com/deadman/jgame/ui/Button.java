@@ -54,6 +54,8 @@ public class Button extends Control
 	
 	void init()
 	{
+		setLayout(new RelativeLayout());
+		
 		background = _picUp;
 		width = background.width;
 		height = background.height;
@@ -148,7 +150,9 @@ public class Button extends Control
 		label = new Label(font);
 		label.setText(text);
 		label.autosize = false;
-		label.setBounds(0, laY, width, font.height, ANCHOR_LEFT | ANCHOR_RIGHT);
+		label.y = laY;
+		label.height = font.height;
+		RelativeLayout.settings(label).fillWidth();
 		label.halign = Label.ALIGN_CENTER;
 		addControl(label);
 		labelY = laY;
@@ -161,7 +165,7 @@ public class Button extends Control
 
 	public void calcWidthByText(int pad)
 	{
-		width = label.getTextWidth() + pad * 2;
+		width = label.getTextWidth() + pad * 2; // TODO Переделать, чтобы кнопка ресайзилась автоматом
 	}
 
 	public void setFont(GameFont font)

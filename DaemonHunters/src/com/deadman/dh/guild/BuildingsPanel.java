@@ -2,7 +2,6 @@ package com.deadman.dh.guild;
 
 import com.deadman.dh.R;
 import com.deadman.jgame.drawing.Drawable;
-import com.deadman.jgame.drawing.GameScreen;
 import com.deadman.jgame.ui.Control;
 import com.deadman.jgame.ui.VListView;
 
@@ -11,9 +10,24 @@ public class BuildingsPanel extends Control
 	private GuildEngine engine;
 
 	private Drawable img_scroll_bgr, img_scroll_bottom;
-	private VListView lvHouses;
+	private HousesList lvHouses;
 
 	private static final int top_pad = 12;
+
+	class HousesList extends VListView
+	{
+		public HousesList()
+		{
+			heightByContent = true;
+		}
+		
+		@Override
+		protected void onResize()
+		{
+			super.onResize();
+			BuildingsPanel.this.height = top_pad + height + img_scroll_bottom.height;
+		}
+	}
 
 	public BuildingsPanel(GuildEngine eng)
 	{
@@ -22,12 +36,11 @@ public class BuildingsPanel extends Control
 		img_scroll_bgr = getDrawable(R.ui.scroll_bgr);
 		img_scroll_bottom = getDrawable(R.ui.scroll_bottom_2);
 
-		lvHouses = new VListView(3, top_pad, 80, 0);
-		lvHouses.item_height = BuildingItem.HEIGHT;
+		lvHouses = new HousesList();
+		lvHouses.setBounds(3, top_pad, 80, 0);
 		addControl(lvHouses);
 
 		width = img_scroll_bgr.width;
-		setPosition(GameScreen.GAME_WIDTH - width - 2, 22, Control.ANCHOR_RIGHT_TOP);
 
 		update();
 	}
@@ -48,10 +61,7 @@ public class BuildingsPanel extends Control
 				if (gb.type.price == 0) continue;
 				lvHouses.addItem(new BuildingItem(engine, gb));
 			}
-			lvHouses.height = lvHouses.items.size() * BuildingItem.HEIGHT;
 		}
-
-		height = top_pad + lvHouses.height + 2 + img_scroll_bottom.height - 2;
 	}
 
 	@Override

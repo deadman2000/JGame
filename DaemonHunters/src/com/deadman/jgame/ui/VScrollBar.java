@@ -11,32 +11,23 @@ public class VScrollBar extends Control
 
 	public VScrollBar(int bt_up, int bt_up_pr, int bt_scrol, int bt_scroll_pr, int bt_down, int bt_down_pr)
 	{
+		setLayout(new RelativeLayout());
+		
 		btUp = new Button(bt_up, bt_up_pr);
-		btUp.setPosition(0, 0);
-		btUp.anchor = ANCHOR_LEFT_TOP;
 		btUp.addControlListener(btnTop_listener);
 		addControl(btUp);
 
 		btScroll = new Button(bt_scrol, bt_scroll_pr);
-		btScroll.anchor = ANCHOR_TOP;
 		btScroll.setPosition(0, btUp.height);
 		btScroll.addControlListener(btnScroll_listener);
 		addControl(btScroll);
 
 		btDown = new Button(bt_down, bt_down_pr);
-		btDown.setPosition(0, height - btDown.height);
-		btDown.anchor = ANCHOR_LEFT | ANCHOR_BOTTOM;
+		RelativeLayout.settings(btDown).alignBottom();
 		btDown.addControlListener(btnBottom_listener);
 		addControl(btDown);
 
 		width = btUp.width;
-	}
-
-	@Override
-	public void setBounds(int x, int y, int width, int height, int anchor)
-	{
-		super.setBounds(x, y, width, height, anchor);
-		btDown.setPosition(0, height - btDown.height);
 	}
 
 	public int min = 0, max = 10;
@@ -121,10 +112,9 @@ public class VScrollBar extends Control
 	}
 
 	@Override
-	public void onScreenChanged()
+	protected void onResize()
 	{
-		super.onScreenChanged();
+		super.onResize();
 		calcScroll();
 	}
-
 }

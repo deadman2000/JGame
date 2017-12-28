@@ -2,6 +2,7 @@ package com.deadman.dh;
 
 import com.deadman.dh.global.Snow;
 import com.deadman.jgame.GameEngine;
+import com.deadman.jgame.ui.FillLayout;
 
 public class Intro extends GameEngine
 {
@@ -9,11 +10,10 @@ public class Intro extends GameEngine
 
 	public Intro()
 	{
-		snow = new Snow(100);
-		addControl(snow);
-		snow.fillParent();
+		setLayout(new FillLayout());
+		addControl(snow = new Snow(100));
 	}
-	
+
 	@Override
 	public void tick()
 	{

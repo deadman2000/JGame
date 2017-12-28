@@ -82,19 +82,19 @@ public class ItemSlot extends Control
 
 		p = clientToScreen(p);
 		Item item = getItem();
-		if (ItemInfoPanel.ENABLED && item != pickedItem()) ItemInfoPanel.show(p.x, p.y, item);
+		if (ItemInfoPanel.ENABLED && item != pickedItem()) ItemInfoPanel.showPanel(p.x, p.y, item);
 	}
 
 	@Override
 	protected void onMouseLeave()
 	{
-		if (ItemInfoPanel.ENABLED && getItem() != null) ItemInfoPanel.hide();
+		if (ItemInfoPanel.ENABLED && getItem() != null) ItemInfoPanel.hidePanel();
 	}
 
 	@Override
 	protected void onPressed(Point p, MouseEvent e)
 	{
-		if (ItemInfoPanel.ENABLED) ItemInfoPanel.hide();
+		if (ItemInfoPanel.ENABLED) ItemInfoPanel.hidePanel();
 
 		if (!enabled) return;
 

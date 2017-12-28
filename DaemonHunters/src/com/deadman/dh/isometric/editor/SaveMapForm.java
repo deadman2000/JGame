@@ -4,7 +4,6 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 
 import com.deadman.dh.R;
-import com.deadman.jgame.ui.Button;
 import com.deadman.jgame.ui.Control;
 import com.deadman.jgame.ui.ControlListener;
 import com.deadman.jgame.ui.Label;
@@ -26,7 +25,8 @@ public class SaveMapForm extends IEWindow
 		width = 230;
 		height = 180;
 
-		fw = new FileView(4, 4, 160, 140);
+		fw = new FileView();
+		fw.setBounds(4, 4, 160, 140);
 		fw.setFilterByExt(".map");
 		fw.setPath(new File(editor.getMap().fileName).getParentFile());
 		fw.addControlListener(file_listener);

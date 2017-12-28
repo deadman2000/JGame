@@ -36,15 +36,15 @@ public class RecruitsTable extends IGMPanel
 		addControl(new Label(fnt_igm, 195, 7, "ЛВ"));
 		addControl(new Label(fnt_igm, 210, 7, "ИН"));
 
-		addControl(lv = new VListView(5, TOP_PAD, width - 13, SIZE * RecruitRow.HEIGHT));
-		lv.item_height = RecruitRow.HEIGHT;
+		addControl(lv = new VListView());
+		lv.setBounds(5, TOP_PAD, width - 13, SIZE * RecruitRow.HEIGHT);
 		lv.setScrollBar(Game.createVScrollInfo());
 		lv.bgrColor = 0xFF686c51;
 		lv.addControlListener(lv_listener);
 
 		for (int i = 0; i < SIZE; i++)
 			lv.addItem(new RecruitRow(i, Unit.generate()));
-		if (lv.size() > 0)
+		if (lv.itemsCount() > 0)
 			lv.selectIndex(0);
 		
 		int by = TOP_PAD + SIZE * RecruitRow.HEIGHT + 2;
@@ -64,7 +64,7 @@ public class RecruitsTable extends IGMPanel
 
 		guild.addUnit((Unit) lv.selectedItem().tag);
 		lv.removeItem(lv.selectedItem());
-		for (int i = 0; i < lv.size(); i++)
+		for (int i = 0; i < lv.itemsCount(); i++)
 			((RecruitRow) lv.items.get(i)).setIndex(i);
 
 		eng.updateUnitsCount();

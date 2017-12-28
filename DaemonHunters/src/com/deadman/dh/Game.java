@@ -76,8 +76,8 @@ public class Game
 			else
 			{
 				//new Intro().show();
-				//initGlobal();
-				initBattle();
+				initGlobal();
+				//initBattle();
 			}
 
 			GameLoop.run();

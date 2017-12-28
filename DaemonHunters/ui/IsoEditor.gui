@@ -1,0 +1,24 @@
+GameEngine
+	Column
+		MainMenu
+			MainMenuItem(FILE)
+				MainMenuItem(NEW)
+				MainMenuItem(OPEN)
+				MainMenuItem(SAVE)
+				MainMenuItem(SAVE AS)
+			MainMenuItem(VIEW)
+				MainMenuItem(GRID)
+			MainMenuItem(MAP)
+				MainMenuItem(RESIZE)
+		IsoViewer
+			fillHeight: true
+		
+		Control
+			id: ctBottomLeft
+			background: R.editor.ie_bottom_left
+		Control
+			id: ctBottomMiddle
+			background: R.editor.ie_bottom_middle
+		Control
+			id: ctBottomRight
+			background: R.editor.ie_bottom_right

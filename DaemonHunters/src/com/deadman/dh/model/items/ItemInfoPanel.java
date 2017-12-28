@@ -74,24 +74,24 @@ public class ItemInfoPanel extends Control
 
 	private static ItemInfoPanel _panel;
 
-	public static void show(int x, int y, Item item)
+	public static void showPanel(int x, int y, Item item)
 	{
 		if (item == null)
-			hide();
+			hidePanel();
 		
 		if (_panel == null)
 		{
 			_panel = new ItemInfoPanel();
-			if (!GameLoop.engine.root.containsControl(_panel)) GameLoop.engine.addControl(_panel);
+			if (!GameLoop.engine.containsControl(_panel)) GameLoop.engine.addControl(_panel);
 		}
 
 		_panel._show(x, y, item);
 	}
 
-	public static void hide()
+	public static void hidePanel()
 	{
 		if (_panel == null) return;
-		_panel.visible = false;
+		_panel.hide();
 		_panel._item = null;
 	}
 }

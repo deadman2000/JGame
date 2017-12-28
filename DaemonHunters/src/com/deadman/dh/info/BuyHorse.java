@@ -31,20 +31,20 @@ public class BuyHorse extends IGMPanel
 		addControl(new Label(IGMPanel.fnt_igm, 110, 7, "Скорость"));
 		addControl(new Label(IGMPanel.fnt_igm, 163, 7, "Цена"));
 
-		addControl(lv = new VListView(5, TOP_PAD, width - 13, COUNT * HorseRow.HEIGHT));
-		lv.item_height = RecruitRow.HEIGHT;
+		addControl(lv = new VListView());
+		lv.setBounds(5, TOP_PAD, width - 13, COUNT * HorseRow.HEIGHT);
 		lv.setScrollBar(Game.createVScrollInfo());
 		lv.bgrColor = 0xFF686c51;
 		lv.addControlListener(lv_listener);
 
 		for (int i = 0; i < COUNT; i++)
 			lv.addItem(new HorseRow(i, Horse.generate()));
-		if (lv.size() > 0)
+		if (lv.itemsCount() > 0)
 			lv.selectIndex(0);
 
-		height = TOP_PAD + CartRow.HEIGHT * lv.size() + BOTTOM_PAD;
+		height = TOP_PAD + CartRow.HEIGHT * lv.itemsCount() + BOTTOM_PAD;
 
-		int by = TOP_PAD + lv.size() * RecruitRow.HEIGHT + 2;
+		int by = TOP_PAD + lv.itemsCount() * RecruitRow.HEIGHT + 2;
 		addButton(0, "Купить", 86, by, 70);
 		addButton(TAG_CLOSE, "Закрыть", 160, by, 70);
 	}

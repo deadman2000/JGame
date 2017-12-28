@@ -3,6 +3,7 @@ package com.deadman.dh.global;
 import com.deadman.jgame.GameLoop;
 import com.deadman.jgame.drawing.GameScreen;
 import com.deadman.jgame.ui.Control;
+import com.deadman.jgame.ui.FillLayout;
 
 public class Weather extends Control
 {
@@ -15,12 +16,12 @@ public class Weather extends Control
 	public Weather(GlobalMapView view)
 	{
 		this.view = view;
+		setLayout(new FillLayout());
 
 		clouds = new Clouds(view);
 
 		snow = new Snow();
 		addControl(snow);
-		snow.fillParent();
 		snow.visible = false;
 
 		animals = new AnimalsLayer(150);

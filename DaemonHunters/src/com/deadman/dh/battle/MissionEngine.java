@@ -47,6 +47,7 @@ import com.deadman.jgame.ui.Control;
 import com.deadman.jgame.ui.ControlListener;
 import com.deadman.jgame.ui.Label;
 import com.deadman.jgame.ui.ProgressBar;
+import com.deadman.jgame.ui.RelativeLayout;
 
 public class MissionEngine extends GameEngine
 {
@@ -157,11 +158,13 @@ public class MissionEngine extends GameEngine
 		cursor = Game.ItemCursor;
 
 		addControl(mapViewer = new IsoViewer());
+		RelativeLayout.settings(mapViewer).fill();
 		mapViewer.cursor = IsoCursor.CURSOR_RECT;
-		mapViewer.fillParent();
 		mapViewer.addControlListener(mapViewer_listener);
 
-		addControl(new Control(R.ui.miss_portrait_bgr, 0, 0));
+		Control p = new Control(R.ui.miss_portrait_bgr);
+		addControl(p);
+		
 		addControl(cPortrait = new Control(4, 4, Unit.PORTRAIT_WIDTH, Unit.PORTRAIT_HEIGHT));
 		cPortrait.addControlListener(action_listener);
 
@@ -176,8 +179,9 @@ public class MissionEngine extends GameEngine
 		btExit = createIB(3, 106, R.ui.ic_miss_exit);
 
 		// Панель с инвентарем
-		addControl(plUnitInfo = new Control(GameScreen.GAME_WIDTH - 120, 0, 120, GameScreen.GAME_HEIGHT));
-		plUnitInfo.anchor = Control.ANCHOR_RIGHT_TOP | Control.ANCHOR_BOTTOM;
+		addControl(plUnitInfo = new Control());
+		plUnitInfo.width = 120;
+		RelativeLayout.settings(plUnitInfo).alignRight().fillHeight();
 		plUnitInfo.bgrColor = 0xffc3bca7;
 		plUnitInfo.visible = false;
 		plUnitInfo.consumeMouse = true;
@@ -345,7 +349,7 @@ public class MissionEngine extends GameEngine
 		switch (e.getKeyCode())
 		{
 			case KeyEvent.VK_ESCAPE:
-				InGameMenu.show();
+				InGameMenu.showMenu();
 				break;
 			case KeyEvent.VK_F2:
 				Book.inst()

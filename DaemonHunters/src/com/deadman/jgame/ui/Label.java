@@ -256,13 +256,6 @@ public class Label extends Control
 		return super.toString() + " \"" + _text + "\"";
 	}
 
-	@Override
-	public void onScreenChanged()
-	{
-		super.onScreenChanged();
-		updateText();
-	}
-
 	public int getTextWidth()
 	{
 		return textWidth;

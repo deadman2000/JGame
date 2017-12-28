@@ -4,57 +4,45 @@ import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
-import com.deadman.dh.isometric.IsoBigSprite;
-import com.deadman.dh.resources.GameResources;
 import com.deadman.jgame.GameEngine;
-import com.deadman.jgame.drawing.Drawable;
 import com.deadman.jgame.drawing.GameScreen;
-import com.deadman.jgame.drawing.Mirrored;
-import com.deadman.jgame.drawing.PicPart;
+import com.deadman.jgame.ui.ColumnLayout;
+import com.deadman.jgame.ui.Control;
 
 public class TestEngine extends GameEngine
 {
-	IsoBigSprite s;
-	Drawable d1, d2, d3;
-	private static final int red = 0x5f0000;
-
 	public TestEngine()
 	{
-		GameResources.init();
-		s = (IsoBigSprite) GameResources.main.getIso("Cabinet");
-		byte st = 17;
-		d1 = s.getPart((byte) 0, (byte) 0, st);
-		d2 = s.getPart((byte) 1, (byte) 0, st);
-		d3 = Drawable.get(R.iso.Cabinet_0_1);
+		//GameResources.init();
+
+		setLayout(new ColumnLayout());
+		
+		{
+			Control i1 = new Control();
+			i1.height = 20;
+			i1.bgrColor = 0xff0000;
+			addControl(i1);
+		}
+
+		{
+			Control i2 = new Control();
+			ColumnLayout.settings(i2).fillHeight();
+			i2.bgrColor = 0x00ff00;
+			addControl(i2);
+		}
+
+		{
+			Control i3 = new Control();
+			i3.height = 20;
+			i3.bgrColor = 0x0000ff;
+			addControl(i3);
+		}
 	}
 
 	@Override
 	public void draw()
 	{
 		super.draw();
-
-		drawPic(10, 50, d1);
-
-		Mirrored m = (Mirrored) d2;
-		drawPic(100, 50, m);
-
-		PicPart p = (PicPart) m.original;
-		drawPic(150, 50, p);
-
-		p.original.drawAt(80, 50, 12, 44, -p.original.width + 12, 0, -12, 44);
-
-		drawPic(170, 50, p.original);
-
-		//drawPic(250, 50, d3);
-
-		//System.out.println(d2.toString());
-	}
-
-	private void drawPic(int x, int y, Drawable d)
-	{
-		screen.drawRect(x - d.anchorX, y - d.anchorY, d.width, d.height, red);
-		d.drawAt(x, y);
-		screen.drawRect(x, y, 1, 1, 0xffff0000);
 	}
 
 	@Override

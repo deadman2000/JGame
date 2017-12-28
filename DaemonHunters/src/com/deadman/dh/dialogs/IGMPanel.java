@@ -8,17 +8,18 @@ import com.deadman.jgame.ui.Button;
 import com.deadman.jgame.ui.Control;
 import com.deadman.jgame.ui.ControlListener;
 import com.deadman.jgame.ui.Label;
+import com.deadman.jgame.ui.RelativeLayout;
 
 public class IGMPanel extends Control
 {
 	private Label laTitle;
-	private static final int la_pad = 7;
 
 	public static final GameFont fnt_igm = getFont(R.fonts.font4x7, 0xffffffff).shadow(0xff4f6477);
 	public static final GameFont fnt_igm_selected = getFont(R.fonts.font4x7, 0xfff3e69f).shadow(0xff4f6477);
 
 	public IGMPanel(int w, int h)
 	{
+		setLayout(new RelativeLayout());
 		background = getDrawable(R.ui.igm_panel_9p);
 
 		width = w;
@@ -29,10 +30,8 @@ public class IGMPanel extends Control
 	{
 		if (laTitle == null)
 		{
-			laTitle = new Label(fnt_igm, la_pad, 10);
-			laTitle.width = width - la_pad * 2 - 3;
-			laTitle.height = fnt_igm.height;
-			laTitle.anchor = ANCHOR_LEFT_TOP | ANCHOR_RIGHT;
+			laTitle = new Label(fnt_igm);
+			RelativeLayout.settings(laTitle).fillWidth().alignTop(10); // TODO Отступ и перенос
 			laTitle.autosize = false;
 			laTitle.word_wrap = true;
 			laTitle.halign = Label.ALIGN_CENTER;
@@ -47,6 +46,28 @@ public class IGMPanel extends Control
 		Button btn = new Button(R.ui.bt_igm_9p, R.ui.bt_igm_pr_9p);
 		addControl(btn);
 		btn.setBounds(x, y, w, 15);
+		btn.setLabel(fnt_igm, 3, title);
+		btn.tag = tag;
+		btn.addControlListener(btn_listener);
+		return btn;
+	}
+
+	protected Button createButton(int tag, String title)
+	{
+		return createButton(tag, title, 0);
+	}
+	
+	protected Button createButton(int tag, String title, int w)
+	{
+		Button btn = new Button(R.ui.bt_igm_9p, R.ui.bt_igm_pr_9p);
+		if (w > 0)
+			btn.setSize(w, 15);
+		else
+		{
+			btn.setHeight(15);
+			btn.calcWidthByText(3);
+		}
+		
 		btn.setLabel(fnt_igm, 3, title);
 		btn.tag = tag;
 		btn.addControlListener(btn_listener);

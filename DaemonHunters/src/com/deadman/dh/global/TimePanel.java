@@ -4,9 +4,9 @@ import com.deadman.dh.Game;
 import com.deadman.dh.R;
 import com.deadman.jgame.drawing.Drawable;
 import com.deadman.jgame.drawing.GameFont;
-import com.deadman.jgame.drawing.GameScreen;
 import com.deadman.jgame.ui.Control;
 import com.deadman.jgame.ui.Label;
+import com.deadman.jgame.ui.RelativeLayout;
 
 public class TimePanel extends Control
 {
@@ -19,7 +19,7 @@ public class TimePanel extends Control
 	{
 		super(R.ui.time_bgr);
 
-		setPosition(GameScreen.GAME_WIDTH - width - 5, GameScreen.GAME_HEIGHT - height - 5, Control.ANCHOR_RIGHT | Control.ANCHOR_BOTTOM);
+		RelativeLayout.settings(this).alignRight(5).alignBottom(5);
 		clickOnBgr = true;
 
 		GameFont fnt = getFont(R.fonts.font4x7, 0xff312013).shadow(0xff646443);

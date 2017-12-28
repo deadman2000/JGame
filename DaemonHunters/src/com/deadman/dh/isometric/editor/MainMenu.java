@@ -7,7 +7,6 @@ import java.awt.event.MouseEvent;
 import com.deadman.dh.R;
 import com.deadman.jgame.GameEngine;
 import com.deadman.jgame.IOverlayListener;
-import com.deadman.jgame.drawing.GameScreen;
 import com.deadman.jgame.ui.Control;
 
 public class MainMenu extends Control implements IOverlayListener
@@ -25,10 +24,7 @@ public class MainMenu extends Control implements IOverlayListener
 		this.listener = listener;
 
 		background = getDrawable(R.editor.ie_menu_bgr);
-		width = GameScreen.GAME_WIDTH;
 		height = background.height;
-		anchor = Control.ANCHOR_LEFT_TOP | Control.ANCHOR_RIGHT;
-		eng.addControl(this);
 	}
 
 	public MainMenuItem addItem(String text)
@@ -88,7 +84,7 @@ public class MainMenu extends Control implements IOverlayListener
 		close();
 
 		engine.showOverlay(this);
-		engine.addControl(control);
+		engine.overlay().addControl(control);
 		openedMenu = control;
 	}
 

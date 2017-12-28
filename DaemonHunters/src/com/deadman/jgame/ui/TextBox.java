@@ -22,17 +22,26 @@ public class TextBox extends Control
 	private long cur_tick_begin;
 
 
+	public TextBox(GameFont font)
+	{
+		_font = font;
+		setHeight(font.height + 5);
+		setText("");
+	}
+
 	public TextBox(GameFont font, int x, int y, int width)
 	{
 		_font = font;
-		maxLength = (width - 4) / (font.width + 1);
 
-		//this.width = width;
-		//height = p.height + 5;
-		//setPosition(x, y);
 		setBounds(x, y, width, font.height + 5);
-
 		setText("");
+	}
+	
+	@Override
+	protected void onResize()
+	{
+		super.onResize();
+		maxLength = (width - 4) / (_font.width + 1);
 	}
 
 	public int contentColor = 0;

@@ -70,8 +70,7 @@ public class MsgScroll extends Control
 	public void setText(String text)
 	{
 		laText.setText(text);
-		width = laText.width + PADDING_H * 2;
-		onScreenChanged();
+		setSize(laText.width + PADDING_H * 2, height);
 	}
 
 	public void setText(String text, String buttonText, MenuAction buttonAction)
@@ -82,10 +81,8 @@ public class MsgScroll extends Control
 		button1.visible = true;
 
 		laText.setText(text);
-		width = laText.width + 4 + button1.width + PADDING_H * 2;
+		setSize(laText.width + 4 + button1.width + PADDING_H * 2, height);
 		button1.setPosition(width - button1.width - 10, 9);
-
-		onScreenChanged();
 	}
 
 	@Override

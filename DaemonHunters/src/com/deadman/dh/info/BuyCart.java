@@ -30,8 +30,8 @@ public class BuyCart extends IGMPanel
 		addControl(new Label(fnt_igm, 120, 7, "Размер"));
 		addControl(new Label(fnt_igm, 163, 7, "Цена"));
 
-		addControl(lv = new VListView(5, TOP_PAD, width - 13, Cart.carts.length * CartRow.HEIGHT));
-		lv.item_height = RecruitRow.HEIGHT;
+		addControl(lv = new VListView());
+		lv.setBounds(5, TOP_PAD, width - 13, Cart.carts.length * CartRow.HEIGHT);
 		lv.setScrollBar(Game.createVScrollInfo());
 		lv.bgrColor = 0xFF686c51;
 		lv.addControlListener(lv_listener);
@@ -43,12 +43,12 @@ public class BuyCart extends IGMPanel
 			if (!c.accessible || c == current) continue;
 			lv.addItem(new CartRow(i, c));
 		}
-		if (lv.size() > 0)
+		if (lv.itemsCount() > 0)
 			lv.selectIndex(0);
 
-		height = TOP_PAD + CartRow.HEIGHT * lv.size() + BOTTOM_PAD;
+		height = TOP_PAD + CartRow.HEIGHT * lv.itemsCount() + BOTTOM_PAD;
 
-		int by = TOP_PAD + lv.size() * RecruitRow.HEIGHT + 2;
+		int by = TOP_PAD + lv.itemsCount() * RecruitRow.HEIGHT + 2;
 		addButton(0, "Купить", 86, by, 70);
 		addButton(TAG_CLOSE, "Закрыть", 160, by, 70);
 	}

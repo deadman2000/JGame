@@ -25,6 +25,7 @@ import com.deadman.jgame.ui.Button;
 import com.deadman.jgame.ui.Control;
 import com.deadman.jgame.ui.ControlListener;
 import com.deadman.jgame.ui.Label;
+import com.deadman.jgame.ui.RelativeLayout;
 
 public class GuildEngine extends GameEngine implements ICellDrawer
 {
@@ -90,7 +91,7 @@ public class GuildEngine extends GameEngine implements ICellDrawer
 	{
 		mapViewer = new IsoViewer();
 		addControl(mapViewer);
-		mapViewer.setBounds(0, 0, GameScreen.GAME_WIDTH, GameScreen.GAME_HEIGHT, Control.ANCHOR_ALL);
+		RelativeLayout.settings(mapViewer).fill();
 		mapViewer.addControlListener(mapViewer_listener);
 		mapViewer.allow_drag = true;
 		mapViewer.show_all = true;
@@ -98,6 +99,7 @@ public class GuildEngine extends GameEngine implements ICellDrawer
 		//mapViewer.setLight(0f);
 
 		addControl(buildingsPanel = new BuildingsPanel(this));
+		RelativeLayout.settings(buildingsPanel).alignRightTop(2, 22);
 		addControl(new TopMenu(TopMenu.MODE_CLOSE));
 
 		addControl(buildInfo = new Control(4, 4, 120, 120));

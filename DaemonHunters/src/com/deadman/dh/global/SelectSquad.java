@@ -9,7 +9,6 @@ import com.deadman.dh.dialogs.MenuAction;
 import com.deadman.dh.dialogs.MenuRow;
 import com.deadman.dh.model.Squad;
 import com.deadman.jgame.ui.ControlListener;
-import com.deadman.jgame.ui.Label;
 import com.deadman.jgame.ui.VListView;
 
 public class SelectSquad extends IGMPanel
@@ -27,19 +26,20 @@ public class SelectSquad extends IGMPanel
 		super(240, 0);
 		this.action = action;
 
+		// TODO Ограничение по размеру
 		height = TOP_PAD + squads.size() * MenuRow.HEIGHT + BOTTOM_PAD;
 
-		addControl(new Label(IGMPanel.fnt_igm, 7, 7, "Выберите отряд"));
+		setTitle("Выберите отряд");
 
-		addControl(lv = new VListView(5, TOP_PAD, width - 13, squads.size() * MenuRow.HEIGHT));
-		lv.item_height = MenuRow.HEIGHT;
+		addControl(lv = new VListView());
+		lv.setBounds(5, TOP_PAD, width - 13, squads.size() * MenuRow.HEIGHT); // TODO Переделать
 		lv.setScrollBar(Game.createVScrollInfo());
 		lv.bgrColor = 0xFF686c51;
 		lv.addControlListener(lv_listener);
 
 		for (Squad s : squads)
 			lv.addItem(new MenuRow(s.name, s));
-		if (lv.size() > 0)
+		if (lv.itemsCount() > 0)
 			lv.selectIndex(0);
 
 		int by = TOP_PAD + squads.size() * MenuRow.HEIGHT + 2;

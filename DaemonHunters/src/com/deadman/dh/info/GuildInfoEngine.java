@@ -24,6 +24,7 @@ import com.deadman.jgame.ui.Control;
 import com.deadman.jgame.ui.ControlListener;
 import com.deadman.jgame.ui.Label;
 import com.deadman.jgame.ui.ProgressBar;
+import com.deadman.jgame.ui.RelativeLayout;
 import com.deadman.jgame.ui.VListView;
 
 public class GuildInfoEngine extends GameEngine
@@ -51,9 +52,16 @@ public class GuildInfoEngine extends GameEngine
 	public GuildInfoEngine(Guild g)
 	{
 		cursor = Game.ItemCursor;
-		
-		addControl(new Control(R.ui.paper).fillParent());
-		addControl(new Control(R.ui.pl_info_9p).fillParent());
+
+		Control ctlPaper = new Control(R.ui.paper);
+		addControl(ctlPaper);
+		RelativeLayout.settings(ctlPaper)
+				.fill();
+
+		Control ctlBorder = new Control(R.ui.pl_info_9p);
+		addControl(ctlBorder);
+		RelativeLayout.settings(ctlBorder)
+				.fill();
 
 		addControl(laGuild = new Label(fnt4x7_l));
 		laGuild.setBounds(38, 7, 128, 17);
@@ -82,10 +90,14 @@ public class GuildInfoEngine extends GameEngine
 		chbSquads.addControlListener(chb_tabs_listener);
 		chbSquads.check_on_click = true;
 
-		addControl(new Control(getDrawable(R.ui.bt_border_info_9p), GameScreen.GAME_WIDTH - 31, 5, 26, 21, Control.ANCHOR_RIGHT_TOP));
+		// Рамка для кнопки
+		Control ctlBorderInfo = new Control(getDrawable(R.ui.bt_border_info_9p));
+		RelativeLayout.settings(ctlBorderInfo).alignRight(5).alignTop(5);
+		ctlBorderInfo.setSize(26, 21);
+		addControl(ctlBorderInfo);
+		
 		Button btClose = new Button(R.ui.bt_info_close, R.ui.bt_info_close_pr);
-		btClose.setPosition(GameScreen.GAME_WIDTH - 29, 7);
-		btClose.anchor = Control.ANCHOR_RIGHT_TOP;
+		RelativeLayout.settings(btClose).alignRight(7).alignTop(7);
 		addControl(btClose);
 		btClose.addControlListener(btClose_listener);
 
@@ -93,8 +105,8 @@ public class GuildInfoEngine extends GameEngine
 		createSquadsPanel();
 
 		// Слоты с предметами гильдии
-		addControl(igStorage = new ItemsGrid(10, GameScreen.GAME_HEIGHT - 41, getDrawable(R.ui.storage_slot)));
-		igStorage.anchor = Control.ANCHOR_LEFT | Control.ANCHOR_BOTTOM;
+		addControl(igStorage = new ItemsGrid(getDrawable(R.ui.storage_slot)));
+		RelativeLayout.settings(igStorage).alignLeft(10).alignBottom(6);
 
 		if (g == null) g = Game.guilds.get(0);
 		setGuild(g);
@@ -238,8 +250,8 @@ public class GuildInfoEngine extends GameEngine
 
 	private void createUnitsPanel()
 	{
-		plUnits = new Control(0, 32, GameScreen.GAME_WIDTH, GameScreen.GAME_HEIGHT - 32);
-		plUnits.anchor = Control.ANCHOR_ALL;
+		plUnits = new Control();
+		RelativeLayout.settings(plUnits).fill(0, 32, 0, 32);
 		addControl(plUnits);
 
 		plUnits.addControl(new Control(R.ui.unit_stat_bgr, 4, 0));
@@ -276,7 +288,7 @@ public class GuildInfoEngine extends GameEngine
 		picFemale = getDrawable(R.ui.ic_unit_female);
 		plUnits.addControl(icUnitGender = new Control(88, 12, 13, 13));
 		icUnitGender.bgrMode = Control.BGR_ONE;
-		
+
 		plUnits.addControl(laUnitName = new Label(GlobalEngine.fnt4x7_brown_sh, 101, 15));
 
 		plUnits.addControl(new Control(R.ui.lvl_txt, 90, 30));
@@ -306,10 +318,10 @@ public class GuildInfoEngine extends GameEngine
 		plUnits.addControl(laDX = new Label(fnt3x5, 25, 82));
 		plUnits.addControl(laIN = new Label(fnt3x5, 25, 93));
 
-		lvSkills = new VListView(10, 107, 100, GameScreen.GAME_HEIGHT - 180);
-		lvSkills.spacing = 2;
-		lvSkills.item_height = 9;
-		lvSkills.anchor = Control.ANCHOR_LEFT_TOP | Control.ANCHOR_BOTTOM;
+		lvSkills = new VListView();
+		lvSkills.setSpacing(2);
+		lvSkills.setWidth(100);
+		RelativeLayout.settings(lvSkills).alignLeft(10).alignTop(107).alignBottom(73);
 		plUnits.addControl(lvSkills);
 
 		pbBlue = getDrawable(R.ui.blue_pb);
@@ -445,7 +457,7 @@ public class GuildInfoEngine extends GameEngine
 	private void createSquadsPanel()
 	{
 		plSquads = new Control(0, 32, GameScreen.GAME_WIDTH, GameScreen.GAME_HEIGHT);
-		plSquads.anchor = Control.ANCHOR_ALL;
+		RelativeLayout.settings(plSquads).fill(0, 32, 0, 32);
 		addControl(plSquads);
 
 		plSquads.addControl(new Control(R.ui.squad_top_bgr, 40, 0));

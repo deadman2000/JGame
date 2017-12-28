@@ -19,7 +19,7 @@ public class LoadingScreen extends GameEngine
 		snow = new Snow(100);
 		snow.interactive = true;
 		addControl(snow);
-		snow.fillParent();
+		RelativeLayout.settings(snow).fill();
 	}
 
 	@Override

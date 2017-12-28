@@ -14,6 +14,7 @@ import com.deadman.jgame.GameEngine;
 import com.deadman.jgame.drawing.Drawable;
 import com.deadman.jgame.drawing.GameScreen;
 import com.deadman.jgame.ui.Control;
+import com.deadman.jgame.ui.RelativeLayout;
 
 public class IsoViewer extends Control
 {
@@ -56,6 +57,7 @@ public class IsoViewer extends Control
 	public IsoViewer()
 	{
 		clip = true;
+		setLayout(new RelativeLayout());
 	}
 
 	public static void showMap(IsoMap m)
@@ -66,7 +68,7 @@ public class IsoViewer extends Control
 
 		viewer.cursor = IsoCursor.CURSOR_RECT;
 
-		viewer.setBounds(0, 0, GameScreen.GAME_WIDTH, GameScreen.GAME_HEIGHT, Control.ANCHOR_ALL);
+		RelativeLayout.settings(viewer).fill();
 		viewer.setMap(m);
 		viewer.zoomToCenter();
 		eng.show();
@@ -87,9 +89,9 @@ public class IsoViewer extends Control
 	}
 
 	@Override
-	public void onScreenChanged()
+	protected void onResize()
 	{
-		super.onScreenChanged();
+		super.onResize();
 		setViewXY(viewX, viewY);
 	}
 

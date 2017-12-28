@@ -26,9 +26,9 @@ import com.deadman.jgame.drawing.GameFont;
 import com.deadman.jgame.drawing.GameScreen;
 import com.deadman.jgame.drawing.Picture;
 import com.deadman.jgame.sound.Music;
-import com.deadman.jgame.ui.Control;
 import com.deadman.jgame.ui.LoadingScreen;
 import com.deadman.jgame.ui.ProgressStatus;
+import com.deadman.jgame.ui.RelativeLayout;
 
 public class GlobalEngine extends GameEngine
 {
@@ -48,9 +48,10 @@ public class GlobalEngine extends GameEngine
 	public GlobalEngine()
 	{
 		addControl(mapView = new GlobalMapView());
-		mapView.fillParent();
+		RelativeLayout.settings(mapView).fill();
 
 		addControl(guildsPanel = new GuildsPanel());
+		RelativeLayout.settings(guildsPanel).alignRight(2).alignTop(22);
 		addControl(squadsPanel = new SquadsPanel());
 		addControl(topMenu = new TopMenu(TopMenu.MODE_MENU));
 		addControl(timePanel = new TimePanel());
@@ -165,7 +166,8 @@ public class GlobalEngine extends GameEngine
 		if (msgScroll != null) return;
 		msgScroll = new MsgScroll();
 		addControl(msgScroll);
-		msgScroll.setBounds(GameScreen.GAME_WIDTH / 2 - 200 / 2, 10, 200, msgScroll.height, Control.ANCHOR_TOP);
+		msgScroll.setBounds(GameScreen.GAME_WIDTH / 2 - 200 / 2, 10, 200, msgScroll.height);
+		RelativeLayout.settings(msgScroll).alignTop();
 		msgScroll.visible = false;
 	}
 
@@ -354,7 +356,7 @@ public class GlobalEngine extends GameEngine
 		switch (e.getKeyCode())
 		{
 			case KeyEvent.VK_ESCAPE:
-				InGameMenu.show();
+				InGameMenu.showMenu();
 				break;
 
 			case KeyEvent.VK_SPACE:

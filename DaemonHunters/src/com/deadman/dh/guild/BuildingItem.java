@@ -24,6 +24,7 @@ public class BuildingItem extends ListViewItem
 	{
 		engine = eng;
 		building = gb;
+		height = 17;
 
 		int dy = 0;
 		if (gb.isBuild())

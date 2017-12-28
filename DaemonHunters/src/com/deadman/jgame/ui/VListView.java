@@ -6,18 +6,48 @@ import java.awt.event.MouseWheelEvent;
 
 public class VListView extends BaseListView
 {
+	private ContentItem content;
 	private VScrollBar scrollBar;
-	public int spacing = 0; // Вертикальный промежуток между итемами
-	public int item_left_padding = 0;
-	public int item_height = 16; // Высота одного итема
-	public int item_width;
+	public boolean heightByContent = false; // TODO MaxHeight
+	
+	class ContentItem extends Column 
+	{
+		public ContentItem()
+		{
+			layout.heightByContent = true;
+			layout.horizontalMode = ColumnLayout.H_FILL;
+		}
+		
+		@Override
+		protected void onResize()
+		{
+			super.onResize();
+			update();
+		}
+	}
+	
+	public VListView()
+	{
+		clip = true;
+		RowLayout layout = new RowLayout();
+		layout.verticalMode = RowLayout.V_FILL;
+		setLayout(layout);
+		
+		addControl(content = new ContentItem());
+		RowLayout.settings(content).fillWidth();
+	}
 
+	@Deprecated
 	public VListView(int x, int y, int width, int height)
 	{
+		this();
 		setBounds(x, y, width, height);
+	}
 
-		item_width = width;
-		clip = true;
+	public void setSpacing(int value)
+	{
+		content.setSpacing(value);
+		refreshLayout();
 	}
 
 	public void setScrollBar(VScrollBar sb)
@@ -29,57 +59,26 @@ public class VListView extends BaseListView
 		}
 
 		scrollBar = sb;
-		addControl(scrollBar, 0);
-		scrollBar.setBounds(width - scrollBar.width, 0, scrollBar.width, height, ANCHOR_RIGHT | ANCHOR_TOP | ANCHOR_BOTTOM);
+		addControl(scrollBar);
 		scrollBar.addControlListener(scrollBar_listener);
 		updateScrollBar();
-		
-		item_width = width - scrollBar.width;
 	}
 
-	void updateScrollBar()
+	private void updateScrollBar()
 	{
-		boolean needRecalc = false;
-		int m = -spacing - height;
-		for (ListViewItem lvi : items)
-			if (lvi.visible)
-				m += lvi.height + spacing;
-
+		int m = content.height - height;
 		if (m > 0)
 		{
-			needRecalc = !scrollBar.visible;
-			scrollBar.visible = true;
+			scrollBar.show();
 			scrollBar.max = m;
-			item_width = width - scrollBar.width;
 		}
 		else
 		{
-			needRecalc = scrollBar.visible;
-
 			if (scrollBar.visible)
+			{
 				scrollBar.setPos(0);
-
-			scrollBar.visible = false;
-			item_width = width;
-		}
-
-		if (needRecalc)
-		{
-			for (ListViewItem lvi : items)
-				lvi.width = item_width;
-			updateItemsPos();
-		}
-	}
-
-	@Override
-	public void clear()
-	{
-		super.clear();
-
-		if (scrollBar != null)
-		{
-			scrollBar.setPos(0);
-			scrollBar.visible = false;
+				scrollBar.hide();
+			}
 		}
 	}
 
@@ -90,66 +89,26 @@ public class VListView extends BaseListView
 		{
 			if (action == ACTION_POSITION_CHANGED)
 			{
-				updateItemsPos();
+				content.y = -scrollBar.getPos();
 			}
 		};
 	};
 
 	@Override
-	protected void updateItemsPos()
-	{
-		int ty = 0;
-		if (scrollBar != null)
-			ty = -scrollBar.getPos();
-		for (ListViewItem lvi : items)
-			if (lvi.visible)
-			{
-				lvi.setPosition(item_left_padding, ty);
-				ty += lvi.height + spacing;
-			}
-	}
-
 	public void update()
 	{
+		if (heightByContent)
+			setHeight(content.height);
+		
 		if (scrollBar != null)
 			updateScrollBar();
-		updateItemsPos();
 	}
 
 	@Override
-	public void addItem(ListViewItem lvi)
+	public void addItem(ListViewItem lvi) // TODO Может быть перетащить в базовый класс
 	{
-		int iy = 0;
-		if (items.size() > 0)
-		{
-			ListViewItem lviLast = null;
-			for (int i = items.size() - 1; i >= 0; i--)
-			{
-				lviLast = items.get(i);
-				if (lviLast.visible) break;
-			}
-
-			if (lviLast.visible)
-				iy = lviLast.y + lviLast.height + spacing;
-		}
-
-		if (item_height > 0)
-			lvi.setBounds(item_left_padding, iy, item_width, item_height);
-		else
-			lvi.setBounds(item_left_padding, iy, item_width, lvi.height);
-
+		content.addControl(lvi);
 		super.addItem(lvi);
-
-		if (scrollBar != null)
-			updateScrollBar();
-	}
-
-	@Override
-	public void onScreenChanged()
-	{
-		super.onScreenChanged();
-		if (scrollBar != null)
-			updateScrollBar();
 	}
 
 	@Override
@@ -170,29 +129,17 @@ public class VListView extends BaseListView
 		}
 	}
 
-	public void autoHeight()
-	{
-		height = size() * item_height;
-	}
-
 	@Override
 	protected void ensureSelectedVisible()
 	{
-		int s = 0;
-		for (ListViewItem i : items)
+		if (scrollBar.getPos() > selectedItem.y)
 		{
-			if (i == selectedItem) break;
-			s += i.height + spacing;
-		}
-		
-		if (scrollBar.getPos() > s)
-		{
-			scrollBar.shift(s - scrollBar.getPos());
+			scrollBar.shift(selectedItem.y - scrollBar.getPos());
 			return;
 		}
 
 		int scrollB = scrollBar.getPos() + height;
-		int itemB = s + selectedItem.height;
+		int itemB = selectedItem.y + selectedItem.height;
 		if (itemB > scrollB)
 			scrollBar.shift(itemB - scrollB);
 	}

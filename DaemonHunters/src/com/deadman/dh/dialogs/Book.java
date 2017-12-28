@@ -41,6 +41,8 @@ public class Book extends Control
 		width = PAD_LEFT + picBook.width + PAD_RIGHT;
 		height = PAD_TOP + picBook.height + PAD_BOTTOM;
 
+		addControl(new Control(picBook, PAD_LEFT, PAD_TOP));
+
 		Control bmClose = new Control(R.ui.bm_close, PAD_LEFT + 287, PAD_TOP + 22);
 		bmClose.clickOnBgr = true;
 		addControl(bmClose);
@@ -59,7 +61,7 @@ public class Book extends Control
 	@Override
 	public void draw()
 	{
-		picBook.drawAt(scrX + PAD_LEFT, scrY + PAD_TOP);
+		//picBook.drawAt(scrX + PAD_LEFT, scrY + PAD_TOP);
 		super.draw();
 	}
 
@@ -69,7 +71,7 @@ public class Book extends Control
 		page.visible = true;
 		currentPage = page;
 	}
-	
+
 	public void show()
 	{
 		_engine = GameLoop.engine;
@@ -87,8 +89,9 @@ public class Book extends Control
 		addControl(buildingsPage);
 		buildingsPage.setBounds(PAD_LEFT + 14, PAD_TOP + 10, 261, 182);
 
-		lvBuildings = new VListView(0, 0, 128, 184);
-		lvBuildings.item_height = 34;
+		lvBuildings = new VListView();
+		lvBuildings.name = "Buildings";
+		lvBuildings.setBounds(0, 0, 128, 184);
 		lvBuildings.setScrollBar(Game.createVScrollInfo()); // TODO Свой скроллер для книги
 
 		buildingsPage.addControl(lvBuildings);
@@ -158,10 +161,13 @@ public class Book extends Control
 
 	protected void build()
 	{
-		GuildEngine eng = (GuildEngine) _engine;
-		GuildBuildingType building = (GuildBuildingType) lvBuildings.selectedItem().tag;
-		eng.beginBuild(building);
-		close();
+		if (_engine instanceof GuildEngine)
+		{
+			GuildEngine eng = (GuildEngine) _engine;
+			GuildBuildingType building = (GuildBuildingType) lvBuildings.selectedItem().tag;
+			eng.beginBuild(building);
+			close();
+		}
 	}
 
 	// END Buildings
@@ -186,6 +192,7 @@ public class Book extends Control
 		{
 			picSmall = type.getPicture();
 			tag = type;
+			height = 34;
 
 			addControl(new Label(GlobalEngine.fnt4x7_brown, TEXT_MARGIN, 2 + 1, type.name));
 			addControl(new Label(GlobalEngine.fnt3x5_brown, TEXT_MARGIN, 14 + 1, "ЦЕНА: " + type.price));

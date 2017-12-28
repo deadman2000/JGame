@@ -5,8 +5,8 @@ import java.awt.event.KeyEvent;
 import com.deadman.dh.R;
 import com.deadman.jgame.GameEngine;
 import com.deadman.jgame.GameLoop;
-import com.deadman.jgame.drawing.GameScreen;
 import com.deadman.jgame.ui.Control;
+import com.deadman.jgame.ui.RelativeLayout;
 
 public class IEWindow extends Control
 {
@@ -25,10 +25,10 @@ public class IEWindow extends Control
 	{
 		_eng = GameLoop.engine;
 		_eng.showOverlay();
-
-		setBounds(GameScreen.GAME_WIDTH / 2 - width / 2, GameScreen.GAME_HEIGHT / 2 - height / 2, width, height, ANCHOR_NONE);
-
-		_eng.addControl(this);
+		
+		RelativeLayout.settings(this).center();
+		
+		_eng.overlay().addControl(this);
 	}
 
 	@Override

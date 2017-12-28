@@ -6,17 +6,44 @@ import java.util.Collection;
 
 public class HListView extends BaseListView
 {
+	private ContentItem content;
 	private HScrollBar scrollBar;
-	private int spacing = 5; // Промежуток между итемами
 
 	public int item_top_padding = 0;
-
-	public HListView(int x, int y, int width, int height)
-	{
-		setBounds(x, y, width, height);
-		clip = true;
-	}
 	
+	class ContentItem extends Row
+	{
+		public ContentItem()
+		{
+			layout.widthByContent = true;
+			layout.verticalMode = RowLayout.V_FILL;
+		}
+		
+		@Override
+		protected void onResize()
+		{
+			super.onResize();
+			update();
+		}
+	}
+
+	public HListView()
+	{
+		clip = true;
+		ColumnLayout layout = new ColumnLayout();
+		layout.horizontalMode = ColumnLayout.H_FILL;
+		setLayout(layout);
+
+		addControl(content = new ContentItem());
+		ColumnLayout.settings(content).fillHeight();
+	}
+
+	public void setSpacing(int value)
+	{
+		content.setSpacing(value);
+		refreshLayout();
+	}
+
 	public void setScrollBar(HScrollBar sb)
 	{
 		if (scrollBar != null)
@@ -26,21 +53,27 @@ public class HListView extends BaseListView
 		}
 		
 		scrollBar = sb;
-		scrollBar.setBounds(0, height - scrollBar.height, width, scrollBar.height, ANCHOR_LEFT | ANCHOR_BOTTOM | ANCHOR_RIGHT);
 		scrollBar.addControlListener(scrollBar_listener);
 		addControl(scrollBar);
-
-		scrollBar.max = -width;
-		scrollBar.visible = false;
+		updateScrollBar();
 	}
 
-	@Override
-	public void clear()
+	private void updateScrollBar()
 	{
-		super.clear();
-
-		scrollBar.max = -width;
-		scrollBar.visible = false;
+		int m = content.width - width;
+		if (m > 0)
+		{
+			scrollBar.show();
+			scrollBar.max = m;
+		}
+		else
+		{
+			if (scrollBar.visible)
+			{
+				scrollBar.setPos(0);
+				scrollBar.hide();
+			}
+		}
 	}
 
 	private ControlListener scrollBar_listener = new ControlListener()
@@ -50,41 +83,23 @@ public class HListView extends BaseListView
 		{
 			if (action == ACTION_POSITION_CHANGED)
 			{
-				int tx = -scrollBar.getPos();
-				for (ListViewItem lvi : items)
-				{
-					lvi.setPosition(tx, item_top_padding);
-					tx += lvi.width + spacing;
-				}
+				content.x = -scrollBar.getPos();
 			}
 		};
 	};
 
 	@Override
-	protected void updateItemsPos()
+	public void update()
 	{
-		// TODO Реализовать
+		if (scrollBar != null)
+			updateScrollBar();
 	}
-
+	
 	@Override
 	public void addItem(ListViewItem lvi)
 	{
-		int ix = 0;
-		if (items.size() > 0)
-		{
-			ListViewItem lviLast = items.get(items.size() - 1);
-			ix = lviLast.x + lviLast.width + spacing;
-		}
-
-		lvi.setPosition(ix, item_top_padding);
+		content.addControl(lvi);
 		super.addItem(lvi);
-
-		scrollBar.max += lvi.width;
-		if (items.size() > 1)
-			scrollBar.max += spacing;
-
-		if (scroll_visible)
-			scrollBar.visible = scrollBar.max > 0;
 	}
 
 	public void setItems(ListViewItem[] values)
@@ -100,17 +115,6 @@ public class HListView extends BaseListView
 		clear();
 		for (ListViewItem it : list)
 			addItem(it);
-	}
-
-	private boolean scroll_visible = true;
-
-	public void setScrollbarVisible(boolean value)
-	{
-		scroll_visible = value;
-		if (value)
-			scrollBar.visible = scrollBar.max > 0;
-		else
-			scrollBar.visible = false;
 	}
 
 	private ListViewItem getFirstVisible()
@@ -129,7 +133,7 @@ public class HListView extends BaseListView
 		ListViewItem first = getFirstVisible();
 		if (first != null)
 		{
-			int d = -first.width - spacing;
+			int d = -first.width;
 			scrollBar.shift(d);
 		}
 	}
@@ -140,7 +144,7 @@ public class HListView extends BaseListView
 		ListViewItem first = getFirstVisible();
 		if (first != null)
 		{
-			int d = first.width + spacing;
+			int d = first.width;
 			scrollBar.shift(d);
 		}
 	}
@@ -148,23 +152,16 @@ public class HListView extends BaseListView
 	@Override
 	protected void ensureSelectedVisible()
 	{
-		int s = 0;
-		for (ListViewItem i : items)
+		if (scrollBar.getPos() > selectedItem.x)
 		{
-			if (i == selectedItem) break;
-			s += i.width + spacing;
-		}
-		
-		if (scrollBar.getPos() > s)
-		{
-			scrollBar.shift(s - scrollBar.getPos());
+			scrollBar.shift(selectedItem.x - scrollBar.getPos());
 			return;
 		}
 
-		int scrollR = scrollBar.getPos() + width;
-		int itemR = s + selectedItem.width;
-		if (itemR > scrollR)
-			scrollBar.shift(itemR - scrollR);
+		int scrollPos = scrollBar.getPos() + width;
+		int itemPos = selectedItem.x + selectedItem.width;
+		if (itemPos > scrollPos)
+			scrollBar.shift(itemPos - scrollPos);
 	}
 
 	@Override

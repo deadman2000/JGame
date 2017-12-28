@@ -6,7 +6,6 @@ import com.deadman.dh.Game;
 import com.deadman.dh.R;
 import com.deadman.dh.guild.Guild;
 import com.deadman.jgame.drawing.Drawable;
-import com.deadman.jgame.drawing.GameScreen;
 import com.deadman.jgame.ui.Control;
 
 public class GuildsPanel extends Control
@@ -21,8 +20,6 @@ public class GuildsPanel extends Control
 	public GuildsPanel()
 	{
 		width = img_bgr.width;
-		setPosition(GameScreen.GAME_WIDTH - width - 2, 22, Control.ANCHOR_RIGHT_TOP);
-		
 		calcSize();
 	}
 

@@ -19,8 +19,12 @@ public class Control
 	private ArrayList<Control> childs, childsReverse, controlsToAdd;
 
 	public int x, y, width, height;
-	private int distL, distR, distT, distB;
-	public int anchor = ANCHOR_LEFT_TOP;
+	
+	private Layout _layout;
+	public Layout.ChildSettings layoutChildSettings;
+	
+	@Deprecated
+	public int anchor;
 
 	public boolean isFocused = false;
 	public boolean isPressed;
@@ -34,7 +38,7 @@ public class Control
 
 	public static Drawable disabled_bgr;
 
-	private boolean removed = false;
+	public boolean removed = false;
 	private boolean childsChanged = false;
 
 	public Control()
@@ -51,10 +55,11 @@ public class Control
 		setBounds(x, y, w, h);
 	}
 
+	@Deprecated
 	public Control(int x, int y, int w, int h, int anchor)
 	{
 		setBounds(x, y, w, h);
-		this.anchor = anchor;
+		//this.anchor = anchor;
 	}
 
 	public Control(int bgrId)
@@ -86,11 +91,17 @@ public class Control
 		setBounds(x, y, w, h);
 	}
 
+	@Deprecated
 	public Control(Drawable pic, int x, int y, int w, int h, int anchor)
 	{
 		this(pic);
 		setBounds(x, y, w, h);
-		this.anchor = anchor;
+		//this.anchor = anchor;
+	}
+
+	public int right()
+	{
+		return x + width;
 	}
 
 	public String name;
@@ -129,19 +140,18 @@ public class Control
 
 	public void setPosition(int x, int y)
 	{
+		if (x == this.x && y == this.y) return;
+		
 		this.x = x;
 		this.y = y;
-		fixLayout();
-		onResize();
 	}
 
+	@Deprecated
 	public void setPosition(int x, int y, int anchor)
 	{
 		this.x = x;
 		this.y = y;
-		this.anchor = anchor;
-		fixLayout();
-		onResize();
+		//this.anchor = anchor;
 	}
 
 	// Позиция относительно правого нижнего угла
@@ -152,39 +162,67 @@ public class Control
 
 	public void setSize(int width, int height)
 	{
+		if (width == this.width && height == this.height) return;
+		
 		this.width = width;
 		this.height = height;
-		fixLayout();
+		onResize();
+	}
+	
+	public void setWidth(int width)
+	{
+		if (width == this.width) return;
+		
+		this.width = width;
+		onResize();
+	}
+
+	public void setHeight(int height)
+	{
+		if (height == this.height) return;
+		
+		this.height = height;
 		onResize();
 	}
 
 	public void setBounds(int x, int y, int width, int height)
 	{
+		if (x == this.x && y == this.y && width == this.width && height == this.height) return;
+		
 		this.x = x;
 		this.y = y;
 		this.width = width;
 		this.height = height;
-		fixLayout();
 		onResize();
 	}
 
+	@Deprecated
 	public void setBounds(int x, int y, int width, int height, int anchor)
 	{
 		this.x = x;
 		this.y = y;
 		this.width = width;
 		this.height = height;
-		this.anchor = anchor;
-		fixLayout();
 		onResize();
 	}
 	
-	public void setAnchor(int anchor)
+	public void setLayout(Layout layout)
 	{
-		this.anchor = anchor;
-		fixLayout();
+		_layout = layout;
+		_layout.target = this;
 	}
 
+	public Layout layout()
+	{
+		return _layout;
+	}
+
+	@Deprecated
+	public void setAnchor(int anchor)
+	{
+	}
+
+	@Deprecated
 	public Control fillParent()
 	{
 		int pw = parent == null ? GameScreen.GAME_WIDTH : parent.width;
@@ -193,6 +231,7 @@ public class Control
 		return this;
 	}
 
+	@Deprecated
 	public void centerParent()
 	{
 		int pw = parent == null ? GameScreen.GAME_WIDTH : parent.width;
@@ -200,59 +239,14 @@ public class Control
 		setBounds((pw - width) / 2, (ph - height) / 2, width, height, ANCHOR_NONE);
 	}
 
-	public void fixLayout()
-	{
-		int pw = parent == null ? GameScreen.GAME_WIDTH : parent.width;
-		int ph = parent == null ? GameScreen.GAME_HEIGHT : parent.height;
-
-		distL = x; // Расстояние от левого края контрола до правой границы экрана
-		distR = pw - x - width;
-		distT = y;
-		distB = ph - y - height;
-
-		updateChildsLayout();
-	}
-
+	@Deprecated
 	public void onScreenChanged()
 	{
-		int oldX = x, oldY = y, oldW = width, oldH = height;
-
-		int pw = parent == null ? GameScreen.GAME_WIDTH : parent.width;
-		int ph = parent == null ? GameScreen.GAME_HEIGHT : parent.height;
-
-		if ((anchor & ANCHOR_LEFT) == 0)
-		{
-			if ((anchor & ANCHOR_RIGHT) == 0)
-				x = (int) ((distL + width / 2.0) / (distL + distR + width) * pw - width / 2.0);
-			else
-				x = pw - distR - width;
-		}
-		else
-		{
-			if ((anchor & ANCHOR_RIGHT) != 0)
-				width = pw - distL - distR;
-		}
-
-		if ((anchor & ANCHOR_TOP) == 0)
-		{
-			if ((anchor & ANCHOR_BOTTOM) == 0)
-				y = (int) ((distT + height / 2.0) / (distT + distB + height) * ph - height / 2.0);
-			else
-				y = ph - distB - height;
-		}
-		else
-		{
-			if ((anchor & ANCHOR_BOTTOM) != 0)
-				height = ph - distT - distB;
-		}
-
-		if (x != oldX || y != oldY || height != oldH || width != oldW)
-			onResize();
-
-		updateChildsLayout();
+		refreshLayout();
+		//updateChildsLayout();
 	}
 	
-	private void updateChildsLayout()
+	/*private void updateChildsLayout()
 	{
 		if (childs != null)
 			for (Control c : childs)
@@ -260,10 +254,75 @@ public class Control
 		if (controlsToAdd != null)
 			for (Control c : controlsToAdd)
 			c.onScreenChanged();
+	}*/
+
+	// Visibility
+
+	public void show()
+	{
+		if (visible) return;
+		
+		visible = true;
+		if (parent != null)
+			parent.refreshLayout();
 	}
+
+	public void hide()
+	{
+		if (!visible) return;
+		
+		visible = false;
+		if (parent != null)
+			parent.refreshLayout();
+	}
+
+	// Layout
+
+	public <T extends Layout.ChildSettings> T getLayoutSettings(Class<T> type, T def)
+	{
+		if (type.isInstance(layoutChildSettings))
+			return type.cast(layoutChildSettings);
+		
+		return def;
+	}
+	
+	public <T extends Layout.ChildSettings> T getLayoutSettings(Class<T> type)
+	{
+		if (type.isInstance(layoutChildSettings))
+			return type.cast(layoutChildSettings);
+		
+		try
+		{
+			T s = type.newInstance();
+			layoutChildSettings = s;
+			return s;
+		}
+		catch (InstantiationException | IllegalAccessException e)
+		{
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	// Пересчитывает компоновку элементов
+	public void refreshLayout()
+	{
+		if (_layout != null && childs != null)
+			_layout.apply();
+	}
+
+	public static final int ANCHOR_NONE = 0;
+	public static final int ANCHOR_LEFT = 1 << 0;
+	public static final int ANCHOR_RIGHT = 1 << 1;
+	public static final int ANCHOR_TOP = 1 << 2;
+	public static final int ANCHOR_BOTTOM = 1 << 3;
+	public static final int ANCHOR_LEFT_TOP = ANCHOR_LEFT | ANCHOR_TOP;
+	public static final int ANCHOR_RIGHT_TOP = ANCHOR_RIGHT | ANCHOR_TOP;
+	public static final int ANCHOR_ALL = ANCHOR_LEFT | ANCHOR_RIGHT | ANCHOR_TOP | ANCHOR_BOTTOM;
 
 	protected void onResize()
 	{
+		refreshLayout();
 	}
 
 	public Point parentToChild(Point p)
@@ -279,11 +338,6 @@ public class Control
 			return p;
 		else
 			return parent.clientToScreen(p);
-	}
-
-	public int right()
-	{
-		return x + width;
 	}
 
 	// Координаты контрола на экране
@@ -562,6 +616,11 @@ public class Control
 	}
 
 	// sub controls
+	
+	public ArrayList<Control> childs()
+	{
+		return childs;
+	}
 
 	public void addControl(Control c, int index)
 	{
@@ -599,7 +658,6 @@ public class Control
 	private void setParent(Control control)
 	{
 		parent = control;
-		fixLayout();
 	}
 
 	public void submitChilds()
@@ -634,6 +692,8 @@ public class Control
 			childsReverse = reverse;
 
 			childsChanged = false;
+
+			refreshLayout();
 		}
 
 		if (childs != null)
@@ -674,23 +734,7 @@ public class Control
 		if (_listeners != null)
 			_listeners.remove(listener);
 	}
-
-	public static final int ANCHOR_NONE = 0;
-	public static final int ANCHOR_LEFT = 1 << 0;
-	public static final int ANCHOR_RIGHT = 1 << 1;
-	public static final int ANCHOR_TOP = 1 << 2;
-	public static final int ANCHOR_BOTTOM = 1 << 3;
-	public static final int ANCHOR_LEFT_TOP = ANCHOR_LEFT | ANCHOR_TOP;
-	public static final int ANCHOR_RIGHT_TOP = ANCHOR_RIGHT | ANCHOR_TOP;
-	public static final int ANCHOR_ALL = ANCHOR_LEFT | ANCHOR_RIGHT | ANCHOR_TOP | ANCHOR_BOTTOM;
-
-	public static final int ACTION_VALUE_CHANGED = 0;
-	public static final int ACTION_POSITION_CHANGED = 1;
-	public static final int ACTION_ITEM_SELECTED = 2;
-	public static final int ACTION_ITEM_DBLCLICK = 3;
-	public static final int ACTION_CHECKED = 4;
-	public static final int ACTION_UNCHECKED = 5;
-
+	
 	// Resources
 
 	public static ResourceEntry getResource(int id)
@@ -712,4 +756,13 @@ public class Control
 	{
 		return GameFont.get(id, pal);
 	}
+	
+	// Actions
+	
+	public static final int ACTION_VALUE_CHANGED = 0;
+	public static final int ACTION_POSITION_CHANGED = 1;
+	public static final int ACTION_ITEM_SELECTED = 2;
+	public static final int ACTION_ITEM_DBLCLICK = 3;
+	public static final int ACTION_CHECKED = 4;
+	public static final int ACTION_UNCHECKED = 5;
 }

@@ -24,16 +24,19 @@ import com.deadman.jgame.drawing.Drawable;
 import com.deadman.jgame.drawing.GameFont;
 import com.deadman.jgame.drawing.GameScreen;
 import com.deadman.jgame.ui.Button;
+import com.deadman.jgame.ui.ColumnLayout;
 import com.deadman.jgame.ui.Control;
 import com.deadman.jgame.ui.ControlListener;
 import com.deadman.jgame.ui.HListView;
 import com.deadman.jgame.ui.Label;
 import com.deadman.jgame.ui.ListViewItem;
+import com.deadman.jgame.ui.RelativeLayout;
+import com.deadman.jgame.ui.Row;
+import com.deadman.jgame.ui.RowLayout;
 import com.deadman.jgame.ui.TextBox;
 
 public class IsoEditor extends GameEngine implements IMainMenuListener
 {
-	private static final int RIGHT_PANEL_WIDTH = 100;
 	private IsoMap map;
 	private IsoViewer mapViewer;
 
@@ -62,13 +65,14 @@ public class IsoEditor extends GameEngine implements IMainMenuListener
 	private Drawable CURSOR_MOVE_XY = getDrawable(R.cursors.move_xy);
 	private boolean resizing = false;
 
-	enum EditorMode {
+	enum EditorMode
+	{
 		SELECTION,
 		PAINT
 	};
-	
+
 	private EditorMode mode;
-	
+
 	public IsoEditor()
 	{
 		init();
@@ -101,120 +105,169 @@ public class IsoEditor extends GameEngine implements IMainMenuListener
 
 	private void initialiseControls()
 	{
-		MainMenu mm = new MainMenu(this, this);
+		ColumnLayout layout = new ColumnLayout();
+		layout.horizontalMode = ColumnLayout.H_FILL;
+		setLayout(layout);
 
-		MainMenuItem mmFile = mm.addItem("FILE");
-		mmFile.addItem("NEW", MM_FILE_NEW);
-		mmFile.addItem("OPEN", MM_FILE_OPEN);
-		mmFile.addItem("SAVE", MM_FILE_SAVE);
-		mmFile.addItem("SAVE AS", MM_FILE_SAVEAS);
-
-		MainMenuItem mmView = mm.addItem("VIEW");
-		mmView.addItem("GRID");
-		MainMenuItem mmMap = mm.addItem("MAP");
-		mmMap.addItem("RESIZE");
-
-		Control ctBottomLeft = new Control(R.editor.ie_bottom_left);
-		ctBottomLeft.setPosition(0, GameScreen.GAME_HEIGHT - ctBottomLeft.height, Control.ANCHOR_BOTTOM | Control.ANCHOR_LEFT);
-		addControl(ctBottomLeft);
-		ctBottomLeft.tag = 0;
-		ctBottomLeft.addControlListener(scroll_listener);
-
-		Control ctBottomRight = new Control(R.editor.ie_bottom_right);
-		ctBottomRight.setPosition(GameScreen.GAME_WIDTH - ctBottomRight.width, GameScreen.GAME_HEIGHT - ctBottomRight.height, Control.ANCHOR_BOTTOM | Control.ANCHOR_RIGHT);
-		addControl(ctBottomRight);
-		ctBottomRight.tag = 1;
-		ctBottomRight.addControlListener(scroll_listener);
-
-		Control ctBottomMiddle = new Control(R.editor.ie_bottom_middle);
-		ctBottomMiddle.width = GameScreen.GAME_WIDTH - ctBottomLeft.width - ctBottomRight.width;
-		ctBottomMiddle.setPosition(ctBottomLeft.width, GameScreen.GAME_HEIGHT - ctBottomLeft.height, Control.ANCHOR_BOTTOM | Control.ANCHOR_LEFT | Control.ANCHOR_RIGHT);
-		addControl(ctBottomMiddle);
-
-		addControl(mapViewer = new IsoViewer());
-		mapViewer.allow_drag = false;
-		mapViewer.show_all = true;
-		mapViewer.wall_blending = false;
-		mapViewer.setBounds(0, mm.height, GameScreen.GAME_WIDTH - RIGHT_PANEL_WIDTH, GameScreen.GAME_HEIGHT - ctBottomLeft.height - mm.height, Control.ANCHOR_ALL);
-		mapViewer.addControlListener(mapViewer_listener);
-		mapViewer.selectionInBounds = true;
-
-		{ // Right panel
-			Control ctRight = new Control();
-			ctRight.bgrColor = 0x916a02;
-			ctRight.setBounds(GameScreen.GAME_WIDTH - RIGHT_PANEL_WIDTH, mm.height, RIGHT_PANEL_WIDTH, mapViewer.height, Control.ANCHOR_TOP | Control.ANCHOR_BOTTOM | Control.ANCHOR_RIGHT);
-			addControl(ctRight);
-
-			btSelect = new EditorButton();
-			btSelect.setBounds(10, 2, 14, 14);
-			btSelect.addControl(new Control(Drawable.get(R.editor.ic_select), 2, 2));
-			ctRight.addControl(btSelect);
-			btSelect.addControlListener(new ControlListener()
-			{
-				@Override
-				public void onClick(Object sender, Point p, MouseEvent e)
-				{
-					setMode(EditorMode.SELECTION);
-				}
-			});
-
-			btBrush = new EditorButton();
-			btBrush.setBounds(26, 2, 14, 14);
-			btBrush.addControl(new Control(Drawable.get(R.editor.ic_brush), 2, 2));
-			ctRight.addControl(btBrush);
-			btBrush.addControlListener(new ControlListener()
-			{
-				@Override
-				public void onClick(Object sender, Point p, MouseEvent e)
-				{
-					setMode(EditorMode.PAINT);
-				}
-			});
-			
-			setMode(EditorMode.SELECTION);
-		}
-
-		for (int i = 0; i < TAB_COUNT; i++)
 		{
-			Button bt = new Button(R.editor.ie_tab_button_bgr, R.editor.ie_tab_button_pressed);
-			bt.setPosition(2 + i * 29, GameScreen.GAME_HEIGHT - ctBottomLeft.height + 3, Control.ANCHOR_LEFT | Control.ANCHOR_BOTTOM);
-			bt.check_on_click = true;
-			bt.tag = i;
-			bt.addControlListener(tab_listener);
-			addControl(bt);
-			tabButtons[i] = bt;
+			MainMenu mm = new MainMenu(this, this);
+			addControl(mm);
 
-			bt.image = getDrawable(R.editor.ie_tab_button[i]);
+			MainMenuItem mmFile = mm.addItem("FILE");
+			mmFile.addItem("NEW", MM_FILE_NEW);
+			mmFile.addItem("OPEN", MM_FILE_OPEN);
+			mmFile.addItem("SAVE", MM_FILE_SAVE);
+			mmFile.addItem("SAVE AS", MM_FILE_SAVEAS);
+
+			MainMenuItem mmView = mm.addItem("VIEW");
+			mmView.addItem("GRID");
+			MainMenuItem mmMap = mm.addItem("MAP");
+			mmMap.addItem("RESIZE");
 		}
 
-		lvItems = new HListView(10, ctBottomLeft.y + 21, GameScreen.GAME_WIDTH - ctBottomLeft.width - ctBottomRight.width, 57 + 11);
-		lvItems.setAnchor(Control.ANCHOR_LEFT | Control.ANCHOR_RIGHT | Control.ANCHOR_BOTTOM);
-		lvItems.setScrollBar(Game.createHScrollGray());
-		addControl(lvItems);
-		lvItems.addControlListener(lvInstr_listener);
+		{
+			Row row = new Row();
+			ColumnLayout.settings(row).fillHeight();
+			row.fillContent();
+			addControl(row);
 
-		items[0] = makeItems(GameResources.main.floors.values());
-		items[1] = makeItems(GameResources.main.walls.values());
-		items[2] = makeItems(GameResources.main.objects.values());
-		items[3] = makeItems(GameResources.main.wobjects.values());
+			row.addControl(mapViewer = new IsoViewer());
+			RowLayout.settings(mapViewer).fillWidth();
+			mapViewer.allow_drag = false;
+			mapViewer.show_all = true;
+			mapViewer.wall_blending = false;
+			mapViewer.addControlListener(mapViewer_listener);
+			mapViewer.selectionInBounds = true;
 
-		addControl(laStatus = new Label(fnt_light_3x5));
-		laStatus.setPosition(12, GameScreen.GAME_HEIGHT - 6, Control.ANCHOR_LEFT | Control.ANCHOR_BOTTOM);
+			{ // Right panel
+				Control ctRight = new Control();
+				ctRight.setWidth(100);
+				ctRight.bgrColor = 0x916a02;
+				//ctRight.setBounds(GameScreen.GAME_WIDTH - RIGHT_PANEL_WIDTH, mm.height, RIGHT_PANEL_WIDTH, mapViewer.height, Control.ANCHOR_TOP | Control.ANCHOR_BOTTOM | Control.ANCHOR_RIGHT);
+				row.addControl(ctRight);
 
-		int searchWidth = 100;
-		Control ctSearchBgr = new Control(R.editor.ie_search_bgr);
-		ctSearchBgr.setBounds(GameScreen.GAME_WIDTH - searchWidth - 2, GameScreen.GAME_HEIGHT - ctBottomLeft.height + 4, searchWidth, 15, Control.ANCHOR_RIGHT | Control.ANCHOR_BOTTOM);
-		addControl(ctSearchBgr);
+				btSelect = new EditorButton();
+				btSelect.setBounds(10, 2, 14, 14);
+				btSelect.addControl(new Control(Drawable.get(R.editor.ic_select), 2, 2));
+				ctRight.addControl(btSelect);
+				btSelect.addControlListener(new ControlListener()
+				{
+					@Override
+					public void onClick(Object sender, Point p, MouseEvent e)
+					{
+						setMode(EditorMode.SELECTION);
+					}
+				});
 
-		tbSearch = new TextBox(fnt_dark_3x5, 0, 2, searchWidth - 13);
-		tbSearch.addControlListener(search_listener);
-		ctSearchBgr.addControl(tbSearch);
+				btBrush = new EditorButton();
+				btBrush.setBounds(26, 2, 14, 14);
+				btBrush.addControl(new Control(Drawable.get(R.editor.ic_brush), 2, 2));
+				ctRight.addControl(btBrush);
+				btBrush.addControlListener(new ControlListener()
+				{
+					@Override
+					public void onClick(Object sender, Point p, MouseEvent e)
+					{
+						setMode(EditorMode.PAINT);
+					}
+				});
 
-		Button btSearchCancel = new Button(R.editor.ie_search_cancel);
-		btSearchCancel.setPosition(searchWidth - 9 - 2, 3);
-		btSearchCancel.addControlListener(search_cancel_listener);
-		ctSearchBgr.addControl(btSearchCancel);
+				setMode(EditorMode.SELECTION);
+			}
+		}
 
+		{
+			Row rowTabs = new Row();
+			rowTabs.setHeight(20);
+			rowTabs.background = getDrawable(R.editor.ie_tabs_bgr);
+			rowTabs.setSpacing(-3);
+			addControl(rowTabs);
+
+			rowTabs.addControl(new Control(R.editor.ie_tabs_left));
+
+			for (int i = 0; i < TAB_COUNT; i++)
+			{
+				Button bt = new Button(R.editor.ie_tab_button_bgr, R.editor.ie_tab_button_pressed);
+				bt.y = 3;
+				bt.check_on_click = true;
+				bt.tag = i;
+				bt.addControlListener(tab_listener);
+				rowTabs.addControl(bt);
+				tabButtons[i] = bt;
+
+				bt.image = getDrawable(R.editor.ie_tab_button[i]);
+			}
+
+			Control rowfill = new Control();
+			RowLayout.settings(rowfill).fillWidth();
+			rowTabs.addControl(rowfill);
+
+			Control ctSearchBgr = new Control(R.editor.ie_search_bgr);
+			ctSearchBgr.setLayout(new RelativeLayout());
+			ctSearchBgr.setWidth(100);
+			ctSearchBgr.y = 4;
+			rowTabs.addControl(ctSearchBgr);
+
+			tbSearch = new TextBox(fnt_dark_3x5); // , 0, 2, ctSearchBgr.width - 13
+			RelativeLayout.settings(tbSearch).alignLeft(0).alignTop(2).alignRight(13);
+			tbSearch.addControlListener(search_listener);
+			ctSearchBgr.addControl(tbSearch);
+
+			Button btSearchCancel = new Button(R.editor.ie_search_cancel);
+			RelativeLayout.settings(btSearchCancel).alignTop(3).alignRight(2);
+			btSearchCancel.addControlListener(search_cancel_listener);
+			ctSearchBgr.addControl(btSearchCancel);
+
+			rowTabs.addControl(new Control(0, 0, 6, 0));
+		}
+
+		{
+			Row rowItems = new Row();
+			rowItems.setHeight(70);
+			addControl(rowItems);
+			
+			Control left = new Control(R.editor.ie_items_left);
+			left.tag = 0;
+			left.addControlListener(scroll_listener);
+			rowItems.addControl(left);
+			
+			Control bgr = new Control(R.editor.ie_items_bgr);
+			bgr.setLayout(new RelativeLayout());
+			RowLayout.settings(bgr).fillWidth();
+			rowItems.addControl(bgr);
+			{
+				lvItems = new HListView(); // 10, ctBottomLeft.y + 21, GameScreen.GAME_WIDTH - ctBottomLeft.width - ctBottomRight.width, 57 + 11
+				lvItems.y = 1;
+				lvItems.setHeight(68);
+				RelativeLayout.settings(lvItems).fill(0, 1, 0, 1);
+				lvItems.setScrollBar(Game.createHScrollGray());
+				lvItems.addControlListener(lvInstr_listener);
+				bgr.addControl(lvItems);
+			}
+
+			Control right = new Control(R.editor.ie_items_right);
+			right.tag = 1;
+			right.addControlListener(scroll_listener);
+			rowItems.addControl(right);
+
+			items[0] = makeItems(GameResources.main.floors.values());
+			items[1] = makeItems(GameResources.main.walls.values());
+			items[2] = makeItems(GameResources.main.objects.values());
+			items[3] = makeItems(GameResources.main.wobjects.values());
+		}
+
+		{
+			Row row = new Row();
+			row.setHeight(7);
+			row.bgrColor = 0x916a02;
+			addControl(row);
+			
+			row.addControl(new Control(R.editor.ie_status_left));
+			
+			row.addControl(laStatus = new Label(fnt_light_3x5));
+			laStatus.y = 1;
+			//laStatus.setPosition(12, GameScreen.GAME_HEIGHT - 6, Control.ANCHOR_LEFT | Control.ANCHOR_BOTTOM);				
+		}
 	}
 
 	@Override
@@ -350,8 +403,7 @@ public class IsoEditor extends GameEngine implements IMainMenuListener
 
 	private boolean isMatch(IsoSprite spr, String pattern)
 	{
-		return spr.name.toLowerCase()
-				.indexOf(pattern) != -1;
+		return spr.name.toLowerCase().indexOf(pattern) != -1;
 	}
 
 	private int current_page = -1;
@@ -408,7 +460,7 @@ public class IsoEditor extends GameEngine implements IMainMenuListener
 	{
 		return map;
 	}
-	
+
 	public void setMode(EditorMode newMode)
 	{
 		mode = newMode;
@@ -417,7 +469,7 @@ public class IsoEditor extends GameEngine implements IMainMenuListener
 			case SELECTION:
 				btBrush.setChecked(false);
 				btSelect.setChecked(true);
-				
+
 				break;
 
 			case PAINT:
@@ -856,8 +908,7 @@ public class IsoEditor extends GameEngine implements IMainMenuListener
 		for (int i = files.length - 1; i >= 0; i--)
 		{
 			File f = files[i];
-			if (f.getAbsoluteFile()
-					.equals(curr))
+			if (f.getAbsoluteFile().equals(curr))
 			{
 				found = true;
 				continue;
@@ -884,8 +935,7 @@ public class IsoEditor extends GameEngine implements IMainMenuListener
 		for (int i = 0; i < files.length; i++)
 		{
 			File f = files[i];
-			if (f.getAbsoluteFile()
-					.equals(curr))
+			if (f.getAbsoluteFile().equals(curr))
 			{
 				found = true;
 				continue;
@@ -906,8 +956,7 @@ public class IsoEditor extends GameEngine implements IMainMenuListener
 		@Override
 		public boolean accept(File f)
 		{
-			return !f.isDirectory() && f.getName()
-					.endsWith(".map");
+			return !f.isDirectory() && f.getName().endsWith(".map");
 		}
 	};
 }

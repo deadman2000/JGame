@@ -21,7 +21,7 @@ public class SquadsPanel extends Control
 	public SquadsPanel()
 	{
 		width = img_bgr.width;
-		setPosition(5, 5, Control.ANCHOR_LEFT_TOP);
+		setPosition(5, 5);
 		calcSize();
 	}
 

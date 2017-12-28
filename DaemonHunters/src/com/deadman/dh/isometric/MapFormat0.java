@@ -1,7 +1,9 @@
 package com.deadman.dh.isometric;
 
 import java.io.IOException;
+import java.util.HashMap;
 
+import com.deadman.dh.model.itemtypes.ItemType;
 import com.deadman.dh.resources.GameResources;
 import com.deadman.jgame.io.DataInputStreamBE;
 import com.deadman.jgame.io.DataOutputStream;
@@ -87,33 +89,42 @@ public class MapFormat0
 		return map;
 	}
 
+	private void set(HashMap<Integer, IsoSprite> map, int id, MapCell c, byte state)
+	{
+		IsoSprite s = map.get(id);
+		if (s != null)
+			s.setTo(c, state);
+		else
+		{
+			System.err.println("Sprite " + id + " not found");
+			if (id == 10001)
+				c.putOnFloor(ItemType.getItemType(10001).generate());
+			else if (id == 10002)
+				c.putOnFloor(ItemType.getItemType(10002).generate());
+		}
+	}
+
 	protected void readCell(MapCell c, DataInputStreamBE in) throws IOException
 	{
 		int flags = in.read();
 
 		if ((flags & 1 << 0) != 0)
-			GameResources.main.floors.get(in.readInt())
-					.setTo(c, in.readByte());
+			set(GameResources.main.floors, in.readInt(), c, in.readByte());
 
 		if ((flags & 1 << 1) != 0)
-			GameResources.main.walls.get(in.readInt())
-					.setTo(c, in.readByte());
+			set(GameResources.main.walls, in.readInt(), c, in.readByte());
 
 		if ((flags & 1 << 2) != 0)
-			GameResources.main.walls.get(in.readInt())
-					.setTo(c, in.readByte());
+			set(GameResources.main.walls, in.readInt(), c, in.readByte());
 
 		if ((flags & 1 << 3) != 0)
-			GameResources.main.objects.get(in.readInt())
-					.setTo(c, in.readByte());
+			set(GameResources.main.objects, in.readInt(), c, in.readByte());
 
 		if ((flags & 1 << 4) != 0)
-			GameResources.main.wobjects.get(in.readInt())
-					.setToL(c, in.readByte());
+			set(GameResources.main.wobjects, in.readInt(), c, in.readByte());
 
 		if ((flags & 1 << 5) != 0)
-			GameResources.main.wobjects.get(in.readInt())
-					.setToR(c, in.readByte());
+			set(GameResources.main.wobjects, in.readInt(), c, in.readByte());
 	}
 
 	// Сериализация

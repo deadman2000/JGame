@@ -9,11 +9,11 @@ import com.deadman.dh.dialogs.InGameMenu;
 import com.deadman.dh.guild.Guild;
 import com.deadman.dh.info.GuildInfoEngine;
 import com.deadman.jgame.GameLoop;
-import com.deadman.jgame.drawing.GameScreen;
 import com.deadman.jgame.ui.Button;
 import com.deadman.jgame.ui.Control;
 import com.deadman.jgame.ui.ControlListener;
 import com.deadman.jgame.ui.Label;
+import com.deadman.jgame.ui.RelativeLayout;
 
 public class TopMenu extends Control
 {
@@ -27,7 +27,7 @@ public class TopMenu extends Control
 	public TopMenu(int mode)
 	{
 		super(R.ui.top_menu);
-		setPosition(GameScreen.GAME_WIDTH - width, 0, Control.ANCHOR_RIGHT_TOP);
+		RelativeLayout.settings(this).alignRightTop();
 
 		clickOnBgr = true;
 
@@ -63,7 +63,7 @@ public class TopMenu extends Control
 				@Override
 				public void onControlPressed(Control control, MouseEvent e)
 				{
-					InGameMenu.show();
+					InGameMenu.showMenu();
 				}
 			});
 		}

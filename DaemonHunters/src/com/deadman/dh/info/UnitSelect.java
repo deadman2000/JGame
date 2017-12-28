@@ -34,15 +34,15 @@ public class UnitSelect extends IGMPanel
 		addControl(new Label(fnt_igm, 195, 7, "ЛВ"));
 		addControl(new Label(fnt_igm, 210, 7, "ИН"));
 
-		addControl(lv = new VListView(5, TOP_PAD, width - 13, g.squadFreeUnits.size() * RecruitRow.HEIGHT));
-		lv.item_height = RecruitRow.HEIGHT;
+		addControl(lv = new VListView());
+		lv.setBounds(5, TOP_PAD, width - 13, g.squadFreeUnits.size() * RecruitRow.HEIGHT);
 		lv.setScrollBar(Game.createVScrollInfo());
 		lv.bgrColor = 0xFF686c51;
 		lv.addControlListener(lv_listener);
 
 		for (int i = 0; i < g.squadFreeUnits.size(); i++)
 			lv.addItem(new RecruitRow(i, g.squadFreeUnits.get(i)));
-		if (lv.size() > 0)
+		if (lv.itemsCount() > 0)
 			lv.selectIndex(0);
 
 		int by = TOP_PAD + g.squadFreeUnits.size() * RecruitRow.HEIGHT + 2;

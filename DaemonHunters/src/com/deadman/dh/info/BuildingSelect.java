@@ -19,18 +19,19 @@ public class BuildingSelect extends IGMPanel
 
 		unit = u;
 
-		lv = new VListView(5, 5, width - 13, 100);
-		lv.item_height = 12;
+		lv = new VListView();
+		lv.setBounds(5, 5, width - 13, 100);
 		addControl(lv);
 		lv.addControlListener(lv_listener);
 
-		/*for (int i = 0; i < u.guild.buildings.size(); i++)
+		for (int i = 0; i < u.guild.buildings.size(); i++)
 		{
 			GuildBuilding gb = u.guild.buildings.get(i);
 			if (gb.build_progress == -1)
 				lv.addItem(new ListItemGuildBuilding(i, gb));
-		}*/
-		lv.autoHeight();
+		}
+		
+		//lv.autoHeight();
 		if (u.building != null)
 			lv.selectByTag(u.building);
 

@@ -69,6 +69,8 @@ public class MissionScenario
 				for (int y = 0; y < map.height; y++)
 				{
 					MapCell c = lvl[x][y];
+					if (c.items == null) continue;
+					
 					for (int i = 0; i < c.items.size(); i++)
 					{
 						Item it = c.items.get(i);

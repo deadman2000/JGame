@@ -25,9 +25,8 @@ public class ItemsGrid extends Control
 		setPosition(x, y);
 	}
 
-	public ItemsGrid(int x, int y, Drawable bgItem)
+	public ItemsGrid(Drawable bgItem)
 	{
-		setPosition(x, y);
 		_bgItem = bgItem;
 	}
 

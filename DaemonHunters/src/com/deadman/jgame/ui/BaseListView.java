@@ -11,20 +11,27 @@ public abstract class BaseListView extends Control
 	protected int selectedInd = -1;
 	protected ListViewItem selectedItem;
 
-	protected abstract void updateItemsPos();
+	@Override
+	protected void onResize()
+	{
+		super.onResize();
+		update();
+	}
+
+	public abstract void update();
 
 	public void addItem(ListViewItem lvi)
 	{
 		items.add(lvi);
-		addControl(lvi);
 		lvi.addControlListener(lvi_listener);
+		//update();
 	}
 
 	public void removeItem(ListViewItem lvi)
 	{
 		items.remove(lvi);
 		lvi.remove();
-		updateItemsPos();
+		//update();
 
 		if (items.size() > 0)
 		{
@@ -39,7 +46,7 @@ public abstract class BaseListView extends Control
 		}
 	}
 
-	public int size()
+	public int itemsCount()
 	{
 		return items.size();
 	}
@@ -52,6 +59,7 @@ public abstract class BaseListView extends Control
 			lvi.removeControlListener(lvi_listener);
 		}
 		items.clear();
+		//update();
 	}
 
 	private ControlListener lvi_listener = new ControlListener()

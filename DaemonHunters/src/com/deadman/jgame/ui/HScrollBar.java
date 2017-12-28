@@ -7,25 +7,23 @@ import com.deadman.jgame.drawing.GameScreen;
 
 public class HScrollBar extends Control
 {
-	Button btLeft, btRight, btScroll;
+	private Button btLeft, btRight, btScroll;
 
 	public HScrollBar(int bt_left, int bt_left_pr, int bt_scroll, int bt_scroll_pr, int bt_right, int bt_right_pr)
 	{
+		setLayout(new RelativeLayout());
+		
 		btLeft = new Button(bt_left, bt_left_pr);
-		btLeft.setPosition(0, 0);
-		btLeft.anchor = ANCHOR_LEFT_TOP;
 		btLeft.addControlListener(btn_listener);
 		addControl(btLeft);
 
 		btScroll = new Button(bt_scroll, bt_scroll_pr);
-		btScroll.anchor = ANCHOR_TOP;
 		btScroll.setPosition(btLeft.width, 0);
 		btScroll.addControlListener(btn_listener);
 		addControl(btScroll);
 
 		btRight = new Button(bt_right, bt_right_pr);
-		btRight.anchor = ANCHOR_RIGHT | ANCHOR_TOP;
-		btRight.setPosition(width - btRight.width, 0);
+		RelativeLayout.settings(btRight).alignRight();
 		btRight.addControlListener(btn_listener);
 		addControl(btRight);
 		

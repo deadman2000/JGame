@@ -27,6 +27,7 @@ public class MenuRow extends ListViewItem
 	{
 		addControl(laName = new Label(IGMPanel.fnt_igm, 2, 2, text));
 		tag = t;
+		height = 13;
 	}
 
 	public void setIndex(int i)

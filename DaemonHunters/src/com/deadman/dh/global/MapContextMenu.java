@@ -51,7 +51,6 @@ public class MapContextMenu extends Control
 		@Override
 		public void onControlPressed(Control control, MouseEvent e)
 		{
-			System.out.println(target);
 			if (target instanceof Poi)
 			{
 				Poi pt = (Poi) target;

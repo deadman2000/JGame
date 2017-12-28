@@ -17,6 +17,7 @@ public class ListItemSkill extends ListViewItem
 	{
 		_icon = getDrawable(icon);
 		pbBgr = getDrawable(R.ui.pb_skill_bgr);
+		height = 9;
 
 		addControl(this.pb = pb);
 		addControl(la = new Label(GuildInfoEngine.fnt3x5, 86, 2));

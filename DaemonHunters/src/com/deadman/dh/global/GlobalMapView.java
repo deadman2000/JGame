@@ -19,6 +19,7 @@ import com.deadman.jgame.drawing.GameScreen;
 import com.deadman.jgame.drawing.Picture;
 import com.deadman.jgame.ui.Control;
 import com.deadman.jgame.ui.Label;
+import com.deadman.jgame.ui.RelativeLayout;
 import com.jogamp.opengl.GL2;
 
 public class GlobalMapView extends Control
@@ -68,7 +69,7 @@ public class GlobalMapView extends Control
 
 		weather = new Weather(this);
 		addControl(weather);
-		weather.fillParent();
+		RelativeLayout.settings(weather).fill();
 
 		addControl(laPos = new Label(GlobalEngine.fnt3x5_brown));
 		laPos.bgrColor = -1;
@@ -79,11 +80,11 @@ public class GlobalMapView extends Control
 	}
 
 	Label laPos;
-
+	
 	@Override
-	public void onScreenChanged()
+	protected void onResize()
 	{
-		super.onScreenChanged();
+		super.onResize();
 
 		if (map == null) return;
 

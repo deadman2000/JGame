@@ -4,7 +4,7 @@ public class InGameMenu extends IGMPanel
 {
 	private static InGameMenu menu;
 
-	public static void show()
+	public static void showMenu()
 	{
 		if (menu == null)
 			menu = new InGameMenu();
