@@ -6,6 +6,20 @@ public class ColumnLayout extends Layout
 	public int horizontalMode = H_NONE;
 	public int spacing = 0;
 
+	public int topPadding;
+	public int bottomPadding;
+	public int leftPadding;
+	public int rightPadding;
+
+	public ColumnLayout()
+	{
+	}
+
+	public ColumnLayout(int horizontalMode)
+	{
+		this.horizontalMode = horizontalMode;
+	}
+
 	@Override
 	public void apply()
 	{
@@ -27,37 +41,38 @@ public class ColumnLayout extends Layout
 
 		int fillHeight = 0;
 		if (cnt > 0 && target.height > h)
+		{
 			fillHeight = (target.height - h - (visible - 1) * spacing) / cnt;
+			if (fillHeight < 0) fillHeight = 0;
+		}
 
-		int y = 0;
+		int y = topPadding;
 		for (Control c : target.childs())
 		{
 			if (!c.visible || c.removed) continue;
 			ColumnSettings sett = c.getLayoutSettings(ColumnSettings.class, defSettings);
 
-			int height = c.height, width = c.width;
-			
+			int height = c.height, width = c.width, cx = c.x;
+
 			int hm = sett.horizontalMode != H_NONE ? sett.horizontalMode : horizontalMode;
 			switch (hm)
 			{
 				case H_FILL:
-					c.x = 0;
-					width = target.width;
+					cx = leftPadding;
+					width = target.width - leftPadding - rightPadding;
 					break;
 			}
-
-			c.y = y;
 
 			if (sett.isFillHegiht)
 				height = fillHeight;
 
-			c.setSize(width, height);
-			
+			c.setBounds(cx, y, width, height);
+
 			y += c.height + spacing;
 		}
-		
+
 		if (heightByContent)
-			target.setHeight(y - spacing);
+			target.setHeight(y - spacing + bottomPadding);
 	}
 
 	public static ColumnSettings settings(Control c)

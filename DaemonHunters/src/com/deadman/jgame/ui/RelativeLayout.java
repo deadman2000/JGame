@@ -5,52 +5,49 @@ public class RelativeLayout extends Layout
 	@Override
 	public void apply()
 	{
-		int pw = target.width;
-		int ph = target.height;
-
 		for (Control control : target.childs())
 		{
-			RelativeSettings sett = control.getLayoutSettings(RelativeSettings.class, null);
-			if (sett == null) continue;
-
-			int x = control.x, y = control.y, width = control.width, height = control.height;
-
-			if ((sett.anchor & ANCHOR_LEFT) != 0) // По левому краю 
-			{
-				x = sett.paddingLeft;
-				if ((sett.anchor & ANCHOR_RIGHT) != 0)
-					width = pw - sett.paddingLeft - sett.paddingRight;
-			}
-			else if ((sett.anchor & ANCHOR_RIGHT) != 0) // По правому краю
-				x = pw - sett.paddingRight - width;
-			else // По центру
-				//x = (int) ((sett.paddingLeft + width / 2.0) / (sett.paddingLeft + sett.paddingRight + width) * pw - width / 2.0);
-				x = (pw - width) / 2 + sett.paddingLeft - sett.paddingRight;
-
-			if ((sett.anchor & ANCHOR_TOP) != 0) // По верху 
-			{
-				y = sett.paddingTop;
-				if ((sett.anchor & ANCHOR_BOTTOM) != 0)
-					height = ph - sett.paddingTop - sett.paddingBottom;
-			}
-			else if ((sett.anchor & ANCHOR_BOTTOM) != 0) // По низу
-				y = ph - sett.paddingBottom - height;
-			else // По центру
-				//y = (int) ((sett.paddingTop + height / 2.0) / (sett.paddingTop + sett.paddingBottom + height) * ph - height / 2.0);
-				y = (ph - height) / 2 + sett.paddingTop - sett.paddingBottom;
-
-			control.setBounds(x, y, width, height);
+			applyLayout(control);
 		}
 	}
-
-	// Запоминает расстояние до краев для последующего ресайза
-	/*public void fixLayout()
+	
+	private void applyLayout(Control control)
 	{
-		distL = control.x;
-		distR = target.width - control.x - control.width;
-		distT = control.y;
-		distB = target.height - control.y - control.height;
-	}*/
+		RelativeSettings sett = control.getLayoutSettings(RelativeSettings.class, null);
+		if (sett == null) return;
+
+		int x = control.x, y = control.y, width = control.width, height = control.height;
+
+		if ((sett.anchor & ANCHOR_LEFT) != 0)       // По левому краю 
+		{
+			x = sett.paddingLeft;
+			if ((sett.anchor & ANCHOR_RIGHT) != 0)
+				width = target.width - sett.paddingLeft - sett.paddingRight;
+		}
+		else if ((sett.anchor & ANCHOR_RIGHT) != 0) // По правому краю
+			x = target.width - sett.paddingRight - width;
+		else                                        // По центру
+			x = (target.width - width) / 2 + sett.paddingLeft - sett.paddingRight;
+
+		if ((sett.anchor & ANCHOR_TOP) != 0)        // По верху 
+		{
+			y = sett.paddingTop;
+			if ((sett.anchor & ANCHOR_BOTTOM) != 0)
+				height = target.height - sett.paddingTop - sett.paddingBottom;
+		}
+		else if ((sett.anchor & ANCHOR_BOTTOM) != 0) // По низу
+			y = target.height - sett.paddingBottom - height;
+		else                                         // По центру
+			y = (target.height - height) / 2 + sett.paddingTop - sett.paddingBottom;
+
+		control.setBounds(x, y, width, height);
+	}
+
+	@Override
+	public void onChildResize(Control child)
+	{
+		applyLayout(child);
+	}
 
 	public static RelativeSettings settings(Control c)
 	{

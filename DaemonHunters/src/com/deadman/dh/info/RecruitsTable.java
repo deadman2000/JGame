@@ -20,13 +20,13 @@ public class RecruitsTable extends IGMPanel
 	VListView lv;
 
 	Guild guild;
-	GuildInfoEngine eng;
+	UnitsPanel panel;
 
-	public RecruitsTable(GuildInfoEngine e, Guild g)
+	public RecruitsTable(UnitsPanel p, Guild g)
 	{
 		super(240, TOP_PAD + SIZE * RecruitRow.HEIGHT + BOTTOM_PAD);
 
-		eng = e;
+		panel = p;
 		guild = g;
 
 		addControl(new Label(fnt_igm, 7, 7, "Имя"));
@@ -67,7 +67,7 @@ public class RecruitsTable extends IGMPanel
 		for (int i = 0; i < lv.itemsCount(); i++)
 			((RecruitRow) lv.items.get(i)).setIndex(i);
 
-		eng.updateUnitsCount();
+		panel.updateUnitsCount();
 	}
 
 	private ControlListener lv_listener = new ControlListener()

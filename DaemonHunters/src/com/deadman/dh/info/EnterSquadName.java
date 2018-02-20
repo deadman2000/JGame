@@ -14,19 +14,19 @@ public class EnterSquadName extends IGMPanel
 {
 	final TextBox tbName;
 	final Guild guild;
-	final GuildInfoEngine engine;
+	final SquadsPanel panel;
 	final Button btAccept;
 
 	Squad renameSquad;
 
-	public EnterSquadName(GuildInfoEngine eng, Guild guild)
+	public EnterSquadName(SquadsPanel p, Guild guild)
 	{
 		super(200, 53);
 
-		engine = eng;
+		panel = p;
 		this.guild = guild;
 
-		addControl(new Label("Название:", IGMPanel.fnt_igm, 10, 13));
+		addControl(new Label(IGMPanel.fnt_igm, 10, 13, "Название:"));
 		addControl(tbName = new TextBox(IGMPanel.fnt_igm, 64, 10, 122));
 		tbName.contentColor = 0xFF8DA1B3;
 		tbName.isFocused = true;
@@ -35,9 +35,9 @@ public class EnterSquadName extends IGMPanel
 		addButton(TAG_CLOSE, "Отмена", 140, 28, 50);
 	}
 
-	public EnterSquadName(GuildInfoEngine eng, Squad squad)
+	public EnterSquadName(SquadsPanel p, Squad squad)
 	{
-		this(eng, squad.guild);
+		this(p, squad.guild);
 
 		renameSquad = squad;
 		tbName.setText(squad.name);
@@ -81,7 +81,7 @@ public class EnterSquadName extends IGMPanel
 	private void createSquad()
 	{
 		Squad squad = guild.createSquad(getName());
-		engine.showSquad(squad);
+		panel.showSquad(squad);
 	}
 
 	private void renameSquad()

@@ -115,19 +115,26 @@ public class MapFormat1 extends MapFormat
 		out.writeByte(T_UNIT);
 	}
 
+
 	@Override
-	protected IsoMap loadMap(DataInputStreamBE in) throws IOException
+	protected IsoMapInfo loadInfoImpl(DataInputStreamBE in) throws IOException
 	{
 		int h = in.readIntPack();
 		int w = in.readIntPack();
 		int l = in.readIntPack();
 		int zl = in.readIntPack();
+		return new IsoMapInfo(w, h, l, zl);
+	}
+	
+	@Override
+	protected IsoMap loadMap(DataInputStreamBE in) throws IOException
+	{
+		IsoMapInfo info = loadInfoImpl(in);
+		IsoMap map = new IsoMap(info);
 
-		IsoMap map = new IsoMap(w, h, l, zl);
-
-		for (int z = 0; z < l; z++)
-			for (int y = 0; y < h; y++)
-				for (int x = 0; x < w; x++)
+		for (int z = 0; z < map.zheight; z++)
+			for (int y = 0; y < map.height; y++)
+				for (int x = 0; x < map.width; x++)
 					readCell(map.cells[z][x][y], in);
 		in.close();
 

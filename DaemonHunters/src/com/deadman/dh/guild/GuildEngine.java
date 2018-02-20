@@ -63,7 +63,7 @@ public class GuildEngine extends GameEngine implements ICellDrawer
 		cells = map.cells[0];
 		mapViewer.setMap(map);
 		mapViewer.clearIsoControls();
-		mapViewer.zoomToCenter();
+		mapViewer.centerView();
 
 		buildMap = new byte[guild.width][guild.height];
 
@@ -109,7 +109,7 @@ public class GuildEngine extends GameEngine implements ICellDrawer
 		laBuildInfo.line_interval = 2;
 
 		addControl(buildingBox = new Control(R.ui.building_info));
-		buildingBox.setRBPosition(16, 16);
+		RelativeLayout.settings(buildingBox).alignBottom(16).alignRight(16);
 		buildingBox.visible = false;
 
 		laBuildingName = new Label(GlobalEngine.fnt4x7_brown);
@@ -143,6 +143,8 @@ public class GuildEngine extends GameEngine implements ICellDrawer
 				buildEnd();
 			}
 		});
+
+		submitChilds();
 	}
 
 	private void addBuildTime(GuildBuilding b)

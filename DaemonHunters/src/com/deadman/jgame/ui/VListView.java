@@ -14,8 +14,8 @@ public class VListView extends BaseListView
 	{
 		public ContentItem()
 		{
-			layout.heightByContent = true;
-			layout.horizontalMode = ColumnLayout.H_FILL;
+			columnLayout.heightByContent = true;
+			columnLayout.horizontalMode = ColumnLayout.H_FILL;
 		}
 		
 		@Override
@@ -35,13 +35,6 @@ public class VListView extends BaseListView
 		
 		addControl(content = new ContentItem());
 		RowLayout.settings(content).fillWidth();
-	}
-
-	@Deprecated
-	public VListView(int x, int y, int width, int height)
-	{
-		this();
-		setBounds(x, y, width, height);
 	}
 
 	public void setSpacing(int value)

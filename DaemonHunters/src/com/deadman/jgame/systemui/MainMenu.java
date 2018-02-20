@@ -1,37 +1,42 @@
-package com.deadman.dh.isometric.editor;
+package com.deadman.jgame.systemui;
 
 import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
-import com.deadman.dh.R;
 import com.deadman.jgame.GameEngine;
 import com.deadman.jgame.IOverlayListener;
+import com.deadman.jgame.drawing.Drawable;
+import com.deadman.jgame.drawing.GameFont;
+import com.deadman.jgame.ui.Column;
 import com.deadman.jgame.ui.Control;
+import com.deadman.jgame.ui.Row;
 
-public class MainMenu extends Control implements IOverlayListener
+public class MainMenu extends Row implements IOverlayListener
 {
 	private GameEngine engine;
 
-	private int nextX = 4;
-	private int spacing = 4;
 	private Control openedMenu;
 	public IMainMenuListener listener;
-
+	public GameFont font;
+	public Drawable subMenuBackground;
+	
+	public MainMenu()
+	{
+		setSpacing(4);
+		layout.leftPadding = 1;
+	}
+	
 	public MainMenu(GameEngine eng, IMainMenuListener listener)
 	{
+		this();
 		engine = eng;
 		this.listener = listener;
-
-		background = getDrawable(R.editor.ie_menu_bgr);
-		height = background.height;
 	}
 
 	public MainMenuItem addItem(String text)
 	{
 		MainMenuItem it = new MainMenuItem(this, text, true);
-		it.x = nextX;
-		nextX += spacing + it.width;
 		addControl(it);
 		return it;
 	}
@@ -43,7 +48,7 @@ public class MainMenu extends Control implements IOverlayListener
 		if (!e.isConsumed())
 			closeSubMenu();
 	}
-	
+
 	@Override
 	protected void onKeyPressed(KeyEvent e)
 	{
@@ -61,10 +66,13 @@ public class MainMenu extends Control implements IOverlayListener
 
 	public Control createSubMenuPanel()
 	{
-		Control panel = new Control();
+		Column panel = new Column();
+		panel.setSpacing(1);
 		panel.width = SUBMENU_WIDTH;
-		panel.height = 10;
-		panel.background = getDrawable(R.editor.ie_panel_9p);
+		panel.background = subMenuBackground;
+		panel.columnLayout.heightByContent = true;
+		panel.columnLayout.topPadding = 4;
+		panel.columnLayout.bottomPadding = 6;
 		return panel;
 	}
 

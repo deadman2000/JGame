@@ -9,7 +9,6 @@ import com.deadman.jgame.ui.Column;
 import com.deadman.jgame.ui.Control;
 import com.deadman.jgame.ui.ControlListener;
 import com.deadman.jgame.ui.Label;
-import com.deadman.jgame.ui.RelativeLayout;
 import com.deadman.jgame.ui.Row;
 import com.deadman.jgame.ui.RowLayout;
 import com.deadman.jgame.ui.TextBox;
@@ -24,16 +23,7 @@ public class CreateMapForm extends IEWindow
 	{
 		this.editor = editor;
 		width = 230;
-		height = 180;
-
-		setLayout(new RelativeLayout());
-
-		Column content = new Column();
-		content.fillContent();
-		content.setSpacing(4);
-		addControl(content);
-		RelativeLayout.settings(content).fill(4, 4, 8, 8);
-
+		
 		Drawable tbBgr = getDrawable(R.editor.tb_bgr);
 
 		{
@@ -41,7 +31,7 @@ public class CreateMapForm extends IEWindow
 			row1.setHeight(140);
 			row1.fillContent();
 			row1.setSpacing(4);
-			content.addControl(row1);
+			addControl(row1);
 
 			fw = new FileView();
 			fw.setWidth(160);
@@ -107,7 +97,7 @@ public class CreateMapForm extends IEWindow
 
 		{
 			Row row1 = new Row();
-			content.addControl(row1);
+			addControl(row1);
 			row1.setHeight(10);
 			row1.setSpacing(4);
 
@@ -121,7 +111,7 @@ public class CreateMapForm extends IEWindow
 
 		{
 			Row row1 = new Row();
-			content.addControl(row1);
+			addControl(row1);
 			row1.setHeight(BTN_H);
 			row1.setSpacing(4);
 			row1.setRightToLeft();

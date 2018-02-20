@@ -14,6 +14,7 @@ public class Row extends Control
 		layout.verticalMode = RowLayout.V_FILL;
 	}
 	
+	@Property("spacing")
 	public void setSpacing(int value)
 	{
 		layout.spacing = value;

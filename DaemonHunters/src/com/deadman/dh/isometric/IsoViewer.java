@@ -70,7 +70,7 @@ public class IsoViewer extends Control
 
 		RelativeLayout.settings(viewer).fill();
 		viewer.setMap(m);
-		viewer.zoomToCenter();
+		viewer.centerView();
 		eng.show();
 	}
 
@@ -407,7 +407,7 @@ public class IsoViewer extends Control
 			selectCell(selected_cell.x, selected_cell.y, viewZ);
 	}
 
-	public void zoomToCenter()
+	public void centerView()
 	{
 		if (map == null) return;
 

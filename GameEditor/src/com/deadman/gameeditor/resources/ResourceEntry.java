@@ -2,6 +2,12 @@ package com.deadman.gameeditor.resources;
 
 class ResourceEntry
 {
+	public static final int PICTURE = 0;
+	public static final int PICPARTS = 1;
+	public static final int FONT = 2;
+	public static final int FILE = 3;
+	public static final int ARRAY = -1;
+
 	private final GameResources resources;
 	public final int type;
 	public final String name;
@@ -28,9 +34,8 @@ class ResourceEntry
 		str.append("public static final int ").append(name).append("=").append(id).append(";\r\n");
 	}
 
-	public static final int PICTURE = 0;
-	public static final int PICPARTS = 1;
-	public static final int FONT = 2;
-	public static final int FILE = 3;
-	public static final int ARRAY = -1;
+	public boolean contains(String filePath)
+	{
+		return filePath.equals(path);
+	}
 }

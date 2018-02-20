@@ -39,6 +39,11 @@ public class IsoMap
 		}
 	}
 
+	public IsoMap(IsoMapInfo info)
+	{
+		this(info.width, info.height, info.zheight, info.zerolevel);
+	}
+
 	public MapCell getCell(int x, int y, int z)
 	{
 		if (x < 0 || x >= width || y < 0 || y >= height || z < 0 || z >= zheight) return null;

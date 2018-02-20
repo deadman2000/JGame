@@ -1,5 +1,7 @@
 package com.deadman.gameeditor.resources;
 
+import java.util.HashSet;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -11,27 +13,77 @@ import org.eclipse.core.runtime.CoreException;
 
 public class ResourceChangeReporter implements IResourceChangeListener
 {
+	private HashSet<IProject> toRebuild = new HashSet<>();
+
 	@Override
 	public void resourceChanged(IResourceChangeEvent event)
 	{
-		//System.out.println("Resource changed: " + event);
-
-		IResourceDelta mainDelta = event.getDelta();
-		if (mainDelta == null)
-			return;
-
-		IResourceDelta[] children = mainDelta.getAffectedChildren();
-		for (int i = 0; i < children.length; i++)
+		switch (event.getType())
 		{
-			IResourceDelta delta = children[i];
-			try
-			{
-				delta.accept(visitor);
-			}
-			catch (CoreException e)
-			{
-				e.printStackTrace();
-			}
+			case IResourceChangeEvent.POST_CHANGE:
+				IResourceDelta mainDelta = event.getDelta();
+				if (mainDelta == null)
+					return;
+
+				IResourceDelta[] children = mainDelta.getAffectedChildren();
+				for (int i = 0; i < children.length; i++)
+				{
+					IResourceDelta delta = children[i];
+					try
+					{
+						delta.accept(visitor);
+					}
+					catch (CoreException e)
+					{
+						e.printStackTrace();
+					}
+				}
+				break;
+			default:
+				System.out.println("resourceChanged " + event.getType());
+				break;
+		}
+
+		for (IProject project : toRebuild)
+		{
+			GameResources.build(project);
+		}
+		toRebuild.clear();
+	}
+
+	static String kindName(int kind)
+	{
+		switch (kind)
+		{
+			case IResourceDelta.ADDED:
+				return "ADDED";
+			case IResourceDelta.REMOVED:
+				return "REMOVED";
+			case IResourceDelta.CHANGED:
+				return "CHANGED";
+			case IResourceDelta.ADDED_PHANTOM:
+				return "ADDED_PHANTOM";
+			case IResourceDelta.REMOVED_PHANTOM:
+				return "REMOVED_PHANTOM";
+			default:
+				return "Kind " + kind;
+		}
+	}
+
+	static String typeName(int type)
+	{
+		switch (type)
+		{
+			case IResource.FILE:
+				return "FILE";
+			case IResource.FOLDER:
+				return "FOLDER";
+			case IResource.PROJECT:
+				return "PROJECT";
+			case IResource.ROOT:
+				return "ROOT";
+			default:
+				return "Type " + type;
 		}
 	}
 
@@ -39,28 +91,47 @@ public class ResourceChangeReporter implements IResourceChangeListener
 	{
 		public boolean visit(IResourceDelta delta)
 		{
-			//only interested in changed resources (not added or removed)
-			if (delta.getKind() != IResourceDelta.CHANGED)
-				return true;
-			//only interested in content changes
-			if ((delta.getFlags() & IResourceDelta.CONTENT) == 0)
-				return true;
+			//System.out.println(kindName(delta.getKind()) + " " + typeName(resource.getType()) + " " + resource.getName() + " Flags: " + delta.getFlags());
 
-			IResource resource = delta.getResource();
-			if (resource.getType() == IResource.FILE) //  && "xcf".equalsIgnoreCase(resource.getFileExtension())
+			try
 			{
-				//System.out.println("Changed " + resource);
+				IResource resource = delta.getResource();
 
-				IProject proj = resource.getProject();
-
-				IFile f = proj.getFile("/resources.xml");
-				if (f.exists())
+				if (delta.getKind() == IResourceDelta.CHANGED)
 				{
-					//System.out.println("File:" + f);
+					if ((delta.getFlags() & IResourceDelta.CONTENT) == 0)
+						return true;
 
-					//IJavaProject jproj = JavaCore.create(proj);
-					//System.out.println("JavaProject:" + jproj);
+					if (resource.getType() == IResource.FILE)
+					{
+						IFile file = (IFile) resource;
+
+						if (resource.getName().equals("resources.xml"))
+						{
+							toRebuild.add(resource.getProject());
+						}
+						else if (resource.getFileExtension().equals("ui"))
+						{
+							GameResources.compileUI(file);
+						}
+						else if (!resource.getFileExtension().equals("class") && GameResources.contains(file))
+						{
+							System.out.println("Resource changed " + resource);
+							toRebuild.add(resource.getProject());
+						}
+					}
 				}
+				else if (delta.getKind() == IResourceDelta.REMOVED)
+				{
+					if (resource.getType() == IResource.FOLDER && resource.getName() == "gen")
+					{
+						toRebuild.add(resource.getProject());
+					}
+				}
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
 			}
 			return true;
 		}

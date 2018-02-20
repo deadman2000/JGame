@@ -56,6 +56,8 @@ public class Book extends Control
 		});
 
 		createBuildingsPage();
+		
+		submitChilds();
 	}
 
 	@Override
@@ -155,7 +157,7 @@ public class Book extends Control
 	{
 		_selectedBuildingType = type;
 		iso.setMap(type.getMapPreview());
-		iso.zoomToCenter();
+		iso.centerView();
 		taDescr.setText("At the mouth of the river, the little group of half a dozen intermingled families gathered salt from the great salt beds beside the sea. They groomed and sifted the salt and loaded it into handcarts. When the carts were full, most of the group would stay behind, taking shelter amid rocks and simple lean-tos, while a band of fifteen or so of the heartier members set out on the path that ran alongside the river.\r\n\r\nWith their precious cargo of salt, the travelers crossed the coastal lowlands and traveled toward the mountains. But Lara’s people never reached the mountaintops; they traveled only as far as the foothills. Many people lived in the forests and grassy meadows of the foothills, gathered in small villages. In return for salt, these people would give Lara’s people dried meat, animal skins, cloth spun from wool, clay pots, needles and scraping tools carved from bone, and little toys made of wood.");
 	}
 

@@ -1,5 +1,6 @@
 package com.deadman.dh.isometric;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 
@@ -53,6 +54,40 @@ public abstract class MapFormat
 
 		return format.loadMap(in);
 	}
-
+	
 	protected abstract IsoMap loadMap(DataInputStreamBE in) throws IOException;
+
+	public static IsoMapInfo loadInfo(DataInputStreamBE in) throws Exception
+	{
+		MapFormat format;
+
+		int head = in.readInt();
+		if (head != HEADER)
+			return MF_ZERO.loadInfoImpl(head, in);
+
+		int version = in.readShort();
+		format = MF_BYVER.get(version);
+		if (format == null)
+			throw new Exception("Wrong version number " + version);
+
+		return format.loadInfoImpl(in);
+	}
+
+	protected abstract IsoMapInfo loadInfoImpl(DataInputStreamBE in) throws IOException;
+
+	public static IsoMapInfo loadInfo(String fileName)
+	{
+		File f = new File(fileName);
+		if (!f.exists()) return null;
+
+		try
+		{
+			return loadInfo(DataInputStreamBE.readZip(fileName));
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			return null;
+		}
+	}
 }

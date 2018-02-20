@@ -71,22 +71,28 @@ public class MapFormat0
 
 	public IsoMap loadMap(int head, DataInputStreamBE in) throws IOException
 	{
+		IsoMapInfo info = loadInfoImpl(head, in);
+		IsoMap map = new IsoMap(info);
+		in.readShort();
+		in.readShort();
+
+		for (int z = 0; z < info.zheight; z++)
+			for (int y = 0; y < info.height; y++)
+				for (int x = 0; x < info.width; x++)
+					readCell(map.cells[z][x][y], in);
+		in.close();
+
+		return map;
+	}
+
+	public IsoMapInfo loadInfoImpl(int head, DataInputStreamBE in) throws IOException
+	{
 		int h = head & 0xFFFF;
 		int w = head >>> 16;
 		int l = in.readShort() & 0xFFFF;
 		int zl = in.readShort() & 0xFFFF;
 
-		IsoMap map = new IsoMap(w, h, l, zl);
-		in.readShort();
-		in.readShort();
-
-		for (int z = 0; z < l; z++)
-			for (int y = 0; y < h; y++)
-				for (int x = 0; x < w; x++)
-					readCell(map.cells[z][x][y], in);
-		in.close();
-
-		return map;
+		return new IsoMapInfo(w, h, l, zl);
 	}
 
 	private void set(HashMap<Integer, IsoSprite> map, int id, MapCell c, byte state)

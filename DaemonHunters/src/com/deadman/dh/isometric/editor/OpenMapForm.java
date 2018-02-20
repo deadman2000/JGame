@@ -3,72 +3,133 @@ package com.deadman.dh.isometric.editor;
 import java.awt.event.MouseEvent;
 import java.io.File;
 
+import com.deadman.dh.isometric.IsoMapInfo;
+import com.deadman.dh.isometric.MapFormat;
+import com.deadman.jgame.ui.Column;
 import com.deadman.jgame.ui.Control;
 import com.deadman.jgame.ui.ControlListener;
 import com.deadman.jgame.ui.Label;
+import com.deadman.jgame.ui.Row;
+import com.deadman.jgame.ui.RowLayout;
 
 public class OpenMapForm extends IEWindow
 {
 	private IsoEditor _editor;
 	private FileView fw;
 	
-	private Control infoPanel;
+	private Column infoPanel;
 	private Label laWidth, laHeight, laZHeight;
 
 	public OpenMapForm(IsoEditor editor)
 	{
 		this._editor = editor;
-
 		width = 230;
-		height = 180;
-
-		fw = new FileView();
-		fw.setBounds(4, 4, 160, 150);
 		
-		fw.setFilterByExt(".map");
-		fw.setPath(new File(editor.getMap().fileName).getParentFile());
-		fw.addControlListener(file_listener);
-		addControl(fw);
-
-		addControl(infoPanel = new Control(167, 6, 82, 36));
-		infoPanel.visible = false;
-		infoPanel.addControl(new Label(IsoEditor.fnt_light_3x5, 0, 0, "WIDTH:"));
-		infoPanel.addControl(new Label(IsoEditor.fnt_light_3x5, 0, 10, "HEIGHT:"));
-		infoPanel.addControl(new Label(IsoEditor.fnt_light_3x5, 0, 20, "Z-HEIGHT:"));
-		infoPanel.addControl(laWidth = new Label(IsoEditor.fnt_light_3x5, 37, 0));
-		infoPanel.addControl(laHeight = new Label(IsoEditor.fnt_light_3x5, 37, 10));
-		infoPanel.addControl(laZHeight = new Label(IsoEditor.fnt_light_3x5, 37, 20));
-		
-		EditorButton btOpen = new EditorButton();
-		btOpen.setBounds(width - 8 - BTN_W * 2 - 4, height - 8 - BTN_H, BTN_W, BTN_H, ANCHOR_BOTTOM | ANCHOR_RIGHT);
-		btOpen.setLabel(IsoEditor.fnt_light_3x5, 3, "OPEN");
-		btOpen.addControlListener(new ControlListener()
 		{
-			@Override
-			public void onControlPressed(Control control, MouseEvent e)
+			Row row1 = new Row();
+			row1.setHeight(140);
+			row1.fillContent();
+			row1.setSpacing(4);
+			row1.x = 4;
+			addControl(row1);
+
+			fw = new FileView();
+			fw.setWidth(160);
+			fw.setFilterByExt(".map");
+			fw.setPath(new File(editor.getMap().fileName).getParentFile());
+			fw.addControlListener(file_listener);
+			row1.addControl(fw);
+
+			infoPanel = new Column();
+			infoPanel.visible = false;
+			RowLayout.settings(infoPanel).fillWidth();
+			infoPanel.fillContent();
+			row1.addControl(infoPanel);
+
 			{
-				File f = fw.currentFile();
-				if (f != null && f.isFile())
 				{
-					_editor.loadMap(f.getAbsolutePath());
-					close();
+					Row row = new Row();
+					row.setHeight(12);
+					infoPanel.addControl(row);
+
+					Label la = new Label(IsoEditor.fnt_light_3x5, "WIDTH:");
+					la.autosize = false;
+					//RowLayout.settings(la).fillWidth();
+					la.setWidth(36);
+					row.addControl(la);
+
+					row.addControl(laWidth = new Label(IsoEditor.fnt_light_3x5));
+				}
+
+				{
+					Row row = new Row();
+					row.setHeight(12);
+					infoPanel.addControl(row);
+
+					Label la = new Label(IsoEditor.fnt_light_3x5, "HEIGHT:");
+					la.autosize = false;
+					//RowLayout.settings(la).fillWidth();
+					la.setWidth(36);
+					row.addControl(la);
+
+					row.addControl(laHeight = new Label(IsoEditor.fnt_light_3x5));
+				}
+
+				{
+					Row row = new Row();
+					row.setHeight(12);
+					infoPanel.addControl(row);
+
+					Label la = new Label(IsoEditor.fnt_light_3x5, "Z-HEIGHT:");
+					la.autosize = false;
+					//RowLayout.settings(la).fillWidth();
+					la.setWidth(36);
+					row.addControl(la);
+
+					row.addControl(laZHeight = new Label(IsoEditor.fnt_light_3x5));
 				}
 			}
-		});
-		addControl(btOpen);
+		}
 
-		EditorButton btCancel = new EditorButton();
-		btCancel.setBounds(width - 8 - BTN_W, height - 8 - BTN_H, BTN_W, BTN_H, ANCHOR_BOTTOM | ANCHOR_RIGHT);
-		btCancel.setLabel(IsoEditor.fnt_light_3x5, 3, "CANCEL");
-		btCancel.addControlListener(new ControlListener()
 		{
-			@Override
-			public void onControlPressed(Control control, MouseEvent e)
+			Row row1 = new Row();
+			row1.x = 4;
+			row1.setHeight(BTN_H);
+			row1.setSpacing(4);
+			row1.setRightToLeft();
+			addControl(row1);
+
+			EditorButton btOpen = new EditorButton();
+			btOpen.setSize(BTN_W, BTN_H);
+			btOpen.setLabel(IsoEditor.fnt_light_3x5, 3, "SAVE");
+			btOpen.addControlListener(new ControlListener()
 			{
-				close();
-			}
-		});
-		addControl(btCancel);
+				@Override
+				public void onControlPressed(Control control, MouseEvent e)
+				{
+					File f = fw.currentFile();
+					if (f != null && f.isFile())
+					{
+						_editor.loadMap(f.getAbsolutePath());
+						close();
+					}
+				}
+			});
+			row1.addControl(btOpen);
+
+			EditorButton btCancel = new EditorButton();
+			btCancel.setSize(BTN_W, BTN_H);
+			btCancel.setLabel(IsoEditor.fnt_light_3x5, 3, "CANCEL");
+			btCancel.addControlListener(new ControlListener()
+			{
+				@Override
+				public void onControlPressed(Control control, MouseEvent e)
+				{
+					close();
+				}
+			});
+			row1.addControl(btCancel);
+		}
 	}
 
 	ControlListener file_listener = new ControlListener()
@@ -85,7 +146,7 @@ public class OpenMapForm extends IEWindow
 			{
 				File file = fw.currentFile();
 				if (file != null && file.isFile())
-					setInfo(IsoMapInfo.load(file.getAbsolutePath()));
+					setInfo(MapFormat.loadInfo(file.getAbsolutePath()));
 				else
 					setInfo(null);
 			}
@@ -96,14 +157,14 @@ public class OpenMapForm extends IEWindow
 	{
 		if (info != null)
 		{
-			infoPanel.visible = true;
+			infoPanel.show();
 			laWidth.setText(info.width);
 			laHeight.setText(info.height);
 			laZHeight.setText(info.zheight);
 		}
 		else
 		{
-			infoPanel.visible = false;
+			infoPanel.hide();
 		}
 	}
 }

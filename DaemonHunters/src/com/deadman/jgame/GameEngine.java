@@ -88,13 +88,13 @@ public class GameEngine
 		{
 		}
 	}
-
+	
 	// Drawing
 
 	public void draw()
 	{
-		root.draw();
 		root.submitChilds();
+		root.draw();
 	}
 
 	// Resize
@@ -157,6 +157,11 @@ public class GameEngine
 	public boolean containsControl(Control control)
 	{
 		return content.containsControl(control);
+	}
+	
+	protected void submitChilds()
+	{
+		root.submitChilds();
 	}
 	
 	// Overlay

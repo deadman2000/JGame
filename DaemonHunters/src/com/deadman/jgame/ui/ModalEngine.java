@@ -13,15 +13,14 @@ public class ModalEngine extends GameEngine
 
 	public ModalEngine(Control control)
 	{
-		if (GameLoop.engine == null)
-			throw new NullPointerException("Current engine is null");
+		assert(GameLoop.engine != null);
 		
 		_engine = GameLoop.engine;
 		_isModalEngine = _engine instanceof ModalEngine;
 
 		topControl = control;
 		addControl(control);
-		control.centerParent();
+		RelativeLayout.settings(control).center();
 		control.isFocused = true;
 	}
 

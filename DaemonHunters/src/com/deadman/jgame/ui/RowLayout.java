@@ -9,6 +9,7 @@ public class RowLayout extends Layout
 	public int verticalMode = V_NONE;
 	public int spacing = 0;
 	public boolean rightToLeft = false;
+	public int leftPadding;
 
 	@Override
 	public void apply()
@@ -31,7 +32,10 @@ public class RowLayout extends Layout
 
 		int fillWidth = 0;
 		if (cnt > 0 && target.width > w)
+		{
 			fillWidth = (target.width - w - (visible - 1) * spacing) / cnt;
+			if (fillWidth < 0) fillWidth = 0;
+		}
 
 		if (rightToLeft)
 			alignRightToLeft(fillWidth);
@@ -41,14 +45,14 @@ public class RowLayout extends Layout
 
 	private void alignLeftToRight(int fillWidth)
 	{
-		int x = 0;
+		int x = leftPadding;
 		for (Control c : target.childs())
 		{
 			if (!c.visible || c.removed) continue;
 			RowSettings sett = c.getLayoutSettings(RowSettings.class, defSettings);
 
 			int height = c.height, width = c.width;
-			
+
 			int vm = sett.verticalMode != V_NONE ? sett.verticalMode : verticalMode;
 			switch (vm)
 			{
@@ -62,12 +66,12 @@ public class RowLayout extends Layout
 
 			if (sett.isFillWidth)
 				width = fillWidth;
-			
+
 			c.setSize(width, height);
-			
+
 			x += c.width + spacing;
 		}
-		
+
 		if (widthByContent)
 			target.setWidth(x - spacing);
 	}
@@ -83,7 +87,7 @@ public class RowLayout extends Layout
 			RowSettings sett = c.getLayoutSettings(RowSettings.class, defSettings);
 
 			int height = c.height, width = c.width;
-			
+
 			int vm = sett.verticalMode != V_NONE ? sett.verticalMode : verticalMode;
 			switch (vm)
 			{
@@ -95,14 +99,14 @@ public class RowLayout extends Layout
 
 			if (sett.isFillWidth)
 				width = fillWidth;
-			
+
 			c.setSize(width, height);
 
 			x -= c.width;
 			c.x = x;
 			x -= spacing;
 		}
-		
+
 		// TODO widthByContent
 	}
 

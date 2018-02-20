@@ -1,4 +1,4 @@
-package com.deadman.dh.isometric.editor;
+package com.deadman.jgame.systemui;
 
 public interface IMainMenuListener
 {

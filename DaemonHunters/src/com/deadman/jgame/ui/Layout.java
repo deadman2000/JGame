@@ -9,4 +9,8 @@ public abstract class Layout
 	public static abstract class ChildSettings
 	{
 	}
+
+	public void onChildResize(Control child)
+	{
+	}
 }

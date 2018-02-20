@@ -1,0 +1,84 @@
+Control
+	ColumnLayout(H_FILL)
+	
+	MainMenu
+		background = R.editor.ie_menu_bgr
+		subMenuBackground = R.editor.ie_panel_9p
+		font = fnt_light_3x5
+		
+		MainMenuItem(FILE)
+			MainMenuItem(NEW)
+			MainMenuItem(OPEN)
+			MainMenuItem(SAVE)
+			MainMenuItem(SAVE AS)
+		MainMenuItem(VIEW)
+			MainMenuItem(GRID)
+		MainMenuItem(MAP)
+			MainMenuItem(RESIZE)
+			
+	Row
+		L.fillHeight
+		fillContent  # Вызов метода
+		
+		IsoViewer
+			L.fillWidth
+			allow_drag = false
+			show_all = true
+			wall_blending = false
+			selectionInBounds = true
+			
+		Control  # Right panel
+			width = 100
+			bgrColor = 0x916a02
+		
+	Row
+		height = 20
+		background = R.editor.ie_tabs_bgr
+		spacing = -3
+		
+		Control(R.editor.ie_tabs_left)
+		
+		Button(R.editor.ie_tab_button_bgr, R.editor.ie_tab_button_pressed)
+			y = 3
+			check_on_click = true
+		Button(R.editor.ie_tab_button_bgr, R.editor.ie_tab_button_pressed)
+			y = 3
+			check_on_click = true
+		Button(R.editor.ie_tab_button_bgr, R.editor.ie_tab_button_pressed)
+			y = 3
+			check_on_click = true
+		
+		Control
+			L.fillWidth
+		
+		Control(R.editor.ie_search_bgr)
+			RelativeLayout
+			
+			TextBox(fnt_dark_3x5)
+				id = tbSearch
+				L.alignLeft(0).alignTop(0).alignTight(13)
+				
+			
+			Button(R.editor.ie_search_cancel)
+				id = btSearchCancel
+				L.alignTop(3).alignRight(2)
+			
+		Control
+			width = 6
+			
+	Row
+		height = 70
+		
+		Control(R.editor.ie_items_left)
+			
+		Control(R.editor.ie_items_bgr)
+			L.fillWidth
+			RelativeLayout
+			
+		Control(R.editor.ie_items_right)
+			
+	StatusBar
+		id = statusBar
+		bgrColor = 0x916a02
+		font =  fnt_light_3x5
+		leftBackground = R.editor.ie_status_left

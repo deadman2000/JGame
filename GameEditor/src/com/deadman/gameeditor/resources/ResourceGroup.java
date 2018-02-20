@@ -205,6 +205,9 @@ class ResourceGroup
 				return createEntry(ResourceEntry.PICTURE, getOnlyName(res), res);
 			case "ppr":
 				return addPpr(res);
+			case "ui":
+				resources.addUI(res);
+				return null;
 			default:
 				return addOther(res);
 		}
@@ -215,7 +218,7 @@ class ResourceGroup
 		String name = toFieldName(getOnlyName(res), false);
 		if (name != null)
 		{
-			XCF xcf = XCF.loadFile(res.getRawLocation().toString());
+			XCF xcf = resources.getXCF(res);
 			ResourceGroup group = createSubGroup(name);
 			group.setPath(res);
 			group.scan(xcf);
@@ -317,21 +320,19 @@ class ResourceGroup
 		String entryName = toFieldName(layer.name, true);
 		if (entryName == null)
 			return null;
-		
+
 		if (layer.name.endsWith("-9p"))
 		{
 			String sourceName = layer.name.substring(0, layer.name.length() - 3);
 			Layer source = _xcf.getLayer(sourceName);
 			if (source != null)
 			{
-				System.out.println("Found 9p " + source.name);
 				addLayer(source);
 
 				return addEntry(PicPartEntry.fromLayers(resources, entryName, path + "?" + source.name, layer, source));
 			}
 			else
 			{
-				System.out.println("NOT Found 9p " + sourceName);
 				_xcf.getLayer(sourceName);
 			}
 		}
@@ -455,7 +456,7 @@ class ResourceGroup
 		for (ResourceGroup g : groups.values())
 			g.calcEntries();
 	}
-	
+
 	private IType _javaClass;
 	private int _searchIndex;
 	private ResourceEntry[] _allEntries;
@@ -488,14 +489,14 @@ class ResourceGroup
 			_allEntries = null;
 			_allGroups = null;
 			_javaClass = null;
-			
+
 			if (parent != null)
 				parent.findNext();
 			else
 				resources.checkCompleted();
 			return;
 		}
-		
+
 		_searchIndex++;
 		if (_allEntries != null)
 			findNextEntry();
@@ -569,4 +570,18 @@ class ResourceGroup
 			findNext();
 		}
 	};
+
+	public boolean contains(String filePath)
+	{
+		if (filePath.equals(path))
+			return true;
+
+		for (ResourceGroup g : groups.values())
+			if (g.contains(filePath)) return true;
+
+		for (ResourceEntry e : entries)
+			if (e.contains(filePath)) return true;
+
+		return false;
+	}
 }

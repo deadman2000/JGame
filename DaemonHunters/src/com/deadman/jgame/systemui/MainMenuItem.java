@@ -1,4 +1,4 @@
-package com.deadman.dh.isometric.editor;
+package com.deadman.jgame.systemui;
 
 import java.awt.Point;
 import java.awt.event.MouseEvent;
@@ -18,7 +18,7 @@ public class MainMenuItem extends Control
 	public MainMenuItem(MainMenu menu, String text, boolean root)
 	{
 		this.menu = menu;
-		label = new Label(IsoEditor.fnt_light_3x5, 2, 1, text);
+		label = new Label(menu.font, 2, 1, text);
 		addControl(label);
 
 		if (root)
@@ -44,7 +44,11 @@ public class MainMenuItem extends Control
 	protected void onPressed(Point p, MouseEvent e)
 	{
 		if (subItemsPanel != null)
+		{
+			subItemsPanel.y = height;
+			subItemsPanel.x = x;
 			menu.openSubMenu(subItemsPanel);
+		}
 		else
 		{
 			closeMenu();
@@ -64,16 +68,13 @@ public class MainMenuItem extends Control
 		if (subItemsPanel == null)
 		{
 			subItemsPanel = menu.createSubMenuPanel();
-			subItemsPanel.y = height;
-			subItemsPanel.x = x;
 		}
 
 		MainMenuItem it = new MainMenuItem(menu, text, false);
-		it.setPosition(2, subItemsPanel.height - 6);
+		it.x = 2;
 		it.tag = id;
 
 		subItemsPanel.addControl(it);
-		subItemsPanel.height += it.height;
 
 		if (subItemsPanel.width < it.width + 4)
 			subItemsPanel.width = it.width + 4;

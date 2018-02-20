@@ -23,13 +23,12 @@ public class Control
 	private Layout _layout;
 	public Layout.ChildSettings layoutChildSettings;
 	
-	@Deprecated
-	public int anchor;
-
 	public boolean isFocused = false;
 	public boolean isPressed;
 	public Drawable background;
+	
 	public int bgrColor = 0;
+	
 	public boolean clickOnBgr = false;
 
 	public boolean visible = true;
@@ -53,13 +52,6 @@ public class Control
 	public Control(int x, int y, int w, int h)
 	{
 		setBounds(x, y, w, h);
-	}
-
-	@Deprecated
-	public Control(int x, int y, int w, int h, int anchor)
-	{
-		setBounds(x, y, w, h);
-		//this.anchor = anchor;
 	}
 
 	public Control(int bgrId)
@@ -89,14 +81,6 @@ public class Control
 	{
 		this(pic);
 		setBounds(x, y, w, h);
-	}
-
-	@Deprecated
-	public Control(Drawable pic, int x, int y, int w, int h, int anchor)
-	{
-		this(pic);
-		setBounds(x, y, w, h);
-		//this.anchor = anchor;
 	}
 
 	public int right()
@@ -146,20 +130,6 @@ public class Control
 		this.y = y;
 	}
 
-	@Deprecated
-	public void setPosition(int x, int y, int anchor)
-	{
-		this.x = x;
-		this.y = y;
-		//this.anchor = anchor;
-	}
-
-	// Позиция относительно правого нижнего угла
-	public void setRBPosition(int x, int y)
-	{
-		setPosition(parent.width - width - x, parent.height - height - y, ANCHOR_RIGHT | ANCHOR_BOTTOM);
-	}
-
 	public void setSize(int width, int height)
 	{
 		if (width == this.width && height == this.height) return;
@@ -196,16 +166,6 @@ public class Control
 		onResize();
 	}
 
-	@Deprecated
-	public void setBounds(int x, int y, int width, int height, int anchor)
-	{
-		this.x = x;
-		this.y = y;
-		this.width = width;
-		this.height = height;
-		onResize();
-	}
-	
 	public void setLayout(Layout layout)
 	{
 		_layout = layout;
@@ -216,45 +176,6 @@ public class Control
 	{
 		return _layout;
 	}
-
-	@Deprecated
-	public void setAnchor(int anchor)
-	{
-	}
-
-	@Deprecated
-	public Control fillParent()
-	{
-		int pw = parent == null ? GameScreen.GAME_WIDTH : parent.width;
-		int ph = parent == null ? GameScreen.GAME_HEIGHT : parent.height;
-		setBounds(0, 0, pw, ph, ANCHOR_ALL);
-		return this;
-	}
-
-	@Deprecated
-	public void centerParent()
-	{
-		int pw = parent == null ? GameScreen.GAME_WIDTH : parent.width;
-		int ph = parent == null ? GameScreen.GAME_HEIGHT : parent.height;
-		setBounds((pw - width) / 2, (ph - height) / 2, width, height, ANCHOR_NONE);
-	}
-
-	@Deprecated
-	public void onScreenChanged()
-	{
-		refreshLayout();
-		//updateChildsLayout();
-	}
-	
-	/*private void updateChildsLayout()
-	{
-		if (childs != null)
-			for (Control c : childs)
-			c.onScreenChanged();
-		if (controlsToAdd != null)
-			for (Control c : controlsToAdd)
-			c.onScreenChanged();
-	}*/
 
 	// Visibility
 
@@ -311,18 +232,26 @@ public class Control
 			_layout.apply();
 	}
 
-	public static final int ANCHOR_NONE = 0;
+	/*public static final int ANCHOR_NONE = 0;
 	public static final int ANCHOR_LEFT = 1 << 0;
 	public static final int ANCHOR_RIGHT = 1 << 1;
 	public static final int ANCHOR_TOP = 1 << 2;
 	public static final int ANCHOR_BOTTOM = 1 << 3;
 	public static final int ANCHOR_LEFT_TOP = ANCHOR_LEFT | ANCHOR_TOP;
 	public static final int ANCHOR_RIGHT_TOP = ANCHOR_RIGHT | ANCHOR_TOP;
-	public static final int ANCHOR_ALL = ANCHOR_LEFT | ANCHOR_RIGHT | ANCHOR_TOP | ANCHOR_BOTTOM;
+	public static final int ANCHOR_ALL = ANCHOR_LEFT | ANCHOR_RIGHT | ANCHOR_TOP | ANCHOR_BOTTOM;*/
 
 	protected void onResize()
 	{
+		if (parent != null)
+			parent.onChildResize(this);
 		refreshLayout();
+	}
+
+	protected void onChildResize(Control child)
+	{
+		if (_layout != null)
+			_layout.onChildResize(child);
 	}
 
 	public Point parentToChild(Point p)
@@ -620,18 +549,6 @@ public class Control
 	public ArrayList<Control> childs()
 	{
 		return childs;
-	}
-
-	public void addControl(Control c, int index)
-	{
-		if (childs == null)
-		{
-			childs = new ArrayList<>();
-			childsReverse = new ArrayList<>();
-		}
-		childs.add(index, c);
-		childsReverse.add(childsReverse.size() - index, c);
-		c.setParent(this);
 	}
 
 	public void addControl(Control c)

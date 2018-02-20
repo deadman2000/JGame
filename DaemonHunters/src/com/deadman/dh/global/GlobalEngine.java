@@ -118,8 +118,9 @@ public class GlobalEngine extends GameEngine
 		map.preload();
 		mapView.setMap(map);
 
-		createGuids();
-
+		createGuid();
+		createGuid();
+		
 		System.out.println("Load completed");
 
 		time = SECONDS_IN_HOUR * 12;
@@ -133,15 +134,16 @@ public class GlobalEngine extends GameEngine
 		Music.playOGG(R.music.GAME8_ogg);
 	}
 
-	private void createGuids()
+	private void createGuid()
 	{
 		ProgressStatus st = new ProgressStatus();
-		Game.guilds.clear();
 		Random rnd = new Random();
 		while (true)
 		{
 			int n = rnd.nextInt(Game.map.cities.length);
 			City c = Game.map.cities[n];
+			if (c.guild != null) continue;
+			
 			c.generate(st);
 			if (c.houses.size() == 0)
 			{
@@ -391,7 +393,7 @@ public class GlobalEngine extends GameEngine
 			case KeyEvent.VK_F2:
 				Book.inst().show();
 				break;
-
+				
 			default:
 				super.onKeyPressed(e);
 				return;

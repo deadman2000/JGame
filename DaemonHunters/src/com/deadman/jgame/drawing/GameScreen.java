@@ -1,7 +1,9 @@
 package com.deadman.jgame.drawing;
 
+import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
@@ -35,6 +37,7 @@ import com.jogamp.opengl.GLEventListener;
 import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.awt.GLCanvas;
 import com.jogamp.opengl.glu.GLU;
+import com.jogamp.opengl.util.GLBuffers;
 
 public class GameScreen extends JFrame implements GLEventListener
 {
@@ -61,8 +64,7 @@ public class GameScreen extends JFrame implements GLEventListener
 	{
 		super(title);
 
-		gd = GraphicsEnvironment.getLocalGraphicsEnvironment()
-				.getDefaultScreenDevice();
+		gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
 
 		createCanvas();
 
@@ -81,8 +83,7 @@ public class GameScreen extends JFrame implements GLEventListener
 		}
 
 		BufferedImage cursorImg = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
-		Cursor blankCursor = Toolkit.getDefaultToolkit()
-				.createCustomCursor(cursorImg, new Point(0, 0), "blank cursor");
+		Cursor blankCursor = Toolkit.getDefaultToolkit().createCustomCursor(cursorImg, new Point(0, 0), "blank cursor");
 		setCursor(blankCursor);
 
 		pack();
@@ -150,8 +151,7 @@ public class GameScreen extends JFrame implements GLEventListener
 	{
 		screen_width = canvas.getWidth();
 		screen_height = canvas.getHeight();
-		gl = drawable.getGL()
-				.getGL2();
+		gl = drawable.getGL().getGL2();
 		gl.setSwapInterval(1); // v-sync
 	}
 
@@ -171,14 +171,15 @@ public class GameScreen extends JFrame implements GLEventListener
 	}
 
 	public static GL2 gl;
+	
+	private boolean _takeScreenshot;
 
 	@Override
 	public void display(GLAutoDrawable drawable)
 	{
 		//long t = System.currentTimeMillis();
 
-		gl = drawable.getGL()
-				.getGL2();
+		gl = drawable.getGL().getGL2();
 		if (!isScreenInit) initScreen();
 
 		gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_STENCIL_BUFFER_BIT);
@@ -191,6 +192,9 @@ public class GameScreen extends JFrame implements GLEventListener
 		drawCursor();
 
 		//afterDrawFX();
+		
+		if (_takeScreenshot)
+			saveScreenshot();
 
 		Picture.clean(gl);
 		gl = null;
@@ -207,8 +211,7 @@ public class GameScreen extends JFrame implements GLEventListener
 		screen_width = width;
 		screen_height = height;
 		calcSize();
-		gl = drawable.getGL()
-				.getGL2();
+		gl = drawable.getGL().getGL2();
 		disposeFX();
 		initScreen();
 	}
@@ -216,8 +219,7 @@ public class GameScreen extends JFrame implements GLEventListener
 	@Override
 	public void dispose(GLAutoDrawable drawable)
 	{
-		gl = drawable.getGL()
-				.getGL2();
+		gl = drawable.getGL().getGL2();
 		disposeFX();
 		disposeShaders();
 	}
@@ -604,6 +606,10 @@ public class GameScreen extends JFrame implements GLEventListener
 					isScreenInit = false;
 					break;
 
+				case KeyEvent.VK_F12:
+					takeScreenshot();
+					break;
+
 				default:
 					break;
 			}
@@ -619,6 +625,53 @@ public class GameScreen extends JFrame implements GLEventListener
 			if (e.isConsumed()) return;
 		}
 	};
+
+	public void takeScreenshot()
+	{
+		_takeScreenshot = true;
+	}
+	
+	private void saveScreenshot()
+	{
+		int width = getWidth();
+		int height = getHeight();
+		try
+		{
+			BufferedImage screenshot = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+			Graphics graphics = screenshot.getGraphics();
+
+			ByteBuffer buffer = GLBuffers.newDirectByteBuffer(width * height * 4);
+			// be sure you are reading from the right fbo (here is supposed to be the default one)
+			// bind the right buffer to read from
+			gl.glReadBuffer(GL.GL_BACK);
+			// if the width is not multiple of 4, set unpackPixel = 1
+			gl.glReadPixels(0, 0, width, height, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, buffer);
+
+			for (int h = 0; h < height; h++)
+			{
+				for (int w = 0; w < width; w++)
+				{
+					// The color are the three consecutive bytes, it's like referencing
+					// to the next consecutive array elements, so we got red, green, blue..
+					// red, green, blue, and so on..+ ", "
+					graphics.setColor(new Color((buffer.get() & 0xff), (buffer.get() & 0xff), (buffer.get() & 0xff)));
+					buffer.get(); // consume alpha
+					graphics.drawRect(w, height - h, 1, 1); // height - h is for flipping the image
+				}
+			}
+
+			// This is one util of mine, it make sure you clean the direct buffer
+			//BufferUtils.destroyDirectBuffer(buffer);
+
+			File outputfile = new File("D:\\Download\\texture.png");
+			ImageIO.write(screenshot, "png", outputfile);
+		}
+		catch (Exception ex)
+		{
+			ex.printStackTrace();
+		}
+		_takeScreenshot = false;
+	}
 
 	private MouseInputAdapter mouseListener = new MouseInputAdapter()
 	{

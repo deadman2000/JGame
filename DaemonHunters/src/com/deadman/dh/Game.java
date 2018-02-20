@@ -22,6 +22,7 @@ import com.deadman.jgame.sound.Sound;
 import com.deadman.jgame.ui.Control;
 import com.deadman.jgame.ui.HScrollBar;
 import com.deadman.jgame.ui.VScrollBar;
+import com.deadman.jgame.uibuilder.UIBuilderEngine;
 
 public class Game
 {
@@ -70,6 +71,8 @@ public class Game
 			{
 				if (args[0].equals("-mapeditor"))
 					new IsoEditor().show();
+				if (args[0].equals("-uibuilder"))
+					new UIBuilderEngine().show();
 				else if (args[0].equals("-test"))
 					new TestEngine().show();
 			}

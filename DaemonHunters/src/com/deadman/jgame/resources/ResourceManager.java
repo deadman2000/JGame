@@ -37,7 +37,7 @@ public class ResourceManager
 
 	private void load() throws IOException
 	{
-		File file = new File("res/resources.csv");
+		File file = new File("gen/resources.csv");
 		if (!file.exists()) return;
 
 		ArrayList<ResourceEntry> list = new ArrayList<>();

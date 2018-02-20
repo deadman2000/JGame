@@ -5,10 +5,10 @@ import java.awt.event.KeyEvent;
 import com.deadman.dh.R;
 import com.deadman.jgame.GameEngine;
 import com.deadman.jgame.GameLoop;
-import com.deadman.jgame.ui.Control;
+import com.deadman.jgame.ui.Column;
 import com.deadman.jgame.ui.RelativeLayout;
 
-public class IEWindow extends Control
+public class IEWindow extends Column
 {
 	private GameEngine _eng;
 
@@ -18,6 +18,13 @@ public class IEWindow extends Control
 	public IEWindow()
 	{
 		background = getDrawable(R.editor.ie_panel_9p);
+		columnLayout.heightByContent = true;
+		columnLayout.leftPadding = 4;
+		columnLayout.topPadding = 4;
+		columnLayout.rightPadding = 8;
+		columnLayout.bottomPadding = 8;
+		fillContent();
+		setSpacing(4);
 	}
 
 	@Override

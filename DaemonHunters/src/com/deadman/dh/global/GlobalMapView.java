@@ -42,6 +42,8 @@ public class GlobalMapView extends Control
 
 	private Weather weather;
 
+	//private Label laPos;
+	
 	public GlobalMapView()
 	{
 		bgr = getDrawable(R.ui.map_bgr);
@@ -71,16 +73,14 @@ public class GlobalMapView extends Control
 		addControl(weather);
 		RelativeLayout.settings(weather).fill();
 
-		addControl(laPos = new Label(GlobalEngine.fnt3x5_brown));
+		/*addControl(laPos = new Label(GlobalEngine.fnt3x5_brown));
 		laPos.bgrColor = -1;
-		laPos.setPosition(0, 0);
+		laPos.setPosition(0, 0);*/
 
 		cursor_lens = getDrawable(R.cursors.lens);
 		cursor_lens.setAnchor(8, 8);
 	}
 
-	Label laPos;
-	
 	@Override
 	protected void onResize()
 	{
@@ -328,7 +328,7 @@ public class GlobalMapView extends Control
 	{
 		Point mp = screenToMap(p);
 
-		if (laPos != null) laPos.setText(mp.x + " x " + mp.y);
+		//if (laPos != null) laPos.setText(mp.x + " x " + mp.y);
 		if (pressPos != null && pressPos.distanceSq(p.x, p.y) > 4)
 			pressPos = null;
 

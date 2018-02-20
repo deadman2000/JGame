@@ -135,7 +135,7 @@ public class MissionEngine extends GameEngine
 	{
 		map = m;
 		mapViewer.setMap(map);
-		mapViewer.zoomToCenter();
+		mapViewer.centerView();
 	}
 
 	private IsoViewer mapViewer;
@@ -198,6 +198,8 @@ public class MissionEngine extends GameEngine
 		igGround.setValidator(new MissionItemValidator(igGround));
 
 		messAnim = new MessageAnimation();
+		
+		submitChilds();
 	}
 
 	class MissionItemValidator extends ItemMovingValidator
@@ -832,7 +834,7 @@ public class MissionEngine extends GameEngine
 
 	private void showMessage(String text, GameFont font, int x, int y)
 	{
-		Label la = new Label(text, font, x, y);
+		Label la = new Label(font, x, y, text);
 		la.char_interval = -1;
 		addControl(la);
 		messAnim.add(la);

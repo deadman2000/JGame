@@ -2,20 +2,35 @@ package com.deadman.jgame.ui;
 
 public class Column extends Control
 {
-	protected ColumnLayout layout;
+	public ColumnLayout columnLayout;
 
 	public Column()
 	{
-		setLayout(layout = new ColumnLayout());
+		setLayout(columnLayout = new ColumnLayout());
 	}
 	
 	public void fillContent()
 	{
-		layout.horizontalMode = ColumnLayout.H_FILL;
+		columnLayout.horizontalMode = ColumnLayout.H_FILL;
 	}
 	
 	public void setSpacing(int value)
 	{
-		layout.spacing = value;
+		columnLayout.spacing = value;
 	}
+	
+	/*public void setHeightByContent()
+	{
+		columnLayout.heightByContent = true;
+	}
+
+	public void setTopPadding(int value)
+	{
+		columnLayout.topPadding = value;
+	}
+
+	public void setBottomPadding(int value)
+	{
+		columnLayout.bottomPadding = value;
+	}*/
 }

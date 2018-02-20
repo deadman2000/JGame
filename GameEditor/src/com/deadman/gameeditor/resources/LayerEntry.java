@@ -8,4 +8,10 @@ public class LayerEntry extends ResourceEntry {
 		this.layer = layer;
 		layer.res = this;
 	}
+	
+	@Override
+	public boolean contains(String filePath)
+	{
+		return false;
+	}
 }

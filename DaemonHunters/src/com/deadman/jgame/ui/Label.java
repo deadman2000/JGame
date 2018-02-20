@@ -28,17 +28,14 @@ public class Label extends Control
 	public static final byte ALIGN_BOTTOM = 2;
 	public static final byte ALIGN_FILL = 3;
 
+	public Label()
+	{
+	}
+	
 	public Label(GameFont font)
 	{
 		_font = font;
 		height = font.height;
-	}
-
-	public Label(String text, GameFont font, int x, int y)
-	{
-		this(font);
-		setPosition(x, y);
-		setText(text);
 	}
 
 	public Label(GameFont font, int x, int y)
@@ -51,6 +48,12 @@ public class Label extends Control
 	{
 		this(font);
 		setPosition(x, y);
+		setText(text);
+	}
+
+	public Label(GameFont font, String text)
+	{
+		this(font);
 		setText(text);
 	}
 

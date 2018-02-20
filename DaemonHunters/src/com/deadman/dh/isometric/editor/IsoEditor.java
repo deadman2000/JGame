@@ -23,12 +23,15 @@ import com.deadman.jgame.GameEngine;
 import com.deadman.jgame.drawing.Drawable;
 import com.deadman.jgame.drawing.GameFont;
 import com.deadman.jgame.drawing.GameScreen;
+import com.deadman.jgame.systemui.IMainMenuListener;
+import com.deadman.jgame.systemui.MainMenu;
+import com.deadman.jgame.systemui.MainMenuItem;
+import com.deadman.jgame.systemui.StatusBar;
 import com.deadman.jgame.ui.Button;
 import com.deadman.jgame.ui.ColumnLayout;
 import com.deadman.jgame.ui.Control;
 import com.deadman.jgame.ui.ControlListener;
 import com.deadman.jgame.ui.HListView;
-import com.deadman.jgame.ui.Label;
 import com.deadman.jgame.ui.ListViewItem;
 import com.deadman.jgame.ui.RelativeLayout;
 import com.deadman.jgame.ui.Row;
@@ -52,7 +55,7 @@ public class IsoEditor extends GameEngine implements IMainMenuListener
 	private Button[] tabButtons = new Button[TAB_COUNT];
 	private ListViewItem[][] items = new ListViewItem[TAB_COUNT][];
 	private HListView lvItems;
-	private Label laStatus;
+	private StatusBar statusBar;
 	private TextBox tbSearch;
 	private EditorButton btSelect, btBrush;
 
@@ -105,12 +108,14 @@ public class IsoEditor extends GameEngine implements IMainMenuListener
 
 	private void initialiseControls()
 	{
-		ColumnLayout layout = new ColumnLayout();
-		layout.horizontalMode = ColumnLayout.H_FILL;
-		setLayout(layout);
+		setLayout(new ColumnLayout(ColumnLayout.H_FILL));
 
 		{
 			MainMenu mm = new MainMenu(this, this);
+			mm.background = getDrawable(R.editor.ie_menu_bgr);
+			mm.subMenuBackground = getDrawable(R.editor.ie_panel_9p);
+			mm.font = fnt_light_3x5;
+			mm.height = mm.background.height;
 			addControl(mm);
 
 			MainMenuItem mmFile = mm.addItem("FILE");
@@ -131,19 +136,20 @@ public class IsoEditor extends GameEngine implements IMainMenuListener
 			row.fillContent();
 			addControl(row);
 
-			row.addControl(mapViewer = new IsoViewer());
-			RowLayout.settings(mapViewer).fillWidth();
-			mapViewer.allow_drag = false;
-			mapViewer.show_all = true;
-			mapViewer.wall_blending = false;
-			mapViewer.addControlListener(mapViewer_listener);
-			mapViewer.selectionInBounds = true;
+			{
+				row.addControl(mapViewer = new IsoViewer());
+				RowLayout.settings(mapViewer).fillWidth();
+				mapViewer.allow_drag = false;
+				mapViewer.show_all = true;
+				mapViewer.wall_blending = false;
+				mapViewer.addControlListener(mapViewer_listener);
+				mapViewer.selectionInBounds = true;
+			}
 
 			{ // Right panel
 				Control ctRight = new Control();
 				ctRight.setWidth(100);
 				ctRight.bgrColor = 0x916a02;
-				//ctRight.setBounds(GameScreen.GAME_WIDTH - RIGHT_PANEL_WIDTH, mm.height, RIGHT_PANEL_WIDTH, mapViewer.height, Control.ANCHOR_TOP | Control.ANCHOR_BOTTOM | Control.ANCHOR_RIGHT);
 				row.addControl(ctRight);
 
 				btSelect = new EditorButton();
@@ -190,10 +196,10 @@ public class IsoEditor extends GameEngine implements IMainMenuListener
 				Button bt = new Button(R.editor.ie_tab_button_bgr, R.editor.ie_tab_button_pressed);
 				bt.y = 3;
 				bt.check_on_click = true;
-				bt.tag = i;
-				bt.addControlListener(tab_listener);
 				rowTabs.addControl(bt);
 				tabButtons[i] = bt;
+				bt.tag = i;
+				bt.addControlListener(tab_listener);
 
 				bt.image = getDrawable(R.editor.ie_tab_button[i]);
 			}
@@ -208,15 +214,17 @@ public class IsoEditor extends GameEngine implements IMainMenuListener
 			ctSearchBgr.y = 4;
 			rowTabs.addControl(ctSearchBgr);
 
-			tbSearch = new TextBox(fnt_dark_3x5); // , 0, 2, ctSearchBgr.width - 13
-			RelativeLayout.settings(tbSearch).alignLeft(0).alignTop(2).alignRight(13);
-			tbSearch.addControlListener(search_listener);
-			ctSearchBgr.addControl(tbSearch);
-
-			Button btSearchCancel = new Button(R.editor.ie_search_cancel);
-			RelativeLayout.settings(btSearchCancel).alignTop(3).alignRight(2);
-			btSearchCancel.addControlListener(search_cancel_listener);
-			ctSearchBgr.addControl(btSearchCancel);
+			{
+				tbSearch = new TextBox(fnt_dark_3x5); // , 0, 2, ctSearchBgr.width - 13
+				RelativeLayout.settings(tbSearch).alignLeft(0).alignTop(2).alignRight(13);
+				tbSearch.addControlListener(search_listener);
+				ctSearchBgr.addControl(tbSearch);
+	
+				Button btSearchCancel = new Button(R.editor.ie_search_cancel);
+				RelativeLayout.settings(btSearchCancel).alignTop(3).alignRight(2);
+				btSearchCancel.addControlListener(search_cancel_listener);
+				ctSearchBgr.addControl(btSearchCancel);
+			}
 
 			rowTabs.addControl(new Control(0, 0, 6, 0));
 		}
@@ -225,12 +233,17 @@ public class IsoEditor extends GameEngine implements IMainMenuListener
 			Row rowItems = new Row();
 			rowItems.setHeight(70);
 			addControl(rowItems);
-			
+
 			Control left = new Control(R.editor.ie_items_left);
-			left.tag = 0;
-			left.addControlListener(scroll_listener);
+			left.addControlListener(new ControlListener()
+			{
+				public void onPressed(Object sender, Point p, MouseEvent e)
+				{
+					lvItems.scrollLeft();
+				};
+			});
 			rowItems.addControl(left);
-			
+
 			Control bgr = new Control(R.editor.ie_items_bgr);
 			bgr.setLayout(new RelativeLayout());
 			RowLayout.settings(bgr).fillWidth();
@@ -246,8 +259,13 @@ public class IsoEditor extends GameEngine implements IMainMenuListener
 			}
 
 			Control right = new Control(R.editor.ie_items_right);
-			right.tag = 1;
-			right.addControlListener(scroll_listener);
+			right.addControlListener(new ControlListener()
+			{
+				public void onPressed(Object sender, Point p, MouseEvent e)
+				{
+					lvItems.scrollRight();
+				};
+			});
 			rowItems.addControl(right);
 
 			items[0] = makeItems(GameResources.main.floors.values());
@@ -257,17 +275,13 @@ public class IsoEditor extends GameEngine implements IMainMenuListener
 		}
 
 		{
-			Row row = new Row();
-			row.setHeight(7);
-			row.bgrColor = 0x916a02;
-			addControl(row);
-			
-			row.addControl(new Control(R.editor.ie_status_left));
-			
-			row.addControl(laStatus = new Label(fnt_light_3x5));
-			laStatus.y = 1;
-			//laStatus.setPosition(12, GameScreen.GAME_HEIGHT - 6, Control.ANCHOR_LEFT | Control.ANCHOR_BOTTOM);				
+			addControl(statusBar = new StatusBar());
+			statusBar.bgrColor = 0x916a02;
+			statusBar.setLeftBackground(getDrawable(R.editor.ie_status_left));
+			statusBar.setFont(fnt_light_3x5);
 		}
+
+		submitChilds();
 	}
 
 	@Override
@@ -307,8 +321,8 @@ public class IsoEditor extends GameEngine implements IMainMenuListener
 
 	private void setStatus(String text)
 	{
-		if (laStatus == null) return;
-		laStatus.setText(text.toUpperCase());
+		//if (statusBar == null) return;
+		statusBar.setText(text.toUpperCase());
 	}
 
 	@SuppressWarnings("unused")
@@ -325,18 +339,6 @@ public class IsoEditor extends GameEngine implements IMainMenuListener
 			arr[i++] = new InstrItem(s);
 		return arr;
 	}
-
-	ControlListener scroll_listener = new ControlListener()
-	{
-		public void onPressed(Object sender, Point p, MouseEvent e)
-		{
-			int ind = (int) ((Control) sender).tag;
-			if (ind == 0)
-				lvItems.scrollLeft();
-			else
-				lvItems.scrollRight();
-		};
-	};
 
 	ControlListener tab_listener = new ControlListener()
 	{
@@ -437,7 +439,7 @@ public class IsoEditor extends GameEngine implements IMainMenuListener
 		}
 		map = m;
 		mapViewer.setMap(m);
-		mapViewer.zoomToCenter();
+		mapViewer.centerView();
 
 		GameScreen.screen.setTitle(m.fileName);
 
