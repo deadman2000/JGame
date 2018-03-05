@@ -114,7 +114,11 @@ public class ResourceChangeReporter implements IResourceChangeListener
 						{
 							GameResources.compileUI(file);
 						}
-						else if (!resource.getFileExtension().equals("class") && GameResources.contains(file))
+						else if (resource.getFileExtension().equals("class") )
+						{
+							GameResources.invalidateModel(file.getProject());
+						}
+						else if (GameResources.contains(file))
 						{
 							System.out.println("Resource changed " + resource);
 							toRebuild.add(resource.getProject());

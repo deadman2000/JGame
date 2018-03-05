@@ -38,7 +38,8 @@ public abstract class ClassInfo
 
 			for (IMethod m : _type.getMethods())
 			{
-				System.out.println(type.getElementName() + "  " + m.getElementName() + "  " + m.getReturnType() + "  " + String.join(", ", m.getParameterTypes()));
+				//System.out.println(type.getElementName() + "  " + m.getElementName() + "  " + m.getReturnType() + "  " + String.join(", ", m.getParameterTypes()));
+
 				if (m.getElementName().equals(type.getElementName()))
 					_constructors.add(m);
 
@@ -49,7 +50,9 @@ public abstract class ClassInfo
 
 					//if (m.getReturnType().equals("V"))
 					// TODO Установка как get или set
-					_properties.put(prop, new PropertyInfo(m));
+
+					PropertyInfo pi = createProperty(prop);
+					pi.addMethod(m);
 				}
 			}
 
@@ -57,7 +60,9 @@ public abstract class ClassInfo
 			{
 				String prop = getPropertyName(f);
 				if (prop == null || prop.isEmpty()) prop = f.getElementName();
-				_properties.put(prop, new PropertyInfo(f));
+
+				PropertyInfo pi = createProperty(prop);
+				pi.addField(f);
 			}
 		}
 		catch (JavaModelException e)
@@ -101,6 +106,14 @@ public abstract class ClassInfo
 		return null;
 	}
 
+	private PropertyInfo createProperty(String name)
+	{
+		PropertyInfo pi = _properties.get(name);
+		if (pi == null)
+			_properties.put(name, pi = new PropertyInfo(this, name));
+		return pi;
+	}
+
 	public boolean hasProperty(String name)
 	{
 		if (_properties.containsKey(name)) return true;
@@ -110,7 +123,10 @@ public abstract class ClassInfo
 
 	public PropertyInfo getProperty(String name)
 	{
-		return _properties.get(name);
+		PropertyInfo info = _properties.get(name);
+		if (info != null)
+			return info;
+		return _baseClass.getProperty(name);
 	}
 
 	public boolean hasMethod(String name)
@@ -131,50 +147,9 @@ public abstract class ClassInfo
 		return _baseClass.hasMethod(name);
 	}
 
-	private String resolve(String value, String type) throws Exception
+	public String resolve(String value, String type) throws Exception
 	{
-		// Число
-		/*if (type.equals("D"))
-		{
-			try
-			{
-				double d = Double.parseDouble(value);
-				return Double.toString(d);
-			}
-			catch (Exception e)
-			{
-			}
-		}
-		else
-		*/
-
-		if (type.equals("I")) // Integer
-		{
-			int i = Integer.parseInt(value);
-			return Integer.toString(i);
-		}
-		else if (type.equals("Z")) // Boolean
-		{
-			boolean b = Boolean.parseBoolean(value);
-			return Boolean.toString(b);
-		}
-		else if (type.equals("J")) // Long
-		{
-			long l = Long.parseLong(value);
-			return Long.toString(l);
-		}
-		else if (type.equals("QString;"))
-		{
-			if (value.startsWith("\"") && value.endsWith("\"")) return value;
-			return "\"" + value + "\"";
-		}
-		else
-			System.err.println("Unknown type " + type);
-
-		// Строка
-		// TODO
-
-		// Статичное поле класса
+		// Ищем статичное поле класса
 		try
 		{
 			IField f = _type.getField(value);
@@ -185,25 +160,96 @@ public abstract class ClassInfo
 		{
 		}
 
+		// Пытаемся преобразовать в базовый тип
+		try
+		{
+			String v = compiler.stringToType(value, type);
+			if (v != null)
+				return v;
+		}
+		catch (Exception e)
+		{
+		}
+
+		// TODO R.editor.ie_menu_bgr
+		if (value.startsWith("R."))
+		{
+			int i = value.lastIndexOf('.');
+			String typeName = value.substring(0, i);
+			System.out.println("Finding type " + typeName);
+			IType t = compiler.getType("com.deadman.dh." + typeName);
+			if (t != null)
+			{
+				String propName = value.substring(i + 1);
+				IField f = t.getField(propName);
+				if (f != null)
+				{
+					value = t.getFullyQualifiedName().replace('$', '.') + "." + f.getElementName();
+					//System.out.println("Field found " + value);
+
+					if (type.equals("QDrawable;"))
+						return "getDrawable(" + value + ")";
+					else if (type.equals("I"))
+						return value;
+
+					System.out.println(type);
+				}
+			}
+		}
+
 		throw new Exception();
 	}
 
-	public String[] resolveConstruct(String[] args) throws ParseException
+	// Возвращает строку кода для установки значения свойства
+	public String resolvePropertySet(String name, String value) throws ParseException
 	{
-		if (args == null) return args;
+		PropertyInfo prop = getProperty(name);
+		if (prop == null)
+			throw new ParseException("Not found property " + name + " for value " + value);
+
+		return prop.resolveSet(value);
+	}
+
+	public String resolveConstruct(InstanceDescription parent, String[] args) throws ParseException
+	{
+		if (args == null) return _type.getElementName() + "()";
 
 		String[] res = new String[args.length];
 
 		for (IMethod c : _constructors)
 		{
-			if (c.getParameterTypes().length != args.length) continue;
+			String[] types = c.getParameterTypes();
+			if (types.length == 0) continue;
+
+			if (types[0].startsWith("Q") && types[0].endsWith(";") && types.length == 1 + args.length)
+			{
+				String t0 = types[0];
+				t0 = t0.substring(1, t0.length() - 1);
+				if (parent.isSubclass(t0))
+				{
+					// Первый параметр-родитель	
+					try
+					{
+						for (int i = 0; i < args.length; i++)
+							res[i] = resolve(args[i], types[i + 1]);
+
+						return _type.getElementName() + "(" + parent.varName + ", " + join(res) + ")";
+					}
+					catch (Exception e)
+					{
+					}
+				}
+			}
+
+			// Обычные параметры
+			if (types.length != args.length) continue;
 
 			try
 			{
 				for (int i = 0; i < args.length; i++)
-					res[i] = resolve(args[i], c.getParameterTypes()[i]);
+					res[i] = resolve(args[i], types[i]);
 
-				return res;
+				return _type.getElementName() + "(" + join(res) + ")";
 			}
 			catch (Exception e)
 			{
@@ -213,36 +259,38 @@ public abstract class ClassInfo
 		throw new ParseException("Not found constructor for arguments: " + String.join(", ", args));
 	}
 
-	public String resolvePropertySet(String name, String value) throws ParseException
+	protected String join(String[] args)
 	{
-		PropertyInfo prop = getProperty(name);
-
-		ArrayList<IMethod> setters = prop.getSetters();
-		for (IMethod m : setters)
-		{
-			if (m.getParameterTypes().length != 1) continue;
-
-			try
-			{
-				return resolve(value, m.getParameterTypes()[0]);
-			}
-			catch (Exception e)
-			{
-			}
-		}
-
-		if (_baseClass != null)
-			return _baseClass.resolvePropertySet(name, value);
-
-		throw new ParseException("Not found property " + name + " for value " + value);
+		if (args == null)
+			return "";
+		return String.join(", ", args);
 	}
 
-	public String[] resolveCall(String name, String[] args) throws ParseException
+	public boolean isSubclass(String className)
 	{
-		String[] res = new String[args.length];
+		return _type.getElementName().equals(className) || (_baseClass != null && _baseClass.isSubclass(className));
+	}
 
+	public String resolveCall(String name, String[] args) throws ParseException
+	{
 		try
 		{
+			if (args == null || args.length == 0) // Ищем метод без аргументов
+			{
+				for (IMethod m : _type.getMethods())
+				{
+					if (!m.getElementName().equals(name)) continue;
+					if (m.getParameterTypes().length == 0)
+						return m.getElementName() + "()";
+				}
+
+				if (_baseClass != null)
+					return _baseClass.resolveCall(name, args);
+				throw new ParseException("Method not found " + name + "()");
+			}
+
+			String[] res = new String[args.length];
+
 			for (IMethod m : _type.getMethods())
 			{
 				if (!m.getElementName().equals(name)) continue;
@@ -253,7 +301,7 @@ public abstract class ClassInfo
 					for (int i = 0; i < args.length; i++)
 						res[i] = resolve(args[i], m.getParameterTypes()[i]);
 
-					return res;
+					return _type.getElementName() + "." + name + "(" + join(res) + ")";
 				}
 				catch (Exception e)
 				{
@@ -267,6 +315,6 @@ public abstract class ClassInfo
 		if (_baseClass != null)
 			return _baseClass.resolveCall(name, args);
 
-		throw new ParseException("Not found method " + name + "(" + String.join(", ", args + ")"));
+		throw new ParseException("Method not found " + name + "(" + String.join(", ", args + ")"));
 	}
 }

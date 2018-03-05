@@ -11,7 +11,8 @@ import org.eclipse.jdt.core.JavaModelException;
 
 public class UICompiler
 {
-	private IJavaProject javaProject;
+	private IProject _project;
+	private IJavaProject _javaProject;
 
 	public final ClassStorage<ControlInfo> controls = new ClassStorage<>(ControlInfo.class, this);
 	public final ClassStorage<LayoutInfo> layouts = new ClassStorage<>(LayoutInfo.class, this);
@@ -19,9 +20,15 @@ public class UICompiler
 
 	public UICompiler(IProject project)
 	{
-		javaProject = JavaCore.create(project);
+		_project = project;
+		_javaProject = JavaCore.create(project);
 	}
 
+	public void craeteModel()
+	{
+		_javaProject = JavaCore.create(_project); 
+	}
+	
 	public void refresh()
 	{
 		try
@@ -35,11 +42,24 @@ public class UICompiler
 		}
 	}
 
+
+	public IType getType(String t)
+	{
+		try
+		{
+			return _javaProject.findType(t);
+		}
+		catch (JavaModelException e)
+		{
+			return null;
+		}
+	}
+	
 	private void findControls() throws Exception
 	{
 		controls.clear();
 		
-		IType baseType = javaProject.findType("com.deadman.jgame.ui.Control");
+		IType baseType = _javaProject.findType("com.deadman.jgame.ui.Control");
 		if (baseType == null)
 			throw new Exception();
 
@@ -53,7 +73,7 @@ public class UICompiler
 		layouts.clear();
 		layoutSettings.clear();
 		
-		IType baseType = javaProject.findType("com.deadman.jgame.ui.Layout");
+		IType baseType = _javaProject.findType("com.deadman.jgame.ui.Layout");
 		if (baseType == null)
 			throw new Exception();
 
@@ -78,5 +98,42 @@ public class UICompiler
 	{
 		UIParser parser = new UIParser(this);
 		parser.parse(file);
+	}
+
+	public String stringToType(String value, String type) throws Exception
+	{
+		// Число
+		if (type.equals("D"))
+		{
+			double d = Double.parseDouble(value);
+			return Double.toString(d);
+		}
+		else if (type.equals("I")) // Integer
+		{
+			if (value.startsWith("0x"))
+			{
+				int i = Integer.parseInt(value.substring(2), 16);
+				return Integer.toString(i);				
+			}
+			int i = Integer.parseInt(value);
+			return Integer.toString(i);
+		}
+		else if (type.equals("Z")) // Boolean
+		{
+			boolean b = Boolean.parseBoolean(value);
+			return Boolean.toString(b);
+		}
+		else if (type.equals("J")) // Long
+		{
+			long l = Long.parseLong(value);
+			return Long.toString(l);
+		}
+		else if (type.equals("QString;"))
+		{
+			if (value.startsWith("\"") && value.endsWith("\"")) return value;
+			return "\"" + value.replace("\"", "\\\"") + "\"";
+		}
+		else
+			return null;
 	}
 }

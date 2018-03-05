@@ -15,23 +15,26 @@ public class MainMenuItem extends Control
 
 	private final int FOCUSED_COLOR = 0x30ffffff;
 
-	public MainMenuItem(MainMenu menu, String text, boolean root)
+
+	public MainMenuItem(MainMenu menu, String text)
 	{
 		this.menu = menu;
 		label = new Label(menu.font, 2, 1, text);
 		addControl(label);
 
-		if (root)
-		{
-			height = label.height + 2;
-			width = label.width + 4;
-		}
-		else
-		{
-			width = 42;
-			height = label.height + 4;
-			label.y = 2;
-		}
+		height = label.height + 2;
+		width = label.width + 4;
+	}
+	
+	public MainMenuItem(MainMenuItem parent, String text)
+	{
+		menu = parent.menu;
+		label = new Label(menu.font, 2, 1, text);
+		addControl(label);
+
+		width = 42;
+		height = label.height + 4;
+		label.y = 2;
 	}
 
 	public int id()
@@ -70,7 +73,7 @@ public class MainMenuItem extends Control
 			subItemsPanel = menu.createSubMenuPanel();
 		}
 
-		MainMenuItem it = new MainMenuItem(menu, text, false);
+		MainMenuItem it = new MainMenuItem(this, text);
 		it.x = 2;
 		it.tag = id;
 

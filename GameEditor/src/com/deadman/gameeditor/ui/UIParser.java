@@ -10,7 +10,7 @@ import org.eclipse.core.runtime.CoreException;
 
 public class UIParser
 {
-	private UICompiler _compiler;
+	private final UICompiler _compiler;
 
 	public UIParser(UICompiler compiler)
 	{
@@ -66,11 +66,13 @@ public class UIParser
 
 					if ((control = _compiler.controls.get(word)) != null)
 					{
-						currentControl = control.createDescription(currentControl, spaces, getCallArgs());
+						currentControl = control.createDescription(currentControl, spaces);
+						currentControl.setConstruct(getCallArgs());
 					}
 					else if ((layout = _compiler.layouts.get(word)) != null)
 					{
-						currentControl.layout = layout.createDescription(spaces, getCallArgs());
+						currentControl.layout = layout.createDescription(currentControl, spaces);
+						currentControl.layout.setConstruct(getCallArgs());
 					}
 					else if (currentControl == null) // Дальше пойдут свойства и методы, поэтому проверяем наличие элемента в корне
 					{
@@ -82,7 +84,7 @@ public class UIParser
 					else if (word.equals("id"))
 					{
 						skipAssign();
-						currentControl.id = getJavaIdentifier();
+						currentControl.varName = getJavaIdentifier();
 					}
 					else if (currentControl.hasProperty(word))
 					{

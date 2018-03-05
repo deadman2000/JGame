@@ -5,7 +5,7 @@ import org.eclipse.jdt.core.IType;
 public class LayoutInfo extends ClassInfo
 {
 	public LayoutSettingsInfo settings;
-	
+
 	@Override
 	public void init(UICompiler compiler, IType type)
 	{
@@ -29,10 +29,10 @@ public class LayoutInfo extends ClassInfo
 			e.printStackTrace();
 		}
 	}
-	
-	public LayoutDescription createDescription(int deep, String[] constructorArgs) throws ParseException
+
+	public LayoutDescription createDescription(ControlDescription parent, int deep) throws ParseException
 	{
-		return new LayoutDescription(this, deep, constructorArgs);
+		return new LayoutDescription(this, parent, deep);
 	}
 
 	@Override

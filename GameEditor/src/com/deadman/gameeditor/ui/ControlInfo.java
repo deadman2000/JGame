@@ -2,11 +2,9 @@ package com.deadman.gameeditor.ui;
 
 public class ControlInfo extends ClassInfo
 {
-	public ControlDescription createDescription(ControlDescription parent, int deep, String[] constructorArgs) throws ParseException
+	public ControlDescription createDescription(ControlDescription parent, int deep) throws ParseException
 	{
-		ControlDescription control = new ControlDescription(this, deep, constructorArgs);
-		if (parent != null)
-			parent.addChild(control);
+		ControlDescription control = new ControlDescription(this, parent, deep);
 		return control;
 	}
 

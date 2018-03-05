@@ -345,4 +345,13 @@ public class GameResources
 			res.scheduleCompileUI(file);
 		}
 	}
+
+	public static void invalidateModel(IProject proj)
+	{
+		GameResources res = getRes(proj);
+		if (res != null)
+		{
+			res.uiCompiler.craeteModel();
+		}
+	}
 }

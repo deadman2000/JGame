@@ -36,7 +36,7 @@ public class MainMenu extends Row implements IOverlayListener
 
 	public MainMenuItem addItem(String text)
 	{
-		MainMenuItem it = new MainMenuItem(this, text, true);
+		MainMenuItem it = new MainMenuItem(this, text);
 		addControl(it);
 		return it;
 	}
