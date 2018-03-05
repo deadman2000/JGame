@@ -8,7 +8,6 @@ import com.deadman.dh.battle.BattleSide;
 import com.deadman.dh.battle.ComputerSide;
 import com.deadman.dh.battle.MissionEngine;
 import com.deadman.dh.battle.PlayerSide;
-import com.deadman.dh.model.itemtypes.ItemType;
 
 public class BattleSideInfo
 {
@@ -46,7 +45,7 @@ public class BattleSideInfo
 			{
 				GameCharacter ch = GameCharacter.generateClass(ui.type, engine.mission.level);
 				ch.name = "Unit #" + j;
-				ch.equip(ItemType.sword);
+				ch.equip(Game.ItemTypes.sword);
 				side.addUnit(ch);
 			}
 		}

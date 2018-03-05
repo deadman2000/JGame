@@ -18,7 +18,6 @@ import com.deadman.jgame.drawing.Drawable;
 import com.deadman.jgame.drawing.GameScreen;
 import com.deadman.jgame.drawing.Picture;
 import com.deadman.jgame.ui.Control;
-import com.deadman.jgame.ui.Label;
 import com.deadman.jgame.ui.RelativeLayout;
 import com.jogamp.opengl.GL2;
 

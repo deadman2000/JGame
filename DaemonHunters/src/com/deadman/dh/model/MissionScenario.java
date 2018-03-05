@@ -3,6 +3,7 @@ package com.deadman.dh.model;
 import java.util.ArrayList;
 import java.util.Random;
 
+import com.deadman.dh.Game;
 import com.deadman.dh.R;
 import com.deadman.dh.battle.BattleSide;
 import com.deadman.dh.battle.MissionEngine;
@@ -11,7 +12,6 @@ import com.deadman.dh.global.GlobalEngine;
 import com.deadman.dh.isometric.IsoMap;
 import com.deadman.dh.isometric.MapCell;
 import com.deadman.dh.model.items.Item;
-import com.deadman.dh.model.itemtypes.ItemType;
 
 public class MissionScenario
 {
@@ -74,13 +74,13 @@ public class MissionScenario
 					for (int i = 0; i < c.items.size(); i++)
 					{
 						Item it = c.items.get(i);
-						if (it.type == ItemType.player1)
+						if (it.type == Game.ItemTypes.player1)
 						{
 							c.items.remove(i);
 							i--;
 							c.setUnit(units[0].popUnit());
 						}
-						else if (it.type == ItemType.player2)
+						else if (it.type == Game.ItemTypes.player2)
 						{
 							c.items.remove(i);
 							i--;

@@ -29,14 +29,13 @@ import com.deadman.dh.model.Poi;
 import com.deadman.dh.model.Squad;
 import com.deadman.dh.model.Unit;
 import com.deadman.dh.model.UnitListener;
-import com.deadman.dh.model.items.ItemsGrid;
-import com.deadman.dh.model.items.ItemsGridList;
 import com.deadman.dh.model.items.AmmunitionGrid;
 import com.deadman.dh.model.items.Item;
 import com.deadman.dh.model.items.ItemMovingValidator;
 import com.deadman.dh.model.items.ItemSlot;
+import com.deadman.dh.model.items.ItemsGrid;
+import com.deadman.dh.model.items.ItemsGridList;
 import com.deadman.dh.model.items.Weapon;
-import com.deadman.dh.model.itemtypes.ItemType;
 import com.deadman.jgame.GameEngine;
 import com.deadman.jgame.GameLoop;
 import com.deadman.jgame.drawing.Drawable;
@@ -94,19 +93,19 @@ public class MissionEngine extends GameEngine
 			Unit u = Unit.generate();
 			squad.setUnit(u, i);
 
-			ItemType.red_potion
+			Game.ItemTypes.red_potion
 					.generate()
 					.moveTo(u.backpack, 0, 0);
-			u.equip(ItemType.armor);
-			u.equip(ItemType.book);
-			u.give(ItemType.torch);
+			u.equip(Game.ItemTypes.armor);
+			u.equip(Game.ItemTypes.book);
+			u.give(Game.ItemTypes.torch);
 
 			if (i < 2)
-				u.equip(ItemType.sword);
+				u.equip(Game.ItemTypes.sword);
 			else
 			{
-				u.equip(ItemType.bow);
-				ItemType.arrow
+				u.equip(Game.ItemTypes.bow);
+				Game.ItemTypes.arrow
 						.generate()
 						.setCount(100)
 						.moveTo(u.backpack, 0, 0);

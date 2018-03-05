@@ -1,7 +1,7 @@
 package com.deadman.dh.model.items;
 
+import com.deadman.dh.Game;
 import com.deadman.dh.model.GameCharacter;
-import com.deadman.dh.model.itemtypes.ItemType;
 
 /**
  * Мертвый персонаж на полу
@@ -12,7 +12,7 @@ public class Corpse extends Item
 	
 	public Corpse(GameCharacter character)
 	{
-		super(ItemType.dead_unit);
+		super(Game.ItemTypes.dead_unit);
 		
 		this.character = character;
 	}

@@ -9,10 +9,20 @@ import com.deadman.dh.global.GlobalEngine;
 import com.deadman.dh.guild.Guild;
 import com.deadman.dh.isometric.IsoMap;
 import com.deadman.dh.isometric.editor.IsoEditor;
+import com.deadman.dh.model.Element;
 import com.deadman.dh.model.GlobalMap;
 import com.deadman.dh.model.Mission;
 import com.deadman.dh.model.Squad;
+import com.deadman.dh.model.items.HealEffect;
 import com.deadman.dh.model.items.ItemCursor;
+import com.deadman.dh.model.itemtypes.AmmunitionType;
+import com.deadman.dh.model.itemtypes.ArmorType;
+import com.deadman.dh.model.itemtypes.ItemType;
+import com.deadman.dh.model.itemtypes.MeeleWeaponType;
+import com.deadman.dh.model.itemtypes.PotionType;
+import com.deadman.dh.model.itemtypes.RangedWeaponType;
+import com.deadman.dh.model.itemtypes.TorchType;
+import com.deadman.dh.model.itemtypes.WeaponType;
 import com.deadman.dh.resources.GameResources;
 import com.deadman.jgame.GameLoop;
 import com.deadman.jgame.drawing.Drawable;
@@ -176,4 +186,20 @@ public class Game
 		return new HScrollBar(R.ui.hscroll_gray_up, R.ui.hscroll_gray_up_pr, R.ui.hscroll_gray, R.ui.hscroll_gray_pr, R.ui.hscroll_gray_down, R.ui.hscroll_gray_down_pr);
 	}
 
+	public static final class ItemTypes
+	{
+		public static final MeeleWeaponType sword = new MeeleWeaponType(0, R.items.sword, 30).damage(Element.PHYSICAL, 10, 5);
+		public static final WeaponType bow = new RangedWeaponType(1, R.items.bow, 120).twoHanded();
+		public static final ItemType red_potion = new PotionType(2, R.items.red_potion).addEffect(new HealEffect(50));
+		public static final ArmorType armor = new ArmorType(3, ArmorType.BODY, R.items.armor);
+		public static final ItemType shield = new ItemType(4, R.items.shield);
+		public static final AmmunitionType arrow = new AmmunitionType(5, R.items.arrow);
+		public static final ItemType bottle = new ItemType(6, R.items.bottle);
+		public static final ItemType book = new ItemType(7, R.items.book);
+		public static final ItemType torch = new TorchType(8, R.items.torch, 10).setIso(R.iso.SmallTorh);
+		public static final ItemType dead_unit = new ItemType(9, R.items.dead_unit);
+
+		public static final ItemType player1 = new ItemType(10001, R.items.player1).setIso(R.iso.Player1);
+		public static final ItemType player2 = new ItemType(10002, R.items.player2).setIso(R.iso.Player2);
+	}
 }

@@ -187,8 +187,6 @@
 			<pathelement path="${buildDirectory}/nestedJars/org.eclipse.jdt.compiler.tool_1.2.51.v20171122-1403/lib/java9api.jar"/>
 			<pathelement path="C:/Users/DEADMAN/.p2/pool/plugins/org.eclipse.jdt.compiler.tool_1.2.51.v20171122-1403.jar"/>
 			<pathelement path="C:/Users/DEADMAN/.p2/pool/plugins/org.eclipse.team.core_3.8.100.v20170516-0820.jar"/>
-			<pathelement path="swing2swt.jar"/>
-			<pathelement path="${build.result.folder}/../com.deadman.gameeditor_1.0.6/swing2swt.jar"/>
 		</path>
 		<!-- compile the source code -->
 		<javac destdir="${build.result.folder}/@dot" failonerror="${javacFailOnError}" verbose="${javacVerbose}" debug="${javacDebugInfo}" includeAntRuntime="no" bootclasspath="${bundleBootClasspath}" source="${bundleJavacSource}" target="${bundleJavacTarget}"		>
@@ -255,7 +253,7 @@
 		</copy>
 		<antcall target="apitools.generation">
 			<param name="projectLocation" value="${basedir}"/>
-			<param name="binary.folders" value="${build.result.folder}/@dot;D:\Projects\JGame\GameEditor/swing2swt.jar"/>
+			<param name="binary.folders" value="${build.result.folder}/@dot"/>
 			<param name="projectName" value="${bundleId}_${bundleVersion}"/>
 			<param name="target.folder" value="${build.result.folder}"/>
 		</antcall>
@@ -284,7 +282,7 @@
 		</copy>
 		<antcall target="apitools.generation">
 			<param name="projectLocation" value="${basedir}"/>
-			<param name="binary.folders" value="${build.result.folder}/@dot;D:\Projects\JGame\GameEditor/swing2swt.jar"/>
+			<param name="binary.folders" value="${build.result.folder}/@dot"/>
 			<param name="projectName" value="${bundleId}_${bundleVersion}"/>
 			<param name="target.folder" value="${destination.temp.folder}/com.deadman.gameeditor_1.0.6"/>
 		</antcall>

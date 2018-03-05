@@ -14,7 +14,6 @@ import com.deadman.dh.model.Rectangle;
 import com.deadman.dh.model.Squad;
 import com.deadman.dh.model.Unit;
 import com.deadman.dh.model.items.ItemsPage;
-import com.deadman.dh.model.itemtypes.ItemType;
 import com.deadman.jgame.drawing.Drawable;
 
 public class Guild
@@ -47,23 +46,23 @@ public class Guild
 		marker = Drawable.get(R.ui.red_flag); // .getShifted(city.id * 333)
 
 		storage = new ItemsPage("Storage", 10, 2);
-		ItemType.sword
+		Game.ItemTypes.sword
 				.generate()
 				.moveTo(storage, 0, 0);
-		ItemType.bow
+		Game.ItemTypes.bow
 				.generate()
 				.moveTo(storage, 0, 1);
-		ItemType.red_potion
+		Game.ItemTypes.red_potion
 				.generate()
 				.moveTo(storage, 1, 0);
-		ItemType.bottle
+		Game.ItemTypes.bottle
 				.generate()
 				.setCount(5)
 				.moveTo(storage, 1, 1);
-		ItemType.shield
+		Game.ItemTypes.shield
 				.generate()
 				.moveTo(storage, 2, 0);
-		ItemType.arrow
+		Game.ItemTypes.arrow
 				.generate()
 				.setCount(100)
 				.moveTo(storage, 2, 1);
@@ -144,24 +143,24 @@ public class Guild
 		{
 			Unit u = Unit.generate();
 
-			ItemType.red_potion
+			Game.ItemTypes.red_potion
 					.generate()
 					.equip(u);
 
-			ItemType.torch
+			Game.ItemTypes.torch
 					.generate()
 					.equip(u);
 
 			if (i < 2)
-				ItemType.sword
+				Game.ItemTypes.sword
 						.generate()
 						.equip(u);
 			else
 			{
-				ItemType.bow
+				Game.ItemTypes.bow
 						.generate()
 						.equip(u);
-				ItemType.arrow
+				Game.ItemTypes.arrow
 						.generate()
 						.setCount(100)
 						.equip(u);

@@ -40,6 +40,7 @@ public class ItemInfoPanel extends Control
 		if (_item == item) return;
 		_item = item;
 
+		System.out.println(item.getName());
 		_itemName.setText(item.getName());
 		StringBuilder sbDescr = new StringBuilder();
 		item.appendDescription(sbDescr);

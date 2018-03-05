@@ -86,7 +86,7 @@ public class GameCharacter extends IsoObject implements IItemsPageListener
 			ch.body = GameResources.main.getIso("human_leather")
 					.colorize(ch.id);
 
-			ch.equip(ItemType.armor);
+			ch.equip(Game.ItemTypes.armor);
 			ch.hpMax = 50 + level * 10;
 			ch.hpCount = ch.hpMax;
 
@@ -95,7 +95,7 @@ public class GameCharacter extends IsoObject implements IItemsPageListener
 			ch.intl = 10;
 			ch.calcAttributes();
 
-			ch.equip(ItemType.red_potion);
+			ch.equip(Game.ItemTypes.red_potion);
 		}
 		else
 		{
