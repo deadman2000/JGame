@@ -49,4 +49,10 @@ public class ClassStorage<E extends ClassInfo>
 	{
 		return _map.get(name);
 	}
+
+	public void resetVars()
+	{
+		for (ClassInfo c : _map.values())
+			c.resetVars();
+	}
 }

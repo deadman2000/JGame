@@ -21,12 +21,17 @@ public abstract class ClassInfo
 	protected UICompiler compiler;
 	private ArrayList<IMethod> _constructors;
 
+	String _varPrefix;
+	int _varCount = 0;
+
 	public void init(UICompiler compiler, IType type)
 	{
 		this.compiler = compiler;
 		_type = type;
 		_properties = new HashMap<>();
 		_constructors = new ArrayList<>();
+
+		_varPrefix = compiler.getVarPrefix(type);
 
 		try
 		{
@@ -74,6 +79,11 @@ public abstract class ClassInfo
 	public IType type()
 	{
 		return _type;
+	}
+
+	public String className()
+	{
+		return _type.getElementName();
 	}
 
 	protected abstract ClassStorage<?> getStorage();
@@ -176,7 +186,6 @@ public abstract class ClassInfo
 		{
 			int i = value.lastIndexOf('.');
 			String typeName = value.substring(0, i);
-			System.out.println("Finding type " + typeName);
 			IType t = compiler.getType("com.deadman.dh." + typeName);
 			if (t != null)
 			{
@@ -212,7 +221,7 @@ public abstract class ClassInfo
 
 	public String resolveConstruct(InstanceDescription parent, String[] args) throws ParseException
 	{
-		if (args == null) return _type.getElementName() + "()";
+		if (args == null) return className() + "()";
 
 		String[] res = new String[args.length];
 
@@ -233,7 +242,7 @@ public abstract class ClassInfo
 						for (int i = 0; i < args.length; i++)
 							res[i] = resolve(args[i], types[i + 1]);
 
-						return _type.getElementName() + "(" + parent.varName + ", " + join(res) + ")";
+						return className() + "(" + parent.varName + ", " + join(res) + ")";
 					}
 					catch (Exception e)
 					{
@@ -249,7 +258,7 @@ public abstract class ClassInfo
 				for (int i = 0; i < args.length; i++)
 					res[i] = resolve(args[i], types[i]);
 
-				return _type.getElementName() + "(" + join(res) + ")";
+				return className() + "(" + join(res) + ")";
 			}
 			catch (Exception e)
 			{
@@ -301,7 +310,7 @@ public abstract class ClassInfo
 					for (int i = 0; i < args.length; i++)
 						res[i] = resolve(args[i], m.getParameterTypes()[i]);
 
-					return _type.getElementName() + "." + name + "(" + join(res) + ")";
+					return m.getElementName() + "(" + join(res) + ")";
 				}
 				catch (Exception e)
 				{
@@ -316,5 +325,15 @@ public abstract class ClassInfo
 			return _baseClass.resolveCall(name, args);
 
 		throw new ParseException("Method not found " + name + "(" + String.join(", ", args + ")"));
+	}
+
+	public String generateVarName()
+	{
+		return _varPrefix + ++_varCount;
+	}
+
+	public void resetVars()
+	{
+		_varCount = 0;
 	}
 }
