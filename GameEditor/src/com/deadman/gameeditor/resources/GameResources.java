@@ -73,26 +73,35 @@ public class GameResources
 		return res.containsFile(file);
 	}
 
-	private IProject _project;
+	public final IProject project;
 	private IFile _resourceFile;
 
 	public IJavaProject javaProject;
 
 	public IFolder res;
 	public String pckg;
-	
+
 	private UICompiler uiCompiler;
 
 	private ResourceGroup root;
 
 	private GameResources(IProject project)
 	{
-		_project = project;
+		this.project = project;
 		_resourceFile = project.getFile("/resources.xml");
 		javaProject = JavaCore.create(project);
-		
-		uiCompiler = new UICompiler(project);
+
+		uiCompiler = new UICompiler(this);
 		uiCompiler.refresh();
+
+		try
+		{
+			parseXML();
+		}
+		catch (Exception e)
+		{
+			System.err.println(e);
+		}
 	}
 
 	private boolean containsFile(IFile file)
@@ -126,13 +135,13 @@ public class GameResources
 				return Status.OK_STATUS;
 			}
 		};
-		job.setRule(_project.getWorkspace().getRoot());
+		job.setRule(project.getWorkspace().getRoot());
 		job.schedule();
 	}
 
 	private void build() throws Exception
 	{
-		System.out.println(_project.getName() + " Building...");
+		System.out.println(project.getName() + " Building...");
 
 		if (!_resourceFile.exists())
 			return;
@@ -303,14 +312,14 @@ public class GameResources
 		}
 		return xcf;
 	}
-	
+
 	// UI Compiling
 
 	public void addUI(IFile file)
 	{
 		uiCompiler.compile(file);
 	}
-	
+
 	public void scheduleCompileUI(IFile file)
 	{
 		WorkspaceJob job = new WorkspaceJob("Generating ui")
@@ -333,7 +342,7 @@ public class GameResources
 				return Status.OK_STATUS;
 			}
 		};
-		job.setRule(_project.getWorkspace().getRoot());
+		job.setRule(project.getWorkspace().getRoot());
 		job.schedule();
 	}
 
@@ -346,12 +355,12 @@ public class GameResources
 		}
 	}
 
-	public static void invalidateModel(IProject proj)
+	public static void invalidateModel(IProject project)
 	{
-		GameResources res = getRes(proj);
+		GameResources res = getRes(project);
 		if (res != null)
 		{
-			res.uiCompiler.craeteModel();
+			res.javaProject = JavaCore.create(project);
 		}
 	}
 }

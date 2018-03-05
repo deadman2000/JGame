@@ -173,7 +173,7 @@ public abstract class ClassInfo
 		// Пытаемся преобразовать в базовый тип
 		try
 		{
-			String v = compiler.stringToType(value, type);
+			String v = stringToType(value, type);
 			if (v != null)
 				return v;
 		}
@@ -209,6 +209,43 @@ public abstract class ClassInfo
 		throw new Exception();
 	}
 
+	public String stringToType(String value, String type) throws Exception
+	{
+		// Число
+		if (type.equals("D"))
+		{
+			double d = Double.parseDouble(value);
+			return Double.toString(d);
+		}
+		else if (type.equals("I")) // Integer
+		{
+			if (value.startsWith("0x"))
+			{
+				int i = Integer.parseInt(value.substring(2), 16);
+				return Integer.toString(i);
+			}
+			int i = Integer.parseInt(value);
+			return Integer.toString(i);
+		}
+		else if (type.equals("Z")) // Boolean
+		{
+			boolean b = Boolean.parseBoolean(value);
+			return Boolean.toString(b);
+		}
+		else if (type.equals("J")) // Long
+		{
+			long l = Long.parseLong(value);
+			return Long.toString(l);
+		}
+		else if (type.equals("QString;"))
+		{
+			if (value.startsWith("\"") && value.endsWith("\"")) return value;
+			return "\"" + value.replace("\"", "\\\"") + "\"";
+		}
+		else
+			return null;
+	}
+
 	// Возвращает строку кода для установки значения свойства
 	public String resolvePropertySet(String name, String value) throws ParseException
 	{
@@ -242,7 +279,7 @@ public abstract class ClassInfo
 						for (int i = 0; i < args.length; i++)
 							res[i] = resolve(args[i], types[i + 1]);
 
-						return className() + "(" + parent.varName + ", " + join(res) + ")";
+						return className() + "(%2$s, " + join(res) + ")";
 					}
 					catch (Exception e)
 					{

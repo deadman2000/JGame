@@ -24,12 +24,12 @@ public class ControlDescription extends InstanceDescription
 	public void setProperty(String name, String value) throws ParseException
 	{
 		String code = info.resolvePropertySet(name, value);
-		System.out.println(varName + "." + code);
+		addLine("%1$s." + code + ";");
 	}
 
 	public void addCall(String name, String[] callArgs) throws ParseException
 	{
 		String code = info.resolveCall(name, callArgs);
-		System.out.println(varName + "." + code);
+		addLine("%1$s." + code + ";");
 	}
 }

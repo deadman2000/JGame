@@ -11,25 +11,32 @@ import org.eclipse.core.runtime.CoreException;
 public class UIParser
 {
 	private final UICompiler _compiler;
+	private final IFile _file;
 
-	public UIParser(UICompiler compiler)
+	// File variables
+	private StringBuilder _code;
+	private ControlDescription _rootControl;
+
+	// Current line variables
+	private int lineNumber;
+	private int lineIndex;
+	private String line;
+	private ControlDescription currentControl;
+
+	public UIParser(UICompiler compiler, IFile file)
 	{
 		_compiler = compiler;
+		_file = file;
 	}
 
-	int lineNumber;
-	int lineIndex;
-	String line;
-	ControlDescription currentControl;
-
-	public void parse(IFile file)
+	public void parse()
 	{
 		lineNumber = 0;
 		currentControl = null;
 
 		try
 		{
-			file.deleteMarkers(IMarker.PROBLEM, true, IFile.DEPTH_INFINITE);
+			_file.deleteMarkers(IMarker.PROBLEM, true, IFile.DEPTH_INFINITE);
 		}
 		catch (CoreException e)
 		{
@@ -37,7 +44,7 @@ public class UIParser
 
 		try
 		{
-			BufferedReader in = new BufferedReader(new InputStreamReader(file.getContents(true)));
+			BufferedReader in = new BufferedReader(new InputStreamReader(_file.getContents(true)));
 
 			while ((line = in.readLine()) != null)
 			{
@@ -68,6 +75,8 @@ public class UIParser
 					{
 						currentControl = control.createDescription(currentControl, spaces);
 						currentControl.setConstruct(getCallArgs());
+
+						if (_rootControl == null) _rootControl = currentControl;
 					}
 					else if ((layout = _compiler.layouts.get(word)) != null)
 					{
@@ -80,6 +89,7 @@ public class UIParser
 					}
 					else if (word.equals("L"))
 					{
+						// TODO
 					}
 					else if (word.equals("id"))
 					{
@@ -101,18 +111,54 @@ public class UIParser
 				}
 				catch (ParseException pe)
 				{
-					IMarker marker = file.createMarker(IMarker.PROBLEM);
+					IMarker marker = _file.createMarker(IMarker.PROBLEM);
 					marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
 					marker.setAttribute(IMarker.MESSAGE, pe.getMessage());
 					marker.setAttribute(IMarker.LINE_NUMBER, lineNumber);
 				}
 			}
+
+			buildSource();
 		}
 		catch (Exception e)
 		{
 			System.err.println(String.format("Exception %s at line %s char %s: %s", e.getMessage(), lineNumber, lineIndex, line));
 			e.printStackTrace();
 		}
+	}
+
+	private void buildSource()
+	{
+		String className = _file.getName().replace('.', '_');
+
+		_code = new StringBuilder();
+
+		_code.append("package ").append(_compiler.resources.pckg).append(";\r\n");
+		// TODO Imports
+		_code.append("\r\n");
+
+		_code.append("public class ").append(className).append(" {\r\n");
+		appendIndent(1).append(className).append("() {\r\n");
+		_rootControl.writeCode(this, 2);
+		appendIndent(1).append("}\r\n");
+		_code.append("}");
+
+		System.out.println(_code);
+		_code = null;
+	}
+
+	public StringBuilder appendIndent(int indent)
+	{
+		if (indent > 0)
+			for (int i = 0; i < indent; i++)
+			_code.append('\t');
+		return _code;
+	}
+
+	public void appendLine(int indent, String text)
+	{
+		appendIndent(indent);
+		_code.append(text).append("\r\n");
 	}
 
 	private Character currentSymbol()
@@ -177,7 +223,7 @@ public class UIParser
 	{
 		skipSpaces();
 		checkEndOfLine();
-		
+
 		if (!Character.isJavaIdentifierStart(currentSymbol()))
 			throw new ParseException("Wrong identifier");
 

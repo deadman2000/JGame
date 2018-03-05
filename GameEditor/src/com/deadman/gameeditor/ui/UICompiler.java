@@ -8,13 +8,13 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.ITypeHierarchy;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
+
+import com.deadman.gameeditor.resources.GameResources;
 
 public class UICompiler
 {
-	private IProject _project;
-	private IJavaProject _javaProject;
+	public final GameResources resources;
 
 	private HashSet<String> _varPrefixes = new HashSet<>();
 
@@ -22,15 +22,19 @@ public class UICompiler
 	public final ClassStorage<LayoutInfo> layouts = new ClassStorage<>(LayoutInfo.class, this);
 	public final ClassStorage<LayoutSettingsInfo> layoutSettings = new ClassStorage<>(LayoutSettingsInfo.class, this);
 
-	public UICompiler(IProject project)
+	public UICompiler(GameResources res)
 	{
-		_project = project;
-		_javaProject = JavaCore.create(project);
+		resources = res;
 	}
 
-	public void craeteModel()
+	public IProject project()
 	{
-		_javaProject = JavaCore.create(_project);
+		return resources.project;
+	}
+
+	public IJavaProject javaProject()
+	{
+		return resources.javaProject;
 	}
 
 	public void refresh()
@@ -50,7 +54,7 @@ public class UICompiler
 	{
 		try
 		{
-			return _javaProject.findType(t);
+			return javaProject().findType(t);
 		}
 		catch (JavaModelException e)
 		{
@@ -62,7 +66,7 @@ public class UICompiler
 	{
 		controls.clear();
 
-		IType baseType = _javaProject.findType("com.deadman.jgame.ui.Control");
+		IType baseType = javaProject().findType("com.deadman.jgame.ui.Control");
 		if (baseType == null)
 			throw new Exception();
 
@@ -76,7 +80,7 @@ public class UICompiler
 		layouts.clear();
 		layoutSettings.clear();
 
-		IType baseType = _javaProject.findType("com.deadman.jgame.ui.Layout");
+		IType baseType = javaProject().findType("com.deadman.jgame.ui.Layout");
 		if (baseType == null)
 			throw new Exception();
 
@@ -102,46 +106,9 @@ public class UICompiler
 		controls.resetVars();
 		layouts.resetVars();
 		layoutSettings.resetVars();
-		
-		UIParser parser = new UIParser(this);
-		parser.parse(file);
-	}
 
-	public String stringToType(String value, String type) throws Exception
-	{
-		// Число
-		if (type.equals("D"))
-		{
-			double d = Double.parseDouble(value);
-			return Double.toString(d);
-		}
-		else if (type.equals("I")) // Integer
-		{
-			if (value.startsWith("0x"))
-			{
-				int i = Integer.parseInt(value.substring(2), 16);
-				return Integer.toString(i);
-			}
-			int i = Integer.parseInt(value);
-			return Integer.toString(i);
-		}
-		else if (type.equals("Z")) // Boolean
-		{
-			boolean b = Boolean.parseBoolean(value);
-			return Boolean.toString(b);
-		}
-		else if (type.equals("J")) // Long
-		{
-			long l = Long.parseLong(value);
-			return Long.toString(l);
-		}
-		else if (type.equals("QString;"))
-		{
-			if (value.startsWith("\"") && value.endsWith("\"")) return value;
-			return "\"" + value.replace("\"", "\\\"") + "\"";
-		}
-		else
-			return null;
+		UIParser parser = new UIParser(this, file);
+		parser.parse();
 	}
 
 	public String getVarPrefix(IType type)
