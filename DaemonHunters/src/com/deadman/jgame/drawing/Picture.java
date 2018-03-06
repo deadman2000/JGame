@@ -738,12 +738,24 @@ public class Picture extends Drawable
 		height = h;
 	}
 
+	private Picture copy()
+	{
+		return new Picture(_img, anchorX, anchorY);
+	}
+
 	// Эффекты
 
-	public void outline(int color)
+	public Picture outline(int color)
 	{
-		if (_img == null) return;
+		if (_img == null) return null;
+		
+		Picture copy = copy();
+		copy.makeOutline(color);
+		return copy;
+	}
 
+	public void makeOutline(int color)
+	{
 		resize(width + 2, height + 2, 1, 1);
 
 		for (int y = 0; y < height; y++)
@@ -767,11 +779,18 @@ public class Picture extends Drawable
 			}
 		}
 	}
-
-	public void shadow(int color)
+	
+	public Picture shadow(int color)
 	{
-		if (_img == null) return;
+		if (_img == null) return null;
 
+		Picture copy = copy();
+		copy.makeShadow(color);
+		return copy;
+	}
+
+	private void makeShadow(int color)
+	{
 		resize(width + 1, height + 1, 1, 0);
 		for (int y = 0; y < height; y++)
 		{

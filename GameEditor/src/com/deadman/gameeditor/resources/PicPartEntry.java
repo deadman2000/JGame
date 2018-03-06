@@ -12,8 +12,8 @@ import org.eclipse.core.runtime.CoreException;
 public class PicPartEntry extends ResourceEntry {
 	public ArrayList<PicturePart> parts = new ArrayList<>();
 
-	public PicPartEntry(GameResources res, String name, String path) {
-		super(res, PICPARTS, name, path);
+	public PicPartEntry(ResourceGroup group, String name, String path) {
+		super(group, PICPARTS, name, path);
 	}
 
 	@Override
@@ -23,7 +23,7 @@ public class PicPartEntry extends ResourceEntry {
 			str.append(';').append(p.x).append(',').append(p.y).append(',').append(p.width).append(',').append(p.height).append(',').append(p.aX).append(',').append(p.aY);
 	}
 
-	public static PicPartEntry fromPpr(GameResources resources, String entryName, IFile file) {
+	public static PicPartEntry fromPpr(ResourceGroup group, String entryName, IFile file) {
 		String picName = file.getName();
 		picName = picName.substring(0, picName.length() - file.getFileExtension().length()) + "png";
 		IResource pic = file.getParent().findMember(picName);
@@ -32,7 +32,7 @@ public class PicPartEntry extends ResourceEntry {
 			return null;
 		}
 
-		PicPartEntry ent = new PicPartEntry(resources, entryName, pic.getProjectRelativePath().toString());
+		PicPartEntry ent = new PicPartEntry(group, entryName, pic.getProjectRelativePath().toString());
 
 		try {
 			BufferedReader br = new BufferedReader(new InputStreamReader(file.getContents()));
@@ -53,7 +53,7 @@ public class PicPartEntry extends ResourceEntry {
 		return ent;
 	}
 
-	public static PicPartEntry fromLayers(GameResources resources, String entryName, String path, Layer layer, Layer source) {
+	public static PicPartEntry fromLayers(ResourceGroup group, String entryName, String path, Layer layer, Layer source) {
 		int x1 = layer.absoluteX() - source.absoluteX();
 		int x2 = x1 + layer.width;
 		int w3 = source.width - x2;
@@ -62,7 +62,7 @@ public class PicPartEntry extends ResourceEntry {
 		int y2 = y1 + layer.height;
 		int h3 = source.height - y2;
 
-		PicPartEntry ent = new PicPartEntry(resources, entryName, path);
+		PicPartEntry ent = new PicPartEntry(group, entryName, path);
 
 		ent.parts.add(new PicturePart(0, 0, x1, y1, 0, 0));  // 0:0
 		ent.parts.add(new PicturePart(x1, 0, layer.width, y1, 0, 0)); // 1:0

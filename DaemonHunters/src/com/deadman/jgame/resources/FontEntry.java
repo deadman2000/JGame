@@ -26,9 +26,15 @@ public class FontEntry extends ResourceEntry
 			_font = getFont(null);
 		return _font;
 	}
+	
+	private ArrayList<GameFont> _palFonts = new ArrayList<>();
 
 	public GameFont getFont(int[] pal)
 	{
+		for (GameFont f : _palFonts)
+			if (f.isPalette(pal))
+				return f;
+		
 		try
 		{
 			XCF xcf;
@@ -48,7 +54,9 @@ public class FontEntry extends ResourceEntry
 
 				letters.set(letter, l);
 			}
-			return new GameFont(path, letters.toArray(new Picture[letters.size()]));
+			GameFont gf = new GameFont(path, letters.toArray(new Picture[letters.size()]));
+			_palFonts.add(gf);
+			return gf;
 		}
 		catch (Exception ex)
 		{

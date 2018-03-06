@@ -47,6 +47,7 @@ public class IsoEditor_ui extends com.deadman.jgame.ui.Control
 		addControl(mainMenu1);
 		mainMenu1.background = getDrawable(com.deadman.dh.R.editor.ie_menu_bgr);
 		mainMenu1.subMenuBackground = getDrawable(com.deadman.dh.R.editor.ie_panel_9p);
+		mainMenu1.font = getFont(com.deadman.dh.R.fonts.font3x5, 0xffd7ab34);
 
 		mainMenuItem1 = new com.deadman.jgame.systemui.MainMenuItem(mainMenu1, "FILE");
 
@@ -108,7 +109,7 @@ public class IsoEditor_ui extends com.deadman.jgame.ui.Control
 
 		relativeLayout1 = new com.deadman.jgame.ui.RelativeLayout();
 		control4.setLayout(relativeLayout1);
-		tbSearch = new com.deadman.jgame.ui.TextBox();
+		tbSearch = new com.deadman.jgame.ui.TextBox(getFont(com.deadman.dh.R.fonts.font3x5, 0xff7c5b03));
 		control4.addControl(tbSearch);
 		com.deadman.jgame.ui.RelativeLayout.settings(tbSearch).alignLeft(0).alignTop(0).alignRight(13);
 		btSearchCancel = new com.deadman.jgame.ui.Button(com.deadman.dh.R.editor.ie_search_cancel);
@@ -136,6 +137,7 @@ public class IsoEditor_ui extends com.deadman.jgame.ui.Control
 		statusBar = new com.deadman.jgame.systemui.StatusBar();
 		addControl(statusBar);
 		statusBar.bgrColor = 9529858;
+		statusBar.setFont(getFont(com.deadman.dh.R.fonts.font3x5, 0xffd7ab34));
 		statusBar.setLeftBackground(getDrawable(com.deadman.dh.R.editor.ie_status_left));
 	}
 }

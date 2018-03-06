@@ -22,7 +22,7 @@ import org.eclipse.jdt.core.search.SearchRequestor;
 
 class ResourceGroup
 {
-	private final GameResources resources;
+	public final GameResources resources;
 	public final String name;
 	public final String className;
 	public final ResourceGroup parent;
@@ -190,7 +190,7 @@ class ResourceGroup
 
 		if (childs.size() > 0)
 		{
-			addEntry(new ArrayEntry(resources, entryName, childs));
+			addEntry(new ArrayEntry(this, entryName, childs));
 		}
 	}
 
@@ -232,7 +232,7 @@ class ResourceGroup
 		if (entryName == null)
 			return null;
 
-		return addEntry(PicPartEntry.fromPpr(resources, entryName, file));
+		return addEntry(PicPartEntry.fromPpr(this, entryName, file));
 	}
 
 	private ResourceEntry addOther(IFile res)
@@ -292,7 +292,7 @@ class ResourceGroup
 
 		if (arr.size() > 0)
 		{
-			addEntry(new ArrayEntry(resources, entryName, arr));
+			addEntry(new ArrayEntry(this, entryName, arr));
 		}
 	}
 
@@ -307,7 +307,7 @@ class ResourceGroup
 		if (entryName == null)
 			return null;
 
-		return addEntry(new ResourceEntry(resources, type, entryName, path));
+		return addEntry(new ResourceEntry(this, type, entryName, path));
 	}
 
 	private ResourceEntry addLayer(Layer layer)
@@ -329,7 +329,7 @@ class ResourceGroup
 			{
 				addLayer(source);
 
-				return addEntry(PicPartEntry.fromLayers(resources, entryName, path + "?" + source.name, layer, source));
+				return addEntry(PicPartEntry.fromLayers(this, entryName, path + "?" + source.name, layer, source));
 			}
 			else
 			{
@@ -337,7 +337,7 @@ class ResourceGroup
 			}
 		}
 
-		return addEntry(new LayerEntry(resources, entryName, path, layer));
+		return addEntry(new LayerEntry(this, entryName, path, layer));
 	}
 
 	// Font
@@ -372,6 +372,7 @@ class ResourceGroup
 
 	private void addFont(IFile res)
 	{
+		System.out.println("Font: " + res.getName());
 		switch (res.getFileExtension())
 		{
 			case "xcf":
@@ -583,5 +584,27 @@ class ResourceGroup
 			if (e.contains(filePath)) return true;
 
 		return false;
+	}
+
+	public ResourceEntry getFont(String fontName)
+	{
+		for (ResourceEntry e : fields.values())
+			if (e.type == ResourceEntry.FONT && e.name.equals(fontName))
+				return e;
+
+		for (ResourceGroup g : groups.values())
+		{
+			ResourceEntry e = g.getFont(fontName);
+			if (e != null) return e;
+		}
+
+		return null;
+	}
+
+	public String fullName()
+	{
+		if (parent != null)
+			return parent.fullName() + "."+name;
+		return resources.resourceName();
 	}
 }

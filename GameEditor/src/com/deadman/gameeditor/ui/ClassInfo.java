@@ -2,6 +2,8 @@ package com.deadman.gameeditor.ui;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.IAnnotatable;
@@ -11,6 +13,8 @@ import org.eclipse.jdt.core.IMemberValuePair;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
+
+import com.deadman.gameeditor.resources.ResourceEntry;
 
 public abstract class ClassInfo
 {
@@ -32,7 +36,7 @@ public abstract class ClassInfo
 		constructors = new ArrayList<>();
 
 		_varPrefix = compiler.getVarPrefix(type);
-		
+
 		try
 		{
 			isAbstract = Flags.isAbstract(type.getFlags());
@@ -97,7 +101,7 @@ public abstract class ClassInfo
 	{
 		return getAnnotationValue(annotatable, "Property", "");
 	}
-	
+
 	protected String getAnnotationValue(IAnnotatable annotatable, String name, String def) throws JavaModelException
 	{
 		IAnnotation ann = getAnnotation(annotatable, name);
@@ -167,8 +171,40 @@ public abstract class ClassInfo
 		return _baseClass.hasMethod(name);
 	}
 
+	static final Pattern fontPattern = Pattern.compile("^(?<name>\\w+?)(?<fntcol>(_[a-fA-F0-9]{6,8})+?)?(?<ol>_ol_[a-fA-F0-9]{6,8})?(?<sh>_sh_[a-fA-F0-9]{6,8})?$");
+
 	public String resolve(String value, String type) throws Exception
 	{
+		// Пытаемся перевести в шрифт
+		if (type.equals("QGameFont;"))
+		{
+			Matcher m = fontPattern.matcher(value);
+			if (m.find())
+			{
+				String name = m.group("name");
+				ResourceEntry e = compiler.resources.getFont(name);
+				if (e != null)
+				{
+					StringBuilder call = new StringBuilder("getFont(").append(e.fullName());
+					String fntcol = m.group("fntcol");
+					if (fntcol != null)
+					{
+						String[] colors = fntcol.split("_");
+						for (int i = 1; i < colors.length; i++)
+						{
+							call.append(", 0x");
+							String c = colors[i];
+							if (c.length() == 6) call.append("ff");
+							call.append(c);
+						}
+					}
+
+					return call.append(")").toString();
+				}
+				System.out.println("Font not found " + name);
+			}
+		}
+
 		// Ищем статичное поле класса
 		try
 		{

@@ -1,6 +1,6 @@
 package com.deadman.gameeditor.resources;
 
-class ResourceEntry
+public class ResourceEntry
 {
 	public static final int PICTURE = 0;
 	public static final int PICPARTS = 1;
@@ -8,20 +8,25 @@ class ResourceEntry
 	public static final int FILE = 3;
 	public static final int ARRAY = -1;
 
-	private final GameResources resources;
+	public final ResourceGroup group;
 	public final int type;
 	public final String name;
 	public int id;
 	public String path;
 	public boolean used = false;
 
-	public ResourceEntry(GameResources res, int type, String name, String path)
+	public ResourceEntry(ResourceGroup group, int type, String name, String path)
 	{
-		resources = res;
+		this.group = group;
 		this.type = type;
 		this.name = name;
 		this.path = path;
-		id = resources.genResId();
+		id = group.resources.genResId();
+	}
+
+	public String fullName()
+	{
+		return group.fullName() + "." + name;
 	}
 
 	public void writeCSV(StringBuilder str)

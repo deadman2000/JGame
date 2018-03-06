@@ -1,6 +1,7 @@
 package com.deadman.jgame.drawing;
 
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 
 import com.deadman.jgame.resources.FontEntry;
 import com.deadman.jgame.resources.ResourceManager;
@@ -51,20 +52,57 @@ public class GameFont
 			System.err.println("No base symbol in font");
 	}
 
+	public int[] palette;
+
+	public boolean isPalette(int[] pal)
+	{
+		if (palette == null || palette.length != pal.length)
+			return false;
+		for (int i = 0; i < pal.length; i++)
+			if (palette[i] != pal[i]) return false;
+		return true;
+	}
+
+	private ArrayList<GameFont> _outlined = new ArrayList<>();
+
+	protected int outlineColor;
+
 	public GameFont outline(int color)
 	{
-		for (Picture p : frames)
-			if (p != null)
-				p.outline(color);
-		return this;
+		for (GameFont f : _outlined)
+			if (f.outlineColor == color) return f;
+
+		Picture[] newFrames = new Picture[frames.length];
+		for (int i = 0; i < frames.length; i++)
+			if (frames[i] != null)
+				newFrames[i] = frames[i].outline(color);
+
+		GameFont font = new GameFont(name + " outline", newFrames);
+		font.outlineColor = color;
+		_outlined.add(font);
+
+		return font;
 	}
+
+	private ArrayList<GameFont> _shadowed = new ArrayList<>();
+
+	protected int shadowColor;
 
 	public GameFont shadow(int color)
 	{
-		for (Picture p : frames)
-			if (p != null)
-				p.shadow(color);
-		return this;
+		for (GameFont f : _shadowed)
+			if (f.shadowColor == color) return f;
+
+		Picture[] newFrames = new Picture[frames.length];
+		for (int i = 0; i < frames.length; i++)
+			if (frames[i] != null)
+				newFrames[i] = frames[i].shadow(color);
+		
+		GameFont font = new GameFont(name + " shadow", newFrames);
+		font.shadowColor = color;
+		_shadowed.add(font);
+
+		return font;
 	}
 
 	public static boolean WARN_NO_CHAR = true;
@@ -74,7 +112,7 @@ public class GameFont
 		Picture p;
 		if (ch >= frames.length || (p = frames[ch]) == null)
 		{
-			if (WARN_NO_CHAR) 
+			if (WARN_NO_CHAR)
 				System.err.println(name + " no pic for char " + ch);
 			return noChar;
 		}

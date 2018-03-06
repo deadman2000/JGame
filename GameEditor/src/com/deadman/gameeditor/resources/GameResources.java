@@ -219,12 +219,12 @@ public class GameResources
 		IClasspathEntry[] entries = list.toArray(new IClasspathEntry[list.size()]);
 		javaProject.setRawClasspath(entries, null);
 	}
-	
+
 	public static String version()
 	{
 		return Platform.getBundle("com.deadman.gameeditor").getVersion().toString();
 	}
-	
+
 	public void saveGenerated(String path, String text) throws CoreException
 	{
 		IFolder gen = checkFolder(null, "gen");
@@ -232,10 +232,10 @@ public class GameResources
 		checkSourceEntry(src.getFullPath());
 		IFolder pack = checkFolder(src, pckg.replace('.', '/'));
 		IFile file = pack.getFile(path);
-		
+
 		if (file.exists())
 			file.delete(true, null);
-		
+
 		byte[] bytes = text.getBytes();
 
 		InputStream source = new ByteArrayInputStream(bytes);
@@ -368,5 +368,15 @@ public class GameResources
 		{
 			res.javaProject = JavaCore.create(project);
 		}
+	}
+
+	public ResourceEntry getFont(String name)
+	{
+		return root.getFont(name);
+	}
+
+	public String resourceName()
+	{
+		return pckg + ".R";
 	}
 }

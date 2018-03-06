@@ -67,8 +67,8 @@ public class MissionEngine extends GameEngine
 	private static final int DROP_COST = 4;
 	private static final int ITEM_USE_COST = 4;
 
-	private static final GameFont fnt3x5_sh_red = getFont(R.fonts.font3x5, 0xFFde5252).outline(0xFF2f2f2f);
-	private static final GameFont fnt3x5_sh_green = getFont(R.fonts.font3x5, 0xFF6ee066).outline(0xFF2f2f2f);
+	private static final GameFont fnt3x5_ol_red = getFont(R.fonts.font3x5, 0xFFde5252).outline(0xFF2f2f2f);
+	private static final GameFont fnt3x5_ol_green = getFont(R.fonts.font3x5, 0xFF6ee066).outline(0xFF2f2f2f);
 
 	public MissionEngine(Mission mission, Squad squad)
 	{
@@ -245,12 +245,12 @@ public class MissionEngine extends GameEngine
 		public void onDamaged(GameCharacter ch, Element el, int value)
 		{
 			System.out.println(ch + " damaged " + el + "  " + value);
-			showCellMessage(Integer.toString(value), fnt3x5_sh_red, ch.cell);
+			showCellMessage(Integer.toString(value), fnt3x5_ol_red, ch.cell);
 		};
 
 		public void onHeal(GameCharacter ch, int value)
 		{
-			showCellMessage(Integer.toString(value), fnt3x5_sh_green, ch.cell);
+			showCellMessage(Integer.toString(value), fnt3x5_ol_green, ch.cell);
 		};
 	};
 
@@ -828,7 +828,7 @@ public class MissionEngine extends GameEngine
 
 	private void noAPMessage()
 	{
-		showMessage("Недостаточно очков действия", fnt3x5_sh_red, screen.cursorPos.x, screen.cursorPos.y);
+		showMessage("Недостаточно очков действия", fnt3x5_ol_red, screen.cursorPos.x, screen.cursorPos.y);
 	}
 
 	private void showMessage(String text, GameFont font, int x, int y)

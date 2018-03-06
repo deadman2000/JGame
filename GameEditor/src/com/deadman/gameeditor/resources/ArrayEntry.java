@@ -6,8 +6,8 @@ class ArrayEntry extends ResourceEntry {
 	// private ArrayList<Layer> _entries = new ArrayList<>();
 	private HashMap<Integer, ResourceEntry> _entries;
 
-	public ArrayEntry(GameResources res, String name, HashMap<Integer, ResourceEntry> arr) {
-		super(res, ARRAY, name, "");
+	public ArrayEntry(ResourceGroup group, String name, HashMap<Integer, ResourceEntry> arr) {
+		super(group, ARRAY, name, "");
 		_entries = arr;
 	}
 

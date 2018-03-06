@@ -4,8 +4,9 @@ Control
 	MainMenu
 		background = R.editor.ie_menu_bgr
 		subMenuBackground = R.editor.ie_panel_9p
-		font = fnt_light_3x5
-		
+		font = font3x5_d7ab34
+	
+	
 		MainMenuItem(FILE)
 			MainMenuItem(NEW)
 			MainMenuItem(OPEN)
@@ -54,7 +55,7 @@ Control
 		Control(R.editor.ie_search_bgr)
 			RelativeLayout
 			
-			TextBox(fnt_dark_3x5)
+			TextBox(font3x5_7c5b03)
 				id = tbSearch
 				L.alignLeft(0).alignTop(0).alignRight(13)
 				
@@ -79,5 +80,5 @@ Control
 	StatusBar
 		id = statusBar
 		bgrColor = 0x916a02
-		font =  fnt_light_3x5
+		font = font3x5_d7ab34
 		leftBackground = R.editor.ie_status_left
