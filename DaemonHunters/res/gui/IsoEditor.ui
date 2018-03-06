@@ -17,11 +17,11 @@ Control
 			MainMenuItem(RESIZE)
 			
 	Row
-		L.fillHeight
+		L.fillHeight()
 		fillContent  # Вызов метода
 		
 		IsoViewer
-			L.fillWidth
+			L.fillWidth()
 			allow_drag = false
 			show_all = true
 			wall_blending = false
@@ -49,16 +49,15 @@ Control
 			check_on_click = true
 		
 		Control
-			L.fillWidth
+			L.fillWidth()
 		
 		Control(R.editor.ie_search_bgr)
 			RelativeLayout
 			
 			TextBox(fnt_dark_3x5)
 				id = tbSearch
-				L.alignLeft(0).alignTop(0).alignTight(13)
+				L.alignLeft(0).alignTop(0).alignRight(13)
 				
-			
 			Button(R.editor.ie_search_cancel)
 				id = btSearchCancel
 				L.alignTop(3).alignRight(2)
@@ -72,7 +71,7 @@ Control
 		Control(R.editor.ie_items_left)
 			
 		Control(R.editor.ie_items_bgr)
-			L.fillWidth
+			L.fillWidth()
 			RelativeLayout
 			
 		Control(R.editor.ie_items_right)

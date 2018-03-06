@@ -9,4 +9,13 @@ public class LayoutDescription extends InstanceDescription
 		super(layoutInfo, parent, deep);
 		info = layoutInfo;
 	}
+
+	@Override
+	protected void writeParentAppend(UIParser parser)
+	{
+		if (parent.parent == null) // is root
+			writeCode(parser, "setLayout(%1$s);");
+		else
+			writeCode(parser, "%2$s.setLayout(%1$s);");
+	}
 }

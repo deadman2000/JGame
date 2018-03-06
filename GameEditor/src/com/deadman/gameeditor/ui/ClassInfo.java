@@ -19,7 +19,7 @@ public abstract class ClassInfo
 	private HashMap<String, PropertyInfo> _properties;
 	public boolean isAbstract;
 	protected UICompiler compiler;
-	private ArrayList<IMethod> _constructors;
+	public ArrayList<IMethod> constructors;
 
 	String _varPrefix;
 	int _varCount = 0;
@@ -29,10 +29,10 @@ public abstract class ClassInfo
 		this.compiler = compiler;
 		_type = type;
 		_properties = new HashMap<>();
-		_constructors = new ArrayList<>();
+		constructors = new ArrayList<>();
 
 		_varPrefix = compiler.getVarPrefix(type);
-
+		
 		try
 		{
 			isAbstract = Flags.isAbstract(type.getFlags());
@@ -46,15 +46,15 @@ public abstract class ClassInfo
 				//System.out.println(type.getElementName() + "  " + m.getElementName() + "  " + m.getReturnType() + "  " + String.join(", ", m.getParameterTypes()));
 
 				if (m.getElementName().equals(type.getElementName()))
-					_constructors.add(m);
+					constructors.add(m);
 
 				String prop = getPropertyName(m);
 				if (prop != null)
 				{
 					if (prop.isEmpty()) prop = m.getElementName();
 
+					// TODO Проверка на возвращаемый тип и аргументы
 					//if (m.getReturnType().equals("V"))
-					// TODO Установка как get или set
 
 					PropertyInfo pi = createProperty(prop);
 					pi.addMethod(m);
@@ -86,17 +86,27 @@ public abstract class ClassInfo
 		return _type.getElementName();
 	}
 
+	public String fullClassName()
+	{
+		return _type.getFullyQualifiedName();
+	}
+
 	protected abstract ClassStorage<?> getStorage();
 
 	private String getPropertyName(IAnnotatable annotatable) throws JavaModelException
 	{
-		IAnnotation ann = getAnnotation(annotatable, "Property");
+		return getAnnotationValue(annotatable, "Property", "");
+	}
+	
+	protected String getAnnotationValue(IAnnotatable annotatable, String name, String def) throws JavaModelException
+	{
+		IAnnotation ann = getAnnotation(annotatable, name);
 		if (ann != null)
 		{
 			String value = getMember(ann, "value");
 			if (value != null && !value.isEmpty())
 				return value;
-			return "";
+			return def;
 		}
 		return null;
 	}
@@ -164,7 +174,7 @@ public abstract class ClassInfo
 		{
 			IField f = _type.getField(value);
 			if (f.exists() && Flags.isStatic(f.getFlags()))
-				return _type.getElementName() + "." + f.getElementName();
+				return fullClassName() + "." + f.getElementName();
 		}
 		catch (JavaModelException e)
 		{
@@ -181,12 +191,11 @@ public abstract class ClassInfo
 		{
 		}
 
-		// TODO R.editor.ie_menu_bgr
 		if (value.startsWith("R."))
 		{
 			int i = value.lastIndexOf('.');
 			String typeName = value.substring(0, i);
-			IType t = compiler.getType("com.deadman.dh." + typeName);
+			IType t = compiler.getType(compiler.resources.pckg + "." + typeName);
 			if (t != null)
 			{
 				String propName = value.substring(i + 1);
@@ -201,7 +210,7 @@ public abstract class ClassInfo
 					else if (type.equals("I"))
 						return value;
 
-					System.out.println(type);
+					System.err.println("Type not found " + type);
 				}
 			}
 		}
@@ -254,55 +263,6 @@ public abstract class ClassInfo
 			throw new ParseException("Not found property " + name + " for value " + value);
 
 		return prop.resolveSet(value);
-	}
-
-	public String resolveConstruct(InstanceDescription parent, String[] args) throws ParseException
-	{
-		if (args == null) return className() + "()";
-
-		String[] res = new String[args.length];
-
-		for (IMethod c : _constructors)
-		{
-			String[] types = c.getParameterTypes();
-			if (types.length == 0) continue;
-
-			if (types[0].startsWith("Q") && types[0].endsWith(";") && types.length == 1 + args.length)
-			{
-				String t0 = types[0];
-				t0 = t0.substring(1, t0.length() - 1);
-				if (parent.isSubclass(t0))
-				{
-					// Первый параметр-родитель	
-					try
-					{
-						for (int i = 0; i < args.length; i++)
-							res[i] = resolve(args[i], types[i + 1]);
-
-						return className() + "(%2$s, " + join(res) + ")";
-					}
-					catch (Exception e)
-					{
-					}
-				}
-			}
-
-			// Обычные параметры
-			if (types.length != args.length) continue;
-
-			try
-			{
-				for (int i = 0; i < args.length; i++)
-					res[i] = resolve(args[i], types[i]);
-
-				return className() + "(" + join(res) + ")";
-			}
-			catch (Exception e)
-			{
-			}
-		}
-
-		throw new ParseException("Not found constructor for arguments: " + String.join(", ", args));
 	}
 
 	protected String join(String[] args)

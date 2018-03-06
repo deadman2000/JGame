@@ -41,8 +41,8 @@ public class UICompiler
 	{
 		try
 		{
-			findControls();
 			findLayouts();
+			findControls();
 		}
 		catch (Exception e)
 		{
@@ -113,20 +113,26 @@ public class UICompiler
 
 	public String getVarPrefix(IType type)
 	{
+		// Получаем имя класса
 		String name = type.getElementName();
 
-		StringBuilder prefixBuild = new StringBuilder();
+		String prefix = Character.toLowerCase(name.charAt(0)) + name.substring(1);
+		
+		// Собираем из заглавных букв
+		/*StringBuilder prefixBuild = new StringBuilder();
 		for (int i = 0; i < name.length(); i++)
 		{
 			char c = name.charAt(i);
 			if (Character.isUpperCase(c))
 				prefixBuild.append(Character.toLowerCase(c));
 		}
-		String prefix = prefixBuild.toString();
+		String prefix = prefixBuild.toString();*/
 
+		// Заглавных букв не оказалось, берем имя класса
 		if (prefix.length() == 0)
 			prefix = name;
 
+		// Делаем префикс уникальным
 		String origPrefix = prefix;
 		int n = 0;
 		while (_varPrefixes.contains(prefix))
@@ -134,6 +140,7 @@ public class UICompiler
 			n++;
 			prefix = origPrefix + n;
 		}
+		_varPrefixes.add(prefix);
 
 		return prefix;
 	}

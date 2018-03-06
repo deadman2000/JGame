@@ -1,5 +1,6 @@
 package com.deadman.jgame.ui;
 
+@LayoutInfo("RowLayout")
 public class Row extends Control
 {
 	protected RowLayout layout;

@@ -10,7 +10,7 @@ public class ControlDescription extends InstanceDescription
 		super(controlInfo, parent, deep);
 		info = controlInfo;
 	}
-
+	
 	public boolean hasMethod(String name)
 	{
 		return info.hasMethod(name);
@@ -24,12 +24,12 @@ public class ControlDescription extends InstanceDescription
 	public void setProperty(String name, String value) throws ParseException
 	{
 		String code = info.resolvePropertySet(name, value);
-		addLine("%1$s." + code + ";");
+		appendCode("%1$s." + code + ";");
 	}
 
 	public void addCall(String name, String[] callArgs) throws ParseException
 	{
 		String code = info.resolveCall(name, callArgs);
-		addLine("%1$s." + code + ";");
+		appendCode("%1$s." + code + ";");
 	}
 }

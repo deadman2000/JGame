@@ -14,27 +14,35 @@ import com.deadman.jgame.drawing.Picture;
 public class TextBox extends Control
 {
 	public GameFont _font;
-	public String text;
+	public String text = "";
 	public Picture[] _chars;
 	public int maxLength = Integer.MAX_VALUE;
 	public boolean textAlignLeft = true;
 	public int filter = FILTER_NONE;
 	private long cur_tick_begin;
 
-
+	public TextBox()
+	{
+	}
+	
 	public TextBox(GameFont font)
 	{
-		_font = font;
-		setHeight(font.height + 5);
-		setText("");
+		setFont(font);
 	}
 
 	public TextBox(GameFont font, int x, int y, int width)
 	{
 		_font = font;
-
 		setBounds(x, y, width, font.height + 5);
 		setText("");
+	}
+	
+	@Property("font")
+	public void setFont(GameFont font)
+	{
+		_font = font;
+		setHeight(font.height + 5);
+		setText(text);
 	}
 	
 	@Override
