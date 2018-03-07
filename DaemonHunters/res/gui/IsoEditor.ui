@@ -25,6 +25,7 @@ Control
 			MainMenuItem(RESIZE)
 				id = mmiResize
 			
+			
 	Row
 		L.fillHeight()
 		fillContent  # Вызов метода
@@ -36,6 +37,7 @@ Control
 			show_all = true
 			wall_blending = false
 			selectionInBounds = true
+			bgrColor = 0xff0000
 			
 		Control  # Right panel
 			width = 100

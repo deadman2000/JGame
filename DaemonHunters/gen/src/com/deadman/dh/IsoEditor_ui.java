@@ -85,6 +85,7 @@ public class IsoEditor_ui extends com.deadman.jgame.ui.Control
 		mapViewer.show_all = true;
 		mapViewer.wall_blending = false;
 		mapViewer.selectionInBounds = true;
+		mapViewer.bgrColor = 16711680;
 		control1 = new com.deadman.jgame.ui.Control();
 		row1.addControl(control1);
 		control1.width = 100;
