@@ -9,6 +9,7 @@ import com.deadman.dh.global.GlobalEngine;
 import com.deadman.dh.guild.Guild;
 import com.deadman.dh.isometric.IsoMap;
 import com.deadman.dh.isometric.editor.IsoEditor;
+import com.deadman.dh.isometric.editor.IsoEditor2;
 import com.deadman.dh.model.Element;
 import com.deadman.dh.model.GlobalMap;
 import com.deadman.dh.model.Mission;
@@ -80,7 +81,7 @@ public class Game
 			if (args.length > 0)
 			{
 				if (args[0].equals("-mapeditor"))
-					new IsoEditor().show();
+					new IsoEditor2().show();
 				if (args[0].equals("-uibuilder"))
 					new UIBuilderEngine().show();
 				else if (args[0].equals("-test"))

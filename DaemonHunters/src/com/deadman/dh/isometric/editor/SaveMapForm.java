@@ -16,16 +16,16 @@ import com.deadman.jgame.ui.TextBox;
 
 public class SaveMapForm extends IEWindow
 {
-	private IsoEditor _editor;
+	private IIsoEditor _editor;
 	private FileView fw;
 
 	private Column infoPanel;
 	private Label laWidth, laHeight, laZHeight;
 	private TextBox tbFileName;
 
-	public SaveMapForm(IsoEditor editor)
+	public SaveMapForm(IIsoEditor editor)
 	{
-		this._editor = editor;
+		_editor = editor;
 		width = 230;
 		
 		{

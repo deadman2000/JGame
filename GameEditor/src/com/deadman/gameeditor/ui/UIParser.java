@@ -323,15 +323,14 @@ public class UIParser
 		return args.toArray(new String[args.size()]);
 	}
 
+	private static Pattern patternAssign = Pattern.compile("^\\s*=\\s*"); // ^\s*=\s*
+
 	private void skipAssign() throws ParseException
 	{
-		skipSpaces();
-		checkEndOfLine();
-
-		if (currentSymbol() != '=')
+		Matcher m = patternAssign.matcher(line.substring(lineIndex));
+		if (!m.find())
 			throw new ParseException("Assignment not found");
-
-		lineIndex++; // Skipping symbol '='
+		lineIndex += m.end();
 	}
 
 	private String getAssign() throws ParseException
@@ -340,6 +339,7 @@ public class UIParser
 		return getExpression();
 	}
 
+	// Считывает выражение до конца строки или запятой. аргумент функции или присваивания
 	private String getExpression() throws ParseException
 	{
 		skipSpaces();
@@ -349,11 +349,27 @@ public class UIParser
 		for (; lineIndex < line.length(); lineIndex++)
 		{
 			Character s = currentSymbol();
-			// TODO Обработка строк
-			if (s == ',' || s == ')') break;
+			if (s == '"')
+				skipString();
+			else if (s == ',' || s == ')') break;
 		}
 
 		return line.substring(start, lineIndex);
+	}
+
+	private void skipString()
+	{
+		Character boundSymbol = currentSymbol();
+		lineIndex++;
+		for (; lineIndex < line.length(); lineIndex++)
+		{
+			Character s = currentSymbol();
+			if (s == '\\' && lineIndex < line.length() - 1)
+				lineIndex++;
+			else if (s == boundSymbol)
+				return;
+		}
+		lineIndex--;
 	}
 
 	/*private String readWordOrNumber()

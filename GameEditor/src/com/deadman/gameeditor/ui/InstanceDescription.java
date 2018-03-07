@@ -15,7 +15,7 @@ public class InstanceDescription
 	private String _constuctCode;
 	private ArrayList<String> _code;
 	
-	private boolean _parentInConstruct = false;
+	//private boolean _parentInConstruct = false;
 
 	public InstanceDescription(ClassInfo classInfo, ControlDescription parent, int deep)
 	{
@@ -77,7 +77,7 @@ public class InstanceDescription
 
 	protected void writeParentAppend(UIParser parser)
 	{
-		if (!_parentInConstruct && parent != null)
+		//if (!_parentInConstruct && parent != null)
 		{
 			if (parent.parent == null) // is root
 				writeCode(parser, "addControl(%1$s);");
@@ -125,7 +125,7 @@ public class InstanceDescription
 						for (int i = 0; i < args.length; i++)
 							res[i] = classInfo.resolve(args[i], types[i + 1]);
 
-						_parentInConstruct = true;
+						//_parentInConstruct = true;
 						return classInfo.fullClassName() + "(%2$s, " + join(res) + ")";
 					}
 					catch (Exception e)

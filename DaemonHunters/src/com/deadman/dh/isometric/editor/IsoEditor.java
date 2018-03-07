@@ -38,7 +38,7 @@ import com.deadman.jgame.ui.Row;
 import com.deadman.jgame.ui.RowLayout;
 import com.deadman.jgame.ui.TextBox;
 
-public class IsoEditor extends GameEngine implements IMainMenuListener
+public class IsoEditor extends GameEngine implements IMainMenuListener, IIsoEditor
 {
 	private IsoMap map;
 	private IsoViewer mapViewer;

@@ -2,26 +2,35 @@ Control
 	ColumnLayout(H_FILL)
 	
 	MainMenu
+		id = mainMenu
 		background = R.editor.ie_menu_bgr
 		subMenuBackground = R.editor.ie_panel_9p
 		font = font3x5_d7ab34
-	
+		height = 8
+		
 	
 		MainMenuItem(FILE)
 			MainMenuItem(NEW)
+				id = mmiNew
 			MainMenuItem(OPEN)
+				id = mmiOpen
 			MainMenuItem(SAVE)
+				id = mmiSave
 			MainMenuItem(SAVE AS)
+				id = mmiSaveAs
 		MainMenuItem(VIEW)
 			MainMenuItem(GRID)
+				id = mmiGrid
 		MainMenuItem(MAP)
 			MainMenuItem(RESIZE)
+				id = mmiResize
 			
 	Row
 		L.fillHeight()
 		fillContent  # Вызов метода
 		
 		IsoViewer
+			id = mapViewer
 			L.fillWidth()
 			allow_drag = false
 			show_all = true

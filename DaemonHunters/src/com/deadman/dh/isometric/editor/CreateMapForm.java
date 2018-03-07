@@ -15,13 +15,13 @@ import com.deadman.jgame.ui.TextBox;
 
 public class CreateMapForm extends IEWindow
 {
-	private IsoEditor editor;
+	private IIsoEditor _editor;
 	private FileView fw;
 	private TextBox tbFileName, tbWidth, tbHeight, tbZHeight;
 
-	public CreateMapForm(IsoEditor editor)
+	public CreateMapForm(IIsoEditor editor)
 	{
-		this.editor = editor;
+		this._editor = editor;
 		width = 230;
 		
 		Drawable tbBgr = getDrawable(R.editor.tb_bgr);
@@ -165,7 +165,7 @@ public class CreateMapForm extends IEWindow
 
 			File f = new File(fw.currentDir(), fileName);
 
-			editor.createMap(f.getAbsolutePath(), w, h, l, 0);
+			_editor.createMap(f.getAbsolutePath(), w, h, l, 0);
 			close();
 		}
 		catch (Exception e)

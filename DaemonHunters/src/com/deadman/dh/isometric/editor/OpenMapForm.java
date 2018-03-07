@@ -3,6 +3,7 @@ package com.deadman.dh.isometric.editor;
 import java.awt.event.MouseEvent;
 import java.io.File;
 
+import com.deadman.dh.isometric.IsoMap;
 import com.deadman.dh.isometric.IsoMapInfo;
 import com.deadman.dh.isometric.MapFormat;
 import com.deadman.jgame.ui.Column;
@@ -14,17 +15,19 @@ import com.deadman.jgame.ui.RowLayout;
 
 public class OpenMapForm extends IEWindow
 {
-	private IsoEditor _editor;
+	private IIsoEditor _editor;
 	private FileView fw;
-	
+
 	private Column infoPanel;
 	private Label laWidth, laHeight, laZHeight;
 
-	public OpenMapForm(IsoEditor editor)
+	public OpenMapForm(IIsoEditor editor)
 	{
-		this._editor = editor;
+		_editor = editor;
 		width = 230;
-		
+
+		IsoMap map = editor.getMap();
+
 		{
 			Row row1 = new Row();
 			row1.setHeight(140);
@@ -36,7 +39,8 @@ public class OpenMapForm extends IEWindow
 			fw = new FileView();
 			fw.setWidth(160);
 			fw.setFilterByExt(".map");
-			fw.setPath(new File(editor.getMap().fileName).getParentFile());
+			if (map != null)
+				fw.setPath(new File(map.fileName).getParentFile());
 			fw.addControlListener(file_listener);
 			row1.addControl(fw);
 

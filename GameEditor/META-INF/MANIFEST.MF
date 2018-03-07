@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: GameEditor
 Bundle-SymbolicName: com.deadman.gameeditor;singleton:=true
-Bundle-Version: 1.0.6
+Bundle-Version: 1.0.8
 Bundle-Activator: com.deadman.gameeditor.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,

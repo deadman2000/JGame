@@ -372,7 +372,6 @@ class ResourceGroup
 
 	private void addFont(IFile res)
 	{
-		System.out.println("Font: " + res.getName());
 		switch (res.getFileExtension())
 		{
 			case "xcf":
@@ -604,7 +603,7 @@ class ResourceGroup
 	public String fullName()
 	{
 		if (parent != null)
-			return parent.fullName() + "."+name;
+			return parent.fullName() + "." + name;
 		return resources.resourceName();
 	}
 }

@@ -15,7 +15,6 @@ public class MainMenuItem extends Control
 
 	private final int FOCUSED_COLOR = 0x30ffffff;
 
-
 	public MainMenuItem(MainMenu menu, String text)
 	{
 		this.menu = menu;
@@ -25,7 +24,7 @@ public class MainMenuItem extends Control
 		height = label.height + 2;
 		width = label.width + 4;
 	}
-	
+
 	public MainMenuItem(MainMenuItem parent, String text)
 	{
 		menu = parent.menu;
@@ -55,7 +54,8 @@ public class MainMenuItem extends Control
 		else
 		{
 			closeMenu();
-			menu.listener.onMainMenuPressed(this);
+			if (menu.listener != null)
+				menu.listener.onMainMenuPressed(this);
 		}
 
 		e.consume();
@@ -66,21 +66,38 @@ public class MainMenuItem extends Control
 		menu.closeSubMenu();
 	}
 
-	public MainMenuItem addItem(String text, int id)
+	@Override
+	public void addControl(Control c)
+	{
+		if (c instanceof MainMenuItem)
+			addItem((MainMenuItem) c);
+		else
+			super.addControl(c);
+	}
+
+	public void addControl(MainMenuItem item)
+	{
+		addItem(item);
+	}
+
+	public void addItem(MainMenuItem item)
 	{
 		if (subItemsPanel == null)
-		{
 			subItemsPanel = menu.createSubMenuPanel();
-		}
 
+		item.x = 2;
+		subItemsPanel.addControl(item);
+
+		if (subItemsPanel.width < item.width + 4)
+			subItemsPanel.width = item.width + 4;
+	}
+
+	public MainMenuItem addItem(String text, int id)
+	{
 		MainMenuItem it = new MainMenuItem(this, text);
-		it.x = 2;
+		addItem(it);
+
 		it.tag = id;
-
-		subItemsPanel.addControl(it);
-
-		if (subItemsPanel.width < it.width + 4)
-			subItemsPanel.width = it.width + 4;
 
 		return it;
 	}

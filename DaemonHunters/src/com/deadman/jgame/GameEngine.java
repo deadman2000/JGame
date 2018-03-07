@@ -144,6 +144,11 @@ public class GameEngine
 
 	// UI
 
+	public void setContent(Control control)
+	{
+		root = content = control;
+	}
+	
 	public void setLayout(Layout layout)
 	{
 		content.setLayout(layout);

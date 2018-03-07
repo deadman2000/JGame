@@ -171,6 +171,8 @@ public abstract class ClassInfo
 		return _baseClass.hasMethod(name);
 	}
 
+	// <имя_шрифта>[_<цвет1>][_<цвет2>...][_ol_<цвет_обводки>][_sh_<цвет_тени>]
+	// цвет = шестнадцатеричное значение. 6 или 8 hex-символов:  a0b7cd  FF43FFAC
 	static final Pattern fontPattern = Pattern.compile("^(?<name>\\w+?)(?<fntcol>(_[a-fA-F0-9]{6,8})+?)?(?<ol>_ol_[a-fA-F0-9]{6,8})?(?<sh>_sh_[a-fA-F0-9]{6,8})?$");
 
 	public String resolve(String value, String type) throws Exception
@@ -198,8 +200,23 @@ public abstract class ClassInfo
 							call.append(c);
 						}
 					}
+					call.append(")");
+					
+					String ol = m.group("ol");
+					if (ol != null)
+					{
+						ol = ol.substring(4); 
+						call.append(".outline(0x").append(ol).append(")");
+					}
 
-					return call.append(")").toString();
+					String sh = m.group("sh");
+					if (sh != null)
+					{
+						sh = sh.substring(4); 
+						call.append(".shadow(0x").append(sh).append(")");
+					}
+
+					return call.toString();
 				}
 				System.out.println("Font not found " + name);
 			}
