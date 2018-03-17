@@ -48,9 +48,14 @@ public class Item
 		return this;
 	}
 
-	public Item clone()
+	public Item cloneOne()
 	{
 		return new Item(type);
+	}
+
+	public Item cloneAll()
+	{
+		return cloneOne().setCount(count);
 	}
 
 	public void moveTo(ItemsPage itemsPage, AmmunitionSlot slot)

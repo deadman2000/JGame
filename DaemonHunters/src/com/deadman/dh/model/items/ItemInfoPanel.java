@@ -1,5 +1,9 @@
 package com.deadman.dh.model.items;
 
+import java.awt.Point;
+import java.util.Timer;
+import java.util.TimerTask;
+
 import com.deadman.dh.global.GlobalEngine;
 import com.deadman.jgame.GameLoop;
 import com.deadman.jgame.drawing.GameScreen;
@@ -32,19 +36,31 @@ public class ItemInfoPanel extends Control
 	public void draw()
 	{
 		super.draw();
+		if (_item == null)
+		{
+			hide();
+			return;
+		}
 		_item.type.icon.drawAt(scrX + 11, scrY + 11);
 	}
 
-	private void _show(int x, int y, Item item)
+	private Timer timer;
+
+	public void show(ItemSlot slot, Item item)
 	{
-		if (_item == item) return;
 		_item = item;
+		if (item == null)
+		{
+			hide();
+			return;
+		}
 
 		_itemName.setText(item.getName());
 		StringBuilder sbDescr = new StringBuilder();
 		item.appendDescription(sbDescr);
 		String descrition = sbDescr.toString();
 		_itemDescription.setText(descrition);
+
 		int w, h;
 		if (!descrition.isEmpty())
 		{
@@ -56,36 +72,68 @@ public class ItemInfoPanel extends Control
 			w = 100;
 			h = _itemDescription.y;
 		}
+		Point p = slot.screenPos();
 
-		if (y + h + 13 > GameScreen.GAME_HEIGHT)
-			y = GameScreen.GAME_HEIGHT - h - 3;
-		else
-			y += 10;
+		int x = p.x + slot.width / 2 - w / 2;
+		int y = p.y - h - 2;
 
-		x -= w / 2;
-		if (x + w + 5 > GameScreen.GAME_WIDTH) // Сдвигаем справа от края экрана
-			x = GameScreen.GAME_WIDTH - w - 5;
-		if (x < 5) // Сдвигаем слева от края экрана
-			x = 5;
+		// Укладываем в границы экрана
+		if (y + h > GameScreen.GAME_HEIGHT)
+			y = GameScreen.GAME_HEIGHT - h;
+		else if (y < 0)
+			y = 0;
+
+		if (x + w > GameScreen.GAME_WIDTH) // Сдвигаем справа от края экрана
+			x = GameScreen.GAME_WIDTH - w;
+		else if (x < 0) // Сдвигаем слева от края экрана
+			x = 0;
 
 		setBounds(x, y, w, h);
-		visible = true;
+
+		if (!visible && timer == null)
+		{
+			timer = new Timer();
+			timer.schedule(new TimerTask()
+			{
+				@Override
+				public void run()
+				{
+					visible = true;
+					timer.cancel();
+					timer = null;
+				}
+			}, 200);
+		}
+	}
+
+	@Override
+	public void hide()
+	{
+		super.hide();
+		if (timer != null)
+		{
+			Timer t = timer;
+			timer = null;
+			try
+			{
+				t.cancel();
+			}
+			catch (Exception e)
+			{
+			}
+		}
 	}
 
 	private static ItemInfoPanel _panel;
 
-	public static void showPanel(int x, int y, Item item)
+	public static ItemInfoPanel panel()
 	{
-		if (item == null)
-			hidePanel();
-		
 		if (_panel == null)
 		{
 			_panel = new ItemInfoPanel();
 			if (!GameLoop.engine.containsControl(_panel)) GameLoop.engine.addControl(_panel);
 		}
-
-		_panel._show(x, y, item);
+		return _panel;
 	}
 
 	public static void hidePanel()

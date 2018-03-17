@@ -78,7 +78,7 @@ public class IsoMap
 				}
 	}
 
-	public void mixTo(IsoMap m, int tx, int ty)
+	public void mixTo(IsoMap m, int tx, int ty, int tz)
 	{
 		for (short z = 0; z < zheight; z++)
 			for (int x = 0; x < width; x++)
@@ -86,7 +86,8 @@ public class IsoMap
 				{
 					int cx = tx + x;
 					int cy = ty + y;
-					cells[z][x][y].mixTo(m.cells[z][cx][cy]);
+					int cz = tz + z;
+					cells[z][x][y].mixTo(m.cells[cz][cx][cy]);
 				}
 	}
 

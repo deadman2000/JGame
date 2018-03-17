@@ -97,7 +97,7 @@ public class ResourceChangeReporter implements IResourceChangeListener
 				}
 				else if (delta.getKind() == IResourceDelta.REMOVED)
 				{
-					if (resource.getProjectRelativePath().segment(0).equals("gen"))
+					if (resource != null && resource.getProjectRelativePath().segment(0).equals("gen"))
 						toRebuild.add(resource.getProject());
 				}
 			}

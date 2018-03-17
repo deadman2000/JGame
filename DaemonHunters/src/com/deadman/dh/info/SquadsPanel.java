@@ -77,6 +77,7 @@ public class SquadsPanel extends Control
 			}
 
 		addControl(igCartItems = new ItemsGrid(170, 110));
+		igCartItems.setBgrs(R.slots.item_slot);
 	}
 	
 	public void setGuild(Guild g)

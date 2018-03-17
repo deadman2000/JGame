@@ -38,7 +38,7 @@ public class RecruitsTable extends IGMPanel
 
 		addControl(lv = new VListView());
 		lv.setBounds(5, TOP_PAD, width - 13, SIZE * RecruitRow.HEIGHT);
-		lv.setScrollBar(Game.createVScrollInfo());
+		lv.setScrollBar(Game.getScrollThemeYellow());
 		lv.bgrColor = 0xFF686c51;
 		lv.addControlListener(lv_listener);
 

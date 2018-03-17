@@ -5,16 +5,22 @@ import com.deadman.dh.battle.MissionEngine;
 import com.deadman.dh.isometric.IsoObject;
 import com.deadman.dh.isometric.MapCell;
 import com.deadman.dh.model.GameCharacter;
-import com.deadman.dh.model.itemtypes.MeeleWeaponType;
+import com.deadman.dh.model.itemtypes.MeleeWeaponType;
 
 public class MeleeWeapon extends Weapon
 {
-	private MeeleWeaponType wtype;
+	private MeleeWeaponType wtype;
 	
-	public MeleeWeapon(MeeleWeaponType type)
+	public MeleeWeapon(MeleeWeaponType type)
 	{
 		super(type);
 		wtype = type;
+	}
+	
+	@Override
+	public Item cloneOne()
+	{
+		return new MeleeWeapon(wtype);
 	}
 
 	@Override

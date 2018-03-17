@@ -191,9 +191,8 @@ public class MissionEngine extends GameEngine
 		plUnitInfo.addControl(agAmmunition = new AmmunitionGrid(4, 58));
 		agAmmunition.setValidator(new MissionItemValidator(agAmmunition));
 
-		plUnitInfo.addControl(new Control(R.ui.backpack_bgr, 2, 156));
-
 		plUnitInfo.addControl(igBackpack = new ItemsGrid(4, 158));
+		igBackpack.setBgrs(R.slots.item_slot);
 		igBackpack.setValidator(new MissionItemValidator(igBackpack));
 
 		plUnitInfo.addControl(igGround = new ItemsGridList(4, 260, 111, ItemSlot.ITEM_HEIGHT + 6));

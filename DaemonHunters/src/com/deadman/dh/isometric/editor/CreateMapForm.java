@@ -23,7 +23,7 @@ public class CreateMapForm extends IEWindow
 	{
 		_editor = editor;
 		width = 230;
-		
+
 		Drawable tbBgr = getDrawable(R.editor.tb_bgr);
 
 		{
@@ -41,8 +41,10 @@ public class CreateMapForm extends IEWindow
 			row1.addControl(fw);
 
 			Column col1 = new Column();
-			RowLayout.settings(col1).fillWidth();
+			RowLayout	.settings(col1)
+						.fillWidth();
 			col1.fillContent();
+			col1.name = "col1";
 			row1.addControl(col1);
 			{
 				{
@@ -52,13 +54,15 @@ public class CreateMapForm extends IEWindow
 
 					Label la = new Label(IsoEditor.fnt_light_3x5, 0, 2, "WIDTH:");
 					la.autosize = false;
-					RowLayout.settings(la).fillWidth();
+					RowLayout	.settings(la)
+								.fillWidth();
 					//la.setWidth(36);
 					row.addControl(la);
 
 					row.addControl(tbWidth = new TextBox(IsoEditor.fnt_dark_3x5, 0, 0, 20));
 					tbWidth.background = tbBgr;
 					tbWidth.filter = TextBox.FILTER_INT;
+					tbWidth.name = "tbWidth";
 				}
 
 				{
@@ -68,13 +72,15 @@ public class CreateMapForm extends IEWindow
 
 					Label la = new Label(IsoEditor.fnt_light_3x5, 0, 2, "HEIGHT:");
 					la.autosize = false;
-					RowLayout.settings(la).fillWidth();
+					RowLayout	.settings(la)
+								.fillWidth();
 					//la.setWidth(36);
 					row.addControl(la);
 
 					row.addControl(tbHeight = new TextBox(IsoEditor.fnt_dark_3x5, 0, 0, 20));
 					tbHeight.background = tbBgr;
 					tbHeight.filter = TextBox.FILTER_INT;
+					tbHeight.name = "tbHeight";
 				}
 
 				{
@@ -84,13 +90,15 @@ public class CreateMapForm extends IEWindow
 
 					Label la = new Label(IsoEditor.fnt_light_3x5, 0, 2, "Z-HEIGHT:");
 					la.autosize = false;
-					RowLayout.settings(la).fillWidth();
+					RowLayout	.settings(la)
+								.fillWidth();
 					//la.setWidth(36);
 					row.addControl(la);
 
 					row.addControl(tbZHeight = new TextBox(IsoEditor.fnt_dark_3x5, 0, 0, 20));
 					tbZHeight.background = tbBgr;
 					tbZHeight.filter = TextBox.FILTER_INT;
+					tbZHeight.name = "tbZHeight";
 				}
 			}
 		}
@@ -104,7 +112,8 @@ public class CreateMapForm extends IEWindow
 			row1.addControl(new Label(IsoEditor.fnt_light_3x5, 0, 2, "FILE NAME:"));
 
 			row1.addControl(tbFileName = new TextBox(IsoEditor.fnt_dark_3x5, 0, 0, 0));
-			RowLayout.settings(tbFileName).fillWidth();
+			RowLayout	.settings(tbFileName)
+						.fillWidth();
 			tbFileName.background = tbBgr;
 			tbFileName.filter = TextBox.FILTER_FILENAME;
 		}

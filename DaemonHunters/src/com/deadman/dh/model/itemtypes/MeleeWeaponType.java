@@ -4,7 +4,7 @@ import com.deadman.dh.model.Element;
 import com.deadman.dh.model.items.Item;
 import com.deadman.dh.model.items.MeleeWeapon;
 
-public class MeeleWeaponType extends WeaponType
+public class MeleeWeaponType extends WeaponType
 {
 	// Для урона
 	public Element element;

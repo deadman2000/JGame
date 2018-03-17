@@ -43,7 +43,10 @@ public class MissionScenario
 	public void generate(MissionEngine engine, Squad squad)
 	{
 		IsoMap map = IsoMap.loadMap(mapId);
+		emplaceCart(map, squad);
+
 		engine.setMap(map);
+		
 		//terrain = Game.map.getSubTerrain(mission.point.x + 0.5 - r, mission.point.y + 0.5 - r, r * 2, r * 2);
 		UnitStack[] units = new UnitStack[sides.size() + 1];
 
@@ -66,9 +69,11 @@ public class MissionScenario
 		{
 			MapCell[][] lvl = map.cells[z];
 			for (int x = 0; x < map.width; x++)
+			{
+				MapCell[] row = lvl[x];
 				for (int y = 0; y < map.height; y++)
 				{
-					MapCell c = lvl[x][y];
+					MapCell c = row[y];
 					if (c.items == null) continue;
 					
 					for (int i = 0; i < c.items.size(); i++)
@@ -88,6 +93,7 @@ public class MissionScenario
 						}
 					}
 				}
+			}
 		}
 
 		// TODO если остались нерасставленные юниты 
@@ -105,8 +111,28 @@ public class MissionScenario
 		}
 
 		map.setLight(GlobalEngine.currentBrightness());
-
+		
 		System.out.println("Scenario generate end");
+	}
+	
+	static final int CART_MARKER_ID = 10001;
+
+	private void emplaceCart(IsoMap map, Squad squad)
+	{
+		for (int z = 0; z < map.zheight; z++)
+		{
+			MapCell[][] lvl = map.cells[z];
+			for (int x = 0; x < map.width; x++)
+			{
+				MapCell[] row = lvl[x];
+				for (int y = 0; y < map.height; y++)
+				{
+					MapCell c = row[y];
+					if (c.obj != null && c.obj.sprite.id == CART_MARKER_ID)
+						squad.getCart().map.mixTo(map, x, y, z);
+				}
+			}
+		}
 	}
 
 	class UnitStack

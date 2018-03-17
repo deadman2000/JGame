@@ -14,6 +14,12 @@ public class Armor extends Item
 	}
 
 	@Override
+	public Item cloneOne()
+	{
+		return new Armor((ArmorType) type);
+	}
+
+	@Override
 	public void appendDescription(StringBuilder sb)
 	{
 		ArmorType at = (ArmorType) type;

@@ -48,10 +48,13 @@ public class GlobalEngine extends GameEngine
 	public GlobalEngine()
 	{
 		addControl(mapView = new GlobalMapView());
-		RelativeLayout.settings(mapView).fill();
+		RelativeLayout	.settings(mapView)
+						.fill();
 
 		addControl(guildsPanel = new GuildsPanel());
-		RelativeLayout.settings(guildsPanel).alignRight(2).alignTop(22);
+		RelativeLayout	.settings(guildsPanel)
+						.alignRight(2)
+						.alignTop(22);
 		addControl(squadsPanel = new SquadsPanel());
 		addControl(topMenu = new TopMenu(TopMenu.MODE_MENU));
 		addControl(timePanel = new TimePanel());
@@ -74,14 +77,16 @@ public class GlobalEngine extends GameEngine
 
 	public GlobalEngine beginCraete()
 	{
-		new Thread(new Runnable()
+		Thread t = new Thread(new Runnable()
 		{
 			@Override
 			public void run()
 			{
 				generate(new Random().nextLong());
 			}
-		}).start();
+		});
+		t.setName("Creating global map");
+		t.start();
 		return this;
 	}
 
@@ -120,7 +125,7 @@ public class GlobalEngine extends GameEngine
 
 		createGuid();
 		createGuid();
-		
+
 		System.out.println("Load completed");
 
 		time = SECONDS_IN_HOUR * 12;
@@ -143,7 +148,7 @@ public class GlobalEngine extends GameEngine
 			int n = rnd.nextInt(Game.map.cities.length);
 			City c = Game.map.cities[n];
 			if (c.guild != null) continue;
-			
+
 			c.generate(st);
 			if (c.houses.size() == 0)
 			{
@@ -169,7 +174,8 @@ public class GlobalEngine extends GameEngine
 		msgScroll = new MsgScroll();
 		addControl(msgScroll);
 		msgScroll.setBounds(GameScreen.GAME_WIDTH / 2 - 200 / 2, 10, 200, msgScroll.height);
-		RelativeLayout.settings(msgScroll).alignTop();
+		RelativeLayout	.settings(msgScroll)
+						.alignTop();
 		msgScroll.visible = false;
 	}
 
@@ -219,7 +225,7 @@ public class GlobalEngine extends GameEngine
 	{
 		return (int) (SECONDS_IN_DAY * days);
 	}
-	
+
 	public static int getTimeFromHours(double hours)
 	{
 		return (int) (SECONDS_IN_HOUR * hours);
@@ -227,7 +233,7 @@ public class GlobalEngine extends GameEngine
 
 	public static int getDaysFromTime(int time)
 	{
-		return (int)Math.round((double)time / SECONDS_IN_DAY);
+		return (int) Math.round((double) time / SECONDS_IN_DAY);
 	}
 
 	private int _m_tick;
@@ -258,7 +264,7 @@ public class GlobalEngine extends GameEngine
 
 			if (time >= next_event_time)
 				genEvent();
-			
+
 			Game.checkMissions();
 
 			for (Guild g : Game.guilds)
@@ -281,12 +287,12 @@ public class GlobalEngine extends GameEngine
 	}
 
 	static final float DAWN_BEGIN = 5; // Начало рассвета в часах
-	static final float DAWN_END = 9;   // Конец рассвета
+	static final float DAWN_END = 9; // Конец рассвета
 	static final float DAWN_DURATION = DAWN_END - DAWN_BEGIN;
-	static final float SUNSET_BEGIN = 18;  // Начало заката
-	static final float SUNSET_END = 22;    // Конец заката
+	static final float SUNSET_BEGIN = 18; // Начало заката
+	static final float SUNSET_END = 22; // Конец заката
 	static final float SUNSET_DURATION = SUNSET_END - SUNSET_BEGIN;
-	static final float NIGHT_BRIGHTNESS = 0.1f;  // Светимость ночью
+	static final float NIGHT_BRIGHTNESS = 0.1f; // Светимость ночью
 	static final float DAY_AMP = 1.f - NIGHT_BRIGHTNESS;
 
 	public static float currentBrightness()
@@ -317,7 +323,7 @@ public class GlobalEngine extends GameEngine
 	private void genEvent()
 	{
 		if (Game.NO_EVENTS) return;
-		
+
 		// Выбираем сценарий миссии
 		MissionScenario scenario = MissionScenario.getScenario(Game.level);
 
@@ -391,9 +397,10 @@ public class GlobalEngine extends GameEngine
 				break;
 
 			case KeyEvent.VK_F2:
-				Book.inst().show();
+				Book.inst()
+					.show();
 				break;
-				
+
 			default:
 				super.onKeyPressed(e);
 				return;

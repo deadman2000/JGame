@@ -20,7 +20,7 @@ public class ItemSelectForm extends ItemSelectForm_ui
 	public ItemSelectForm(IItemSelected listener)
 	{
 		_listener = listener;
-		lvItemTypes.setScrollBar(Game.createVScrollInfo());
+		lvItemTypes.setScrollBar(Game.getScrollThemeYellow());
 		for (ItemType it : ItemType.itemTypes.values())
 		{
 			lvItemTypes.addItem(new ItemTypeItem(it));

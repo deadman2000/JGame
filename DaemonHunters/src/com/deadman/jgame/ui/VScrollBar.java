@@ -9,28 +9,37 @@ public class VScrollBar extends Control
 {
 	private Button btUp, btDown, btScroll;
 
-	public VScrollBar(int bt_up, int bt_up_pr, int bt_scrol, int bt_scroll_pr, int bt_down, int bt_down_pr)
+	public VScrollBar(ScrollBarTheme theme)
 	{
 		setLayout(new RelativeLayout());
-		
-		btUp = new Button(bt_up, bt_up_pr);
+
+		btUp = new Button(theme.up, theme.up_pr);
 		btUp.addControlListener(btnTop_listener);
 		addControl(btUp);
 
-		btScroll = new Button(bt_scrol, bt_scroll_pr);
-		btScroll.setPosition(0, btUp.height);
-		btScroll.addControlListener(btnScroll_listener);
-		addControl(btScroll);
-
-		btDown = new Button(bt_down, bt_down_pr);
+		btDown = new Button(theme.down, theme.down_pr);
 		RelativeLayout.settings(btDown).alignBottom();
 		btDown.addControlListener(btnBottom_listener);
 		addControl(btDown);
+
+		if (theme.v_bgr != null)
+		{
+			Control bgr = new Control(theme.v_bgr);
+			RelativeLayout.settings(bgr).alignTop(btUp.height).alignBottom(btDown.height);
+			addControl(bgr);
+		}
+		
+		btScroll = new Button(theme.v_pos, theme.v_pos_pr);
+		btScroll.setPosition((btUp.width - btScroll.width) / 2, btUp.height);
+		btScroll.addControlListener(btnScroll_listener);
+		addControl(btScroll);
 
 		width = btUp.width;
 	}
 
 	public int min = 0, max = 10;
+	public int scrollDelta = 1;
+
 	private int pos;
 	private int pressY;
 
@@ -50,13 +59,13 @@ public class VScrollBar extends Control
 	{
 		setPos(pos + d);
 	}
-
+	
 	ControlListener btnTop_listener = new ControlListener()
 	{
 		@Override
 		public void onPressed(Object sender, Point p, MouseEvent e)
 		{
-			setPos(pos - 1);
+			setPos(pos - scrollDelta);
 		}
 	};
 
@@ -65,7 +74,7 @@ public class VScrollBar extends Control
 		@Override
 		public void onPressed(Object sender, Point p, MouseEvent e)
 		{
-			setPos(pos + 1);
+			setPos(pos + scrollDelta);
 		}
 	};
 
@@ -91,7 +100,7 @@ public class VScrollBar extends Control
 		{
 			int bty = GameScreen.screen.cursorPos.y - pressY;
 			bty = Math.min(Math.max(bty, btUp.height), height - btDown.height - btScroll.height);
-			btScroll.setPosition(0, bty);
+			btScroll.setPosition(btScroll.x, bty);
 			int p = min + (max - min) * (btScroll.y - btUp.height) / (height - btUp.height - btScroll.height - btDown.height);
 			if (p != pos)
 			{
@@ -108,7 +117,7 @@ public class VScrollBar extends Control
 		if (max == min) return;
 
 		int by = (pos - min) * (height - btDown.height - btUp.height - btScroll.height) / (max - min) + btUp.height;
-		btScroll.setPosition(0, by);
+		btScroll.setPosition(btScroll.x, by);
 	}
 
 	@Override

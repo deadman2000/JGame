@@ -45,7 +45,9 @@ public class Clouds
 
 	public void start()
 	{
-		new Thread(new CloudUpdater()).start();
+		Thread t = new Thread(new CloudUpdater());
+		t.setName("Cloud updater");
+		t.start();
 	}
 
 	class CloudUpdater implements Runnable

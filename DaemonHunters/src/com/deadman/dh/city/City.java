@@ -128,43 +128,6 @@ public class City extends Poi
 			labelRect = new Rectangle(x + 4, y - imgLabel.height - 2, imgLabel.width, imgLabel.height);
 	}
 
-	// http://java-sl.com/gp_effects.html
-	/*public void genLabel_(GameFont font, Color bgrColor)
-	{
-		BufferedImage img = font.getLabel(name, bgrColor);
-	
-		/*BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_4BYTE_ABGR);
-		Graphics g = img.getGraphics();
-		Graphics2D g2 = (Graphics2D) g;
-	
-		FontRenderContext frc = g2.getFontRenderContext();
-		GlyphVector gv = font.createGlyphVector(frc, name);
-		Rectangle bounds = gv.getPixelBounds(null, 0, 0);
-	
-		img = new BufferedImage(bounds.width + 2, bounds.height + 2, BufferedImage.TYPE_INT_ARGB);
-		g = img.getGraphics();
-		g2 = (Graphics2D) g;
-	
-		if (bgrColor.getAlpha() != 0)
-		{
-			g.setColor(bgrColor);
-			g.fillRect(0, 0, img.getWidth(), img.getHeight());
-		}
-	
-		if (this.level >= 3)
-			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-	
-		g.setFont(font);
-		g.setColor(color);
-		g.drawString(name, -bounds.x + 1, -bounds.y + 1);*/
-	/*
-			imgLabel = new Picture(img);
-			if (level > 1)
-				labelRect = new Rectangle(x + 2, y - imgLabel.height - 2, imgLabel.width, imgLabel.height);
-			else
-				labelRect = new Rectangle(x + 1 - imgLabel.width / 2, y - imgLabel.height - 2, imgLabel.width, imgLabel.height);
-		}*/
-
 	public void generate()
 	{
 		generate(null);

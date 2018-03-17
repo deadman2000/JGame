@@ -44,6 +44,11 @@ public class HListView extends BaseListView
 		refreshLayout();
 	}
 
+	public void setScrollBar(ScrollBarTheme theme)
+	{
+		setScrollBar(new HScrollBar(theme));
+	}
+
 	public void setScrollBar(HScrollBar sb)
 	{
 		if (scrollBar != null)

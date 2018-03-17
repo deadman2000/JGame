@@ -9,24 +9,31 @@ public class HScrollBar extends Control
 {
 	private Button btLeft, btRight, btScroll;
 
-	public HScrollBar(int bt_left, int bt_left_pr, int bt_scroll, int bt_scroll_pr, int bt_right, int bt_right_pr)
+	public HScrollBar(ScrollBarTheme theme)
 	{
 		setLayout(new RelativeLayout());
-		
-		btLeft = new Button(bt_left, bt_left_pr);
+
+		btLeft = new Button(theme.left, theme.left_pr);
 		btLeft.addControlListener(btn_listener);
 		addControl(btLeft);
 
-		btScroll = new Button(bt_scroll, bt_scroll_pr);
+		btRight = new Button(theme.right, theme.right_pr);
+		RelativeLayout.settings(btRight).alignRight();
+		btRight.addControlListener(btn_listener);
+		addControl(btRight);
+
+		if (theme.h_bgr != null)
+		{
+			Control bgr = new Control(theme.h_bgr);
+			RelativeLayout.settings(bgr).alignLeft(btLeft.width).alignRight(btRight.width);
+			addControl(bgr);
+		}
+
+		btScroll = new Button(theme.h_pos, theme.h_pos_pr);
 		btScroll.setPosition(btLeft.width, 0);
 		btScroll.addControlListener(btn_listener);
 		addControl(btScroll);
 
-		btRight = new Button(bt_right, bt_right_pr);
-		RelativeLayout.settings(btRight).alignRight();
-		btRight.addControlListener(btn_listener);
-		addControl(btRight);
-		
 		height = btLeft.height;
 	}
 

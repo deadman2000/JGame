@@ -3,7 +3,6 @@ package com.deadman.jgame.ui;
 import java.awt.Point;
 import java.awt.event.MouseWheelEvent;
 
-import com.deadman.dh.Game;
 import com.deadman.jgame.drawing.GameFont;
 
 public class TextArea extends Control
@@ -34,26 +33,34 @@ public class TextArea extends Control
 		adjustScroll();
 	}
 
+	public void setVScrollBar(ScrollBarTheme theme)
+	{
+		setScrollBar(new VScrollBar(theme));
+	}
+	
+	public void setScrollBar(VScrollBar scrollBar)
+	{
+		vscroll = scrollBar;
+		vscroll.addControlListener(scroll_listener);
+		addControl(vscroll);
+		adjustScroll();
+	}
+
 	private void adjustScroll()
 	{
+		if (vscroll == null) return;
+
+		vscroll.setBounds(width - vscroll.width, 0, vscroll.width, height);
+		
 		if (la.height > height)
 		{
-			if (vscroll == null)
-			{
-				vscroll = Game.createVScrollInfo();
-				vscroll.setBounds(width - vscroll.width, 0, vscroll.width, height);
-				addControl(vscroll);
-				vscroll.addControlListener(scroll_listener);
-			}
-
 			vscroll.visible = true;
 			vscroll.max = la.height - height + 1;
 			vscroll.setPos(0);
 		}
 		else
 		{
-			if (vscroll != null)
-				vscroll.visible = false;
+			vscroll.visible = false;
 		}
 	}
 
@@ -69,13 +76,12 @@ public class TextArea extends Control
 		};
 	};
 
-
 	@Override
 	public void onMouseWheel(Point p, MouseWheelEvent e)
 	{
 		if (!intersectLocal(p)) return;
 		if (vscroll == null || !vscroll.visible) return;
-		
+
 		if (e.getWheelRotation() > 0)
 			vscroll.shift(10);
 		else

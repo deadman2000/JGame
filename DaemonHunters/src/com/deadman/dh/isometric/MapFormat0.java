@@ -3,7 +3,6 @@ package com.deadman.dh.isometric;
 import java.io.IOException;
 import java.util.HashMap;
 
-import com.deadman.dh.model.itemtypes.ItemType;
 import com.deadman.dh.resources.GameResources;
 import com.deadman.jgame.io.DataInputStreamBE;
 import com.deadman.jgame.io.DataOutputStream;
@@ -101,13 +100,7 @@ public class MapFormat0
 		if (s != null)
 			s.setTo(c, state);
 		else
-		{
 			System.err.println("Sprite " + id + " not found");
-			if (id == 10001)
-				c.putOnFloor(ItemType.getItemType(10001).generate());
-			else if (id == 10002)
-				c.putOnFloor(ItemType.getItemType(10002).generate());
-		}
 	}
 
 	protected void readCell(MapCell c, DataInputStreamBE in) throws IOException

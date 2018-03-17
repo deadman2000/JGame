@@ -28,7 +28,7 @@ public class FileView extends VListView
 		ic_file = getDrawable(R.editor.fb_file);
 
 		bgrColor = 0xFF000000;
-		setScrollBar(Game.createVScrollInfo());
+		setScrollBar(Game.getScrollThemeYellow());
 
 		setPath(new File("").getAbsoluteFile());
 	}

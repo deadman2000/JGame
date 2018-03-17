@@ -214,6 +214,7 @@ public class MapCell
 		if (obj_l != null) obj_l.copyTo(target);
 		if (obj_r != null) obj_r.copyTo(target);
 		if (obj != null) obj.copyTo(target);
+		if (items != null) copyItemsTo(target);
 	}
 
 	public void mixToRandom(MapCell target)
@@ -224,6 +225,15 @@ public class MapCell
 		if (obj_l != null) obj_l.copyToRandom(target);
 		if (obj_r != null) obj_r.copyToRandom(target);
 		if (obj != null) obj.copyToRandom(target);
+		if (items != null) copyItemsTo(target);
+	}
+
+	private void copyItemsTo(MapCell target)
+	{
+		for (Item i : items)
+		{
+			target.putOnFloor(i.cloneAll());
+		}
 	}
 
 	@Override

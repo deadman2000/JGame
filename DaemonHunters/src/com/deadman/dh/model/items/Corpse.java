@@ -18,6 +18,12 @@ public class Corpse extends Item
 	}
 
 	@Override
+	public Item cloneOne()
+	{
+		return new Corpse(character);
+	}
+
+	@Override
 	public void drawIsoAt(int x, int y)
 	{
 		character.drawAt(x, y);

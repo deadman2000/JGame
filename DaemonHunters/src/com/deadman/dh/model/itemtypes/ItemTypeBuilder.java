@@ -62,9 +62,9 @@ public class ItemTypeBuilder
 			w.attackTime = _attackTime;
 		}
 
-		if (it instanceof MeeleWeaponType)
+		if (it instanceof MeleeWeaponType)
 		{
-			MeeleWeaponType meele = (MeeleWeaponType) it;
+			MeleeWeaponType meele = (MeleeWeaponType) it;
 			meele.element = _damageElement;
 			meele.value = _damageValue;
 			meele.amp = _damageAmp;
@@ -89,7 +89,7 @@ public class ItemTypeBuilder
 			case ARMOR:
 				return new ArmorType();
 			case MEELEWEAPON:
-				return new MeeleWeaponType();
+				return new MeleeWeaponType();
 			case RANGEDWEAPON:
 				return new RangedWeaponType();
 			default:

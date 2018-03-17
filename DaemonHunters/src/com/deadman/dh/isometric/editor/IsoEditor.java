@@ -103,11 +103,11 @@ public class IsoEditor extends GameEngine implements IMainMenuListener, ItemSele
 		ui.rciWallRight.addControlListener(rowCellItem_listener);
 		ui.rciFloor.addControlListener(rowCellItem_listener);
 		ui.rciUnit.addControlListener(rowCellItem_listener);
-		ui.lvCellItems.setScrollBar(Game.createVScrollInfo());
+		ui.lvCellItems.setScrollBar(Game.getScrollThemeYellow());
 		ui.btCellItemAdd.addControlListener(cellItemAdd_listener);
 		ui.btCellItemRemove.addControlListener(cellItemRemove_listener);
 
-		ui.lvItems.setScrollBar(Game.createHScrollGray());
+		ui.lvItems.setScrollBar(Game.getScrollThemeGray());
 		ui.lvItems.addControlListener(lvInstr_listener);
 		ui.tbSearch.addControlListener(search_listener);
 		ui.btSearchCancel.addControlListener(searchCancel_listener);
@@ -498,6 +498,10 @@ public class IsoEditor extends GameEngine implements IMainMenuListener, ItemSele
 					selectInstrument(currentInstrument);
 				}
 				break;
+			case KeyEvent.VK_R:
+				if (ui.btBrush.checked)
+					setResizing(!resizing);
+				break;
 
 			case KeyEvent.VK_F5:
 				loadPrevMap();
@@ -511,9 +515,6 @@ public class IsoEditor extends GameEngine implements IMainMenuListener, ItemSele
 				break;
 			case KeyEvent.VK_B:
 				ui.mapViewer.wallBlending = !ui.mapViewer.wallBlending;
-				break;
-			case KeyEvent.VK_R:
-				setResizing(!resizing);
 				break;
 
 			default:
@@ -659,7 +660,8 @@ public class IsoEditor extends GameEngine implements IMainMenuListener, ItemSele
 
 	private boolean isMatch(IsoSprite spr, String pattern)
 	{
-		return spr.name.toLowerCase().indexOf(pattern) != -1;
+		return spr.name	.toLowerCase()
+						.indexOf(pattern) != -1;
 	}
 
 	// Overlay
@@ -826,7 +828,8 @@ public class IsoEditor extends GameEngine implements IMainMenuListener, ItemSele
 		for (int i = files.length - 1; i >= 0; i--)
 		{
 			File f = files[i];
-			if (f.getAbsoluteFile().equals(curr))
+			if (f	.getAbsoluteFile()
+					.equals(curr))
 			{
 				found = true;
 				continue;
@@ -853,7 +856,8 @@ public class IsoEditor extends GameEngine implements IMainMenuListener, ItemSele
 		for (int i = 0; i < files.length; i++)
 		{
 			File f = files[i];
-			if (f.getAbsoluteFile().equals(curr))
+			if (f	.getAbsoluteFile()
+					.equals(curr))
 			{
 				found = true;
 				continue;
@@ -874,7 +878,8 @@ public class IsoEditor extends GameEngine implements IMainMenuListener, ItemSele
 		@Override
 		public boolean accept(File f)
 		{
-			return !f.isDirectory() && f.getName().endsWith(".map");
+			return !f.isDirectory() && f.getName()
+										.endsWith(".map");
 		}
 	};
 

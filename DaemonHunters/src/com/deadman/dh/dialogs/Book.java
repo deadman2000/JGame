@@ -94,7 +94,7 @@ public class Book extends Control
 		lvBuildings = new VListView();
 		lvBuildings.name = "Buildings";
 		lvBuildings.setBounds(0, 0, 128, 184);
-		lvBuildings.setScrollBar(Game.createVScrollInfo()); // TODO Свой скроллер для книги
+		lvBuildings.setScrollBar(Game.getScrollThemePaper());
 
 		buildingsPage.addControl(lvBuildings);
 
@@ -115,6 +115,7 @@ public class Book extends Control
 		buildingsPage.addControl(new Control(R.ui.book_map_rect, 140, 1));
 
 		buildingsPage.addControl(taDescr = new TextArea(GlobalEngine.fnt4x7_brown));
+		taDescr.setVScrollBar(Game.getScrollThemePaper());
 		taDescr.setBounds(140, 66, 122, 100);
 
 		buildingsPage.addControl(new Control(R.ui.book_descr_bottom, 141, 170));

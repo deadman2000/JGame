@@ -124,8 +124,8 @@ public class UnitsPanel extends Control
 
 		addControl(agAmmunition = new AmmunitionGrid(220, 50));
 
-		addControl(new Control(R.ui.backpack_bgr, 218, 148));
 		addControl(igBackpack = new ItemsGrid(220, 150));
+		igBackpack.setBgrs(R.slots.item_slot);
 	}
 
 	private ControlListener btUnitWork_listener = new ControlListener()

@@ -82,7 +82,7 @@ public class ItemSlot extends Control
 
 		p = clientToScreen(p);
 		Item item = getItem();
-		if (ItemInfoPanel.ENABLED && _pickedItem == null) ItemInfoPanel.showPanel(p.x, p.y, item);
+		if (ItemInfoPanel.ENABLED && _pickedItem == null) ItemInfoPanel.panel().show(this, item);
 	}
 
 	@Override
@@ -113,7 +113,7 @@ public class ItemSlot extends Control
 			{
 				if (e.getButton() == 3 && picked.count > 1) // ПКМ - Кладем 1
 				{
-					setItem(picked.clone());
+					setItem(picked.cloneOne());
 					picked.count--;
 				}
 				else // Кладем все что взяли
@@ -180,14 +180,14 @@ public class ItemSlot extends Control
 			if (e.getButton() == 3 && item.count > 1) // ПКМ - берем половину
 			{
 				int cnt = item.count / 2;
-				pick(item	.clone()
+				pick(item	.cloneOne()
 							.setCount(cnt), this);
 				item.count -= cnt;
 			}
 			else if (e.isShiftDown() && item.count > 1) // GameScreen.KEY_SHIFT
 			{
 				int c = item.count / 2;
-				pick(item	.clone()
+				pick(item	.cloneOne()
 							.setCount(c), this);
 				item.count -= c;
 			}

@@ -99,7 +99,8 @@ public class GuildInfoEngine extends GameEngine
 		addControl(plSquads);
 
 		// Слоты с предметами гильдии
-		addControl(igStorage = new ItemsGrid(getDrawable(R.ui.storage_slot)));
+		addControl(igStorage = new ItemsGrid());
+		igStorage.setBgrs(R.slots.item_slot);
 		RelativeLayout.settings(igStorage).alignLeft(10).alignBottom(6);
 
 		if (g == null) g = Game.guilds.get(0);

@@ -33,7 +33,7 @@ public class SelectSquad extends IGMPanel
 
 		addControl(lv = new VListView());
 		lv.setBounds(5, TOP_PAD, width - 13, squads.size() * MenuRow.HEIGHT); // TODO Переделать
-		lv.setScrollBar(Game.createVScrollInfo());
+		lv.setScrollBar(Game.getScrollThemeYellow());
 		lv.bgrColor = 0xFF686c51;
 		lv.addControlListener(lv_listener);
 

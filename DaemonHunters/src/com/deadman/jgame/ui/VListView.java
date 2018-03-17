@@ -43,6 +43,11 @@ public class VListView extends BaseListView
 		refreshLayout();
 	}
 
+	public void setScrollBar(ScrollBarTheme theme)
+	{
+		setScrollBar(new VScrollBar(theme));
+	}
+	
 	public void setScrollBar(VScrollBar sb)
 	{
 		if (scrollBar != null)
@@ -50,6 +55,7 @@ public class VListView extends BaseListView
 			scrollBar.removeControlListener(scrollBar_listener);
 			scrollBar.remove();
 		}
+		sb.scrollDelta = 10;
 
 		scrollBar = sb;
 		addControl(scrollBar);

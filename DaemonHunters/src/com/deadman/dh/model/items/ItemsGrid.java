@@ -1,5 +1,7 @@
 package com.deadman.dh.model.items;
 
+import java.util.Random;
+
 import com.deadman.jgame.drawing.Drawable;
 import com.deadman.jgame.ui.Control;
 
@@ -14,20 +16,28 @@ public class ItemsGrid extends Control
 	public static int PAD_Y = 3;
 
 	private ItemSlot[] slots;
-	private Drawable _bgItem;
+	private Drawable[] _bgrs;
 
 	public ItemsPage page;
 
 	private ItemMovingValidator validator;
 
+	public ItemsGrid()
+	{
+	}
+	
 	public ItemsGrid(int x, int y)
 	{
-		setPosition(x, y);
+		super(x, y);
 	}
 
-	public ItemsGrid(Drawable bgItem)
+	public void setBgrs(int[] bgrs)
 	{
-		_bgItem = bgItem;
+		_bgrs = new Drawable[bgrs.length];
+		for (int i = 0; i < bgrs.length; i++)
+		{
+			_bgrs[i] = getDrawable(bgrs[i]);
+		}
 	}
 
 	public void setPage(ItemsPage page)
@@ -85,17 +95,21 @@ public class ItemsGrid extends Control
 		}
 	}
 
+	private static Random RND = new Random();
+
 	private ItemSlot createSlot()
 	{
 		ItemSlot slot = new ItemSlot();
-		slot.bgrWithItem = _bgItem;
-		slot.bgrWithoutItem = _bgItem;
+		if (_bgrs == null || _bgrs.length == 0)
+			slot.bgrColor = 0xff000000;
+		else
+		{
+			Drawable bgr = _bgrs[RND.nextInt(_bgrs.length)];
+			slot.bgrWithItem = bgr;
+			slot.bgrWithoutItem = bgr;
+		}
 		slot.validator = validator;
 		slot.bind(bind);
-
-		if (_bgItem == null)
-			slot.bgrColor = 0xff000000;
-
 		addControl(slot);
 		return slot;
 	}

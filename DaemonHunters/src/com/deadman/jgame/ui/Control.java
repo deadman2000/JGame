@@ -269,6 +269,16 @@ public class Control
 			return parent.clientToScreen(p);
 	}
 
+	public Point screenPos()
+	{
+		if (parent == null)
+			return new Point(x, y);
+			
+		Point p = parent.screenPos();
+		p.translate(x, y);
+		return p;
+	}
+
 	// Координаты контрола на экране
 	public int scrX, scrY; // TODO Убрать. Сделать glTranslate
 
@@ -348,24 +358,27 @@ public class Control
 	public void pressMouse(Point p, MouseEvent e)
 	{
 		//System.out.println(this + " press?");
+		// Отправляем сигнал внутрь других элементов, чтобы сбросить фокус например
+		if (childs != null)
+		{
+			for (Control c : childsReverse)
+			{
+				if (c.visible)
+				{
+					c.pressMouse(c.parentToChild(p), e);
+					if (e.isConsumed())
+						break;
+				}
+			}
+		}
+		
+		
 		if (intersectLocal(p))
 		{
 			//System.out.println("\tintersect");
-			if (childs != null)
-			{
-				for (Control c : childsReverse)
-				{
-					if (c.visible)
-					{
-						c.pressMouse(c.parentToChild(p), e);
-						if (e.isConsumed())
-							break;
-					}
-				}
-			}
-
 			if (intersectBgr(p))
 			{
+				//System.out.println("\t\tfocus");
 				isFocused = true;
 
 				pressBtn = e.getButton();
@@ -385,8 +398,10 @@ public class Control
 		}
 		else
 		{
+			//System.out.println("\tnot intersect");
 			if (isFocused)
 			{
+				//System.out.println("\t\tunfocus");
 				isFocused = false;
 				onFocusLoss();
 			}
@@ -418,7 +433,7 @@ public class Control
 
 			if (intersectLocal(p) && intersectBgr(p))
 				onControlPressed(e);
-			if (pressPos.distance(p) <= 1)
+			if (pressPos != null && pressPos.distance(p) <= 1)
 				onClick(p, e);
 		}
 	}

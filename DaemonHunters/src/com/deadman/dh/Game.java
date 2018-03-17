@@ -25,8 +25,7 @@ import com.deadman.jgame.drawing.GameScreen;
 import com.deadman.jgame.resources.ResourceManager;
 import com.deadman.jgame.sound.Sound;
 import com.deadman.jgame.ui.Control;
-import com.deadman.jgame.ui.HScrollBar;
-import com.deadman.jgame.ui.VScrollBar;
+import com.deadman.jgame.ui.ScrollBarTheme;
 import com.deadman.jgame.uibuilder.UIBuilderEngine;
 
 public class Game
@@ -172,14 +171,44 @@ public class Game
 		}
 	}
 
-	public static VScrollBar createVScrollInfo()
+	private static ScrollBarTheme _scrollTYellow;
+	public static ScrollBarTheme getScrollThemeYellow()
 	{
-		return new VScrollBar(R.ui.vscroll_info_up, R.ui.vscroll_info_up_pr, R.ui.vscroll_info, R.ui.vscroll_info_pr, R.ui.vscroll_info_down, R.ui.vscroll_info_down_pr);
+		if (_scrollTYellow == null)
+		{
+			_scrollTYellow = new ScrollBarTheme();
+			_scrollTYellow.setUp(R.ui.vscroll_info_up, R.ui.vscroll_info_up_pr);
+			_scrollTYellow.setDown(R.ui.vscroll_info_down, R.ui.vscroll_info_down_pr);
+			_scrollTYellow.setVPos(R.ui.vscroll_info, R.ui.vscroll_info_pr);
+		}
+		return _scrollTYellow;
 	}
 
-	public static HScrollBar createHScrollGray()
+	private static ScrollBarTheme _scrollTGray;
+	public static ScrollBarTheme getScrollThemeGray()
 	{
-		return new HScrollBar(R.ui.hscroll_gray_up, R.ui.hscroll_gray_up_pr, R.ui.hscroll_gray, R.ui.hscroll_gray_pr, R.ui.hscroll_gray_down, R.ui.hscroll_gray_down_pr);
+		if (_scrollTGray == null)
+		{
+			_scrollTGray = new ScrollBarTheme();
+			_scrollTGray.setHPos(R.ui.hscroll_gray, R.ui.hscroll_gray_pr);
+			_scrollTGray.setLeft(R.ui.hscroll_gray_left, R.ui.hscroll_gray_left_pr);
+			_scrollTGray.setRight(R.ui.hscroll_gray_right, R.ui.hscroll_gray_right_pr);
+		}
+		return _scrollTGray;
+	}
+
+	private static ScrollBarTheme _scrollTPaper;
+	public static ScrollBarTheme getScrollThemePaper()
+	{
+		if (_scrollTPaper == null)
+		{
+			_scrollTPaper = new ScrollBarTheme();
+			_scrollTPaper.setVPos(R.ui.scroll_paper_vpos);
+			_scrollTPaper.setUp(R.ui.scroll_paper_up);
+			_scrollTPaper.setDown(R.ui.scroll_paper_down);
+			_scrollTPaper.setVBgr(R.ui.scroll_paper_vbgr);
+		}
+		return _scrollTPaper;
 	}
 
 	public static final class ItemTypes
