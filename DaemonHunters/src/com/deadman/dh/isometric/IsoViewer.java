@@ -20,8 +20,10 @@ public class IsoViewer extends Control
 {
 	IsoMap map;
 
-	public boolean selectionInBounds = false;
-	public MapCell selected_cell, prev_selected;
+	public boolean focusInBounds = false;
+	public MapCell focusedCell, prevFocused; // Ячейка, на которую навели мышь
+
+	public MapCell selectedCell; // Выделенная ячейка (например в редакторе карт)
 
 	public IsoCursor cursor;
 	public boolean showCursor = true;
@@ -32,10 +34,10 @@ public class IsoViewer extends Control
 
 	int minDrawX, maxDrawX, minDrawY, maxDrawY;
 
-	public boolean wall_blending = false;
-	public boolean all_levels = false;
-	public boolean allow_drag = true; // Перетаскивание левой кнопкой мыши
-	public boolean show_all = false;
+	public boolean wallBlending = false;
+	public boolean allLevels = false;
+	public boolean allowDrag = true; // Перетаскивание левой кнопкой мыши
+	public boolean showAll = false;
 
 	private static float BLEND_ALPHA = 0.6f;
 	private static float BLEND_RGB = 0.7f;
@@ -68,7 +70,8 @@ public class IsoViewer extends Control
 
 		viewer.cursor = IsoCursor.CURSOR_RECT;
 
-		RelativeLayout.settings(viewer).fill();
+		RelativeLayout	.settings(viewer)
+						.fill();
 		viewer.setMap(m);
 		viewer.centerView();
 		eng.show();
@@ -76,8 +79,8 @@ public class IsoViewer extends Control
 
 	public static void showMap(Point pt)
 	{
-		IsoMap map = Game.map.getSubTerrain(pt.x - 1, pt.y - 1, 3, 3)
-				.getIsoMap();
+		IsoMap map = Game.map	.getSubTerrain(pt.x - 1, pt.y - 1, 3, 3)
+								.getIsoMap();
 		showMap(map);
 	}
 
@@ -95,11 +98,11 @@ public class IsoViewer extends Control
 		setViewXY(viewX, viewY);
 	}
 
-	int maxdz;
-	int px, py;
-	MapCell drawCell;
-	boolean discovered;
-	boolean blend_all;
+	private int maxdz;
+	private int px, py;
+	private MapCell drawCell;
+	private boolean discovered;
+	private boolean blendAll;
 
 	@Override
 	public void onDraw()
@@ -114,7 +117,7 @@ public class IsoViewer extends Control
 		int maxdx = maxDrawX;
 		int mindy = minDrawY;
 		int maxdy = maxDrawY;
-		maxdz = all_levels ? map.zheight - 1 : d_viewZ;
+		maxdz = allLevels ? map.zheight - 1 : d_viewZ;
 
 		// Рисуем все снизу вверх
 		for (int z = 0; z <= maxdz; z++)
@@ -122,9 +125,9 @@ public class IsoViewer extends Control
 			int dz = z * MapCell.LEVEL_HEIGHT;
 			MapCell[][] zLevel = map.cells[z];
 
-			blend_all = wall_blending && drawCell.z == viewZ;
+			blendAll = wallBlending && z == viewZ;
 
-			// !! Вариант, рисовать весь пол на уровне, потом все объекты не работает. персонаж между этажами рисуется поверх пола 
+			// !! Вариант "рисовать весь пол на уровне, потом все объекты" не работает. персонаж между этажами рисуется поверх пола 
 			for (int x = mindx; x <= maxdx; x++)
 			{
 				int px1 = scrX + x * MapCell.CELL_WIDTH - d_viewX;
@@ -160,7 +163,7 @@ public class IsoViewer extends Control
 
 	boolean isDiscovered(MapCell cell)
 	{
-		return show_all || currentSide == null || currentSide.isDiscovered(cell);
+		return showAll || currentSide == null || currentSide.isDiscovered(cell);
 	}
 
 	private Drawable cellGrid = getDrawable(R.iso.cellgrid);
@@ -176,7 +179,7 @@ public class IsoViewer extends Control
 			drawCell.floor.drawAt(px, py);
 		}
 
-		if (drawGrid)
+		if (drawGrid && drawCell.z == viewZ)
 			cellGrid.drawAt(px, py);
 	}
 
@@ -189,7 +192,7 @@ public class IsoViewer extends Control
 			// Стены
 			if (drawCell.wall_l != null)
 			{
-				if (blend_all || (drawCell.state & MapCell.BLEND_WALL_L_FLAG) > 0)
+				if (blendAll || (drawCell.state & MapCell.BLEND_WALL_L_FLAG) > 0)
 					GameScreen.screen.setColorMask(BLEND_RGB, BLEND_RGB, BLEND_RGB, BLEND_ALPHA);
 				else
 					GameScreen.screen.resetColorFull();
@@ -220,7 +223,7 @@ public class IsoViewer extends Control
 
 			if (drawCell.wall_r != null)
 			{
-				if (blend_all || (drawCell.state & MapCell.BLEND_WALL_R_FLAG) > 0)
+				if (blendAll || (drawCell.state & MapCell.BLEND_WALL_R_FLAG) > 0)
 					GameScreen.screen.setColorMask(BLEND_RGB, BLEND_RGB, BLEND_RGB, BLEND_ALPHA);
 				else
 					GameScreen.screen.resetColorFull();
@@ -233,7 +236,7 @@ public class IsoViewer extends Control
 				Drawable d = ((IsoSimpleObject) drawCell.wall_l).sprite.getState(2, 0);
 				if (d != null)
 				{
-					if (blend_all || (drawCell.state & MapCell.BLEND_WALL_L_FLAG) > 0 || (drawCell.state & MapCell.BLEND_WALL_R_FLAG) > 0)
+					if (blendAll || (drawCell.state & MapCell.BLEND_WALL_L_FLAG) > 0 || (drawCell.state & MapCell.BLEND_WALL_R_FLAG) > 0)
 						GameScreen.screen.setColorMask(BLEND_RGB, BLEND_RGB, BLEND_RGB, BLEND_ALPHA);
 					else
 						GameScreen.screen.resetColorFull();
@@ -254,7 +257,7 @@ public class IsoViewer extends Control
 					else
 						GameScreen.screen.setBrightness(0); // Рисуем тень стены
 
-					if (blend_all || (drawCell.state & MapCell.BLEND_WALL_R_FLAG) > 0)
+					if (blendAll || (drawCell.state & MapCell.BLEND_WALL_R_FLAG) > 0)
 						GameScreen.screen.setColorMask(BLEND_RGB, BLEND_RGB, BLEND_RGB, BLEND_ALPHA);
 					else
 						GameScreen.screen.resetColorFull();
@@ -272,7 +275,7 @@ public class IsoViewer extends Control
 					else
 						GameScreen.screen.setBrightness(0); // Рисуем тень стены
 
-					if (blend_all || (drawCell.state & MapCell.BLEND_WALL_L_FLAG) > 0)
+					if (blendAll || (drawCell.state & MapCell.BLEND_WALL_L_FLAG) > 0)
 						GameScreen.screen.setColorMask(BLEND_RGB, BLEND_RGB, BLEND_RGB, BLEND_ALPHA);
 					else
 						GameScreen.screen.resetColorFull();
@@ -302,21 +305,26 @@ public class IsoViewer extends Control
 			pic_floor.drawAt(px, py);
 
 		// Курсор (задник)
-		if (showCursor && selected_cell != null && cursor != null)
+		if (showCursor && focusedCell != null && cursor != null)
 		{
-			if (drawCell == selected_cell)
+			if (drawCell == focusedCell)
 			{
 				if (cursor.back != null) cursor.back.drawAt(px, py);
 			}
-			else if (cursor.bottom_back != null && drawCell.x == selected_cell.x && drawCell.y == selected_cell.y && drawCell.z < selected_cell.z)
+			else if (cursor.bottom_back != null && drawCell.x == focusedCell.x && drawCell.y == focusedCell.y && drawCell.z < focusedCell.z)
 			{
 				if (cursor.bottom_back != null) cursor.bottom_back.drawAt(px, py);
 			}
 		}
 
+		if (drawCell == selectedCell)
+		{
+			IsoCursor.CURSOR_RECT.back.drawAt(px, py);
+		}
+
 		if (discovered)
 		{
-			if (blend_all || (drawCell.state & MapCell.BLEND_OBJ_FLAG) > 0)
+			if (blendAll || (drawCell.state & MapCell.BLEND_OBJ_FLAG) > 0)
 				GameScreen.screen.setColorMask(BLEND_RGB, BLEND_RGB, BLEND_RGB, BLEND_ALPHA);
 			GameScreen.screen.setBrightness(drawCell.light);
 			// http://stackoverflow.com/questions/19284065/isometric-engine-drawing-issue
@@ -325,16 +333,22 @@ public class IsoViewer extends Control
 			if (drawCell.obj_l != null) drawCell.obj_l.drawAt(px, py);
 			if (drawCell.obj_r != null) drawCell.obj_r.drawAt(px, py);
 
-			if (drawCell.items != null) // Объекты на полу
+			int zshift = drawCell.getZShift();
+
+			if (zshift == 0 && drawCell.items != null) // Предметы на полу
 				for (Item it : drawCell.items)
 				it.drawIsoAt(px, py);
 
 			if (drawCell.obj != null)
 				drawCell.obj.drawAt(px, py);
 
+			if (zshift > 0 && drawCell.items != null) // Предметы на объекте
+				for (Item it : drawCell.items)
+				it.drawIsoAt(px, py - zshift);
+
 			if (drawCell.ch != null)
 			{
-				if (show_all || currentSide == null || currentSide.isVisible(drawCell))
+				if (showAll || currentSide == null || currentSide.isVisible(drawCell))
 				{
 					drawCell.ch.drawAt(maxdz, drawCell, px, py);
 				}
@@ -367,20 +381,25 @@ public class IsoViewer extends Control
 
 		GameScreen.screen.resetColorFull();
 
-		// Курсор (перед)
-		if (showCursor && selected_cell != null && cursor != null)
+		// Курсор (передник)
+		if (showCursor && focusedCell != null && cursor != null)
 		{
-			if (drawCell == selected_cell)
+			if (drawCell == focusedCell)
 			{
 				if (cursor.front != null)
 				{
 					cursor.front.drawAt(px, py);
 				}
 			}
-			else if (cursor.bottom_front != null && drawCell.x == selected_cell.x && drawCell.y == selected_cell.y && drawCell.z < selected_cell.z)
+			else if (cursor.bottom_front != null && drawCell.x == focusedCell.x && drawCell.y == focusedCell.y && drawCell.z < focusedCell.z)
 			{
 				if (cursor.bottom_front != null) cursor.bottom_front.drawAt(px, py);
 			}
+		}
+
+		if (drawCell == selectedCell)
+		{
+			IsoCursor.CURSOR_RECT.front.drawAt(px, py);
 		}
 	}
 
@@ -403,8 +422,8 @@ public class IsoViewer extends Control
 		if (z < 0 || z >= map.zheight) return;
 
 		viewZ = z;
-		if (selected_cell != null)
-			selectCell(selected_cell.x, selected_cell.y, viewZ);
+		if (focusedCell != null)
+			focusCell(focusedCell.x, focusedCell.y, viewZ);
 	}
 
 	public void centerView()
@@ -460,22 +479,22 @@ public class IsoViewer extends Control
 		return map.cells[scrZ][mapX][mapY];
 	}
 
-	private void selectCell(int x, int y, int z)
+	private void focusCell(int x, int y, int z)
 	{
-		selectCell(map.cells[z][x][y]);
+		focusCell(map.cells[z][x][y]);
 	}
 
-	private void selectCell(MapCell cell)
+	private void focusCell(MapCell cell)
 	{
-		prev_selected = selected_cell;
-		selected_cell = cell;
+		prevFocused = focusedCell;
+		focusedCell = cell;
 
-		onCellSelected();
+		onCellFocused();
 	}
 
-	protected void onCellSelected()
+	protected void onCellFocused()
 	{
-		onAction(ACTION_ITEM_SELECTED, selected_cell);
+		onAction(ACTION_ITEM_SELECTED, focusedCell);
 	}
 
 	Point drag_begin;
@@ -486,7 +505,7 @@ public class IsoViewer extends Control
 		super.pressMouse(p, e);
 		if (!intersectLocal(p)) return;
 
-		if (allow_drag || e.getButton() > 1)
+		if (allowDrag || e.getButton() > 1)
 		{
 			drag_begin = p.getLocation();
 			drag_begin.translate(viewX, viewY);
@@ -507,9 +526,9 @@ public class IsoViewer extends Control
 
 		if (mouseFocused)
 		{
-			MapCell cell = screenToCell(p.x, p.y, selectionInBounds);
-			if (selected_cell != cell)
-				selectCell(cell);
+			MapCell cell = screenToCell(p.x, p.y, focusInBounds);
+			if (focusedCell != cell)
+				focusCell(cell);
 		}
 	}
 
@@ -547,10 +566,10 @@ public class IsoViewer extends Control
 				break;
 
 			case KeyEvent.VK_A:
-				all_levels = !all_levels;
+				allLevels = !allLevels;
 				break;
 			case KeyEvent.VK_B:
-				wall_blending = !wall_blending;
+				wallBlending = !wallBlending;
 				break;
 
 			case KeyEvent.VK_PAGE_UP:
@@ -570,7 +589,7 @@ public class IsoViewer extends Control
 
 	public HitResult screenToObject(int scrX, int scrY)
 	{
-		int maxz = all_levels ? map.zheight - 1 : viewZ;
+		int maxz = allLevels ? map.zheight - 1 : viewZ;
 		for (int z = maxz; z >= 0; z--)
 		{
 			MapCell cell = screenToCell(scrX, scrY, z, false);

@@ -3,7 +3,10 @@ package com.deadman.gameeditor.ui;
 import java.util.HashSet;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
@@ -116,21 +119,25 @@ public class UICompiler
 		// Получаем имя класса
 		String name = type.getElementName();
 
-		String prefix = Character.toLowerCase(name.charAt(0)) + name.substring(1);
-		
-		// Собираем из заглавных букв
-		/*StringBuilder prefixBuild = new StringBuilder();
-		for (int i = 0; i < name.length(); i++)
-		{
-			char c = name.charAt(i);
-			if (Character.isUpperCase(c))
-				prefixBuild.append(Character.toLowerCase(c));
-		}
-		String prefix = prefixBuild.toString();*/
+		String prefix;
 
-		// Заглавных букв не оказалось, берем имя класса
-		if (prefix.length() == 0)
-			prefix = name;
+		if (Character.isLowerCase(name.charAt(0))) // Имя не по канону => Собираем из заглавных букв
+		{
+			StringBuilder prefixBuild = new StringBuilder();
+			for (int i = 0; i < name.length(); i++)
+			{
+				char c = name.charAt(i);
+				if (Character.isUpperCase(c))
+					prefixBuild.append(Character.toLowerCase(c));
+			}
+			prefix = prefixBuild.toString();
+
+			// Заглавных букв не оказалось, берем имя класса
+			if (prefix.length() == 0)
+				prefix = name;
+		}
+		else
+			prefix = Character.toLowerCase(name.charAt(0)) + name.substring(1); // Опускаем первую букву
 
 		// Делаем префикс уникальным
 		String origPrefix = prefix;
@@ -143,5 +150,74 @@ public class UICompiler
 		_varPrefixes.add(prefix);
 
 		return prefix;
+	}
+
+	public void refreshClass(String className) throws CoreException
+	{
+		ControlInfo ci = controls.get(className);
+		if (ci != null)
+		{
+			ci.refresh();
+			buildAll();
+			return;
+		}
+
+		LayoutInfo li = layouts.get(className);
+		if (li != null)
+		{
+			li.refresh();
+			buildAll();
+			return;
+		}
+
+		LayoutSettingsInfo lsi = layoutSettings.get(className);
+		if (lsi != null)
+		{
+			lsi.refresh();
+			buildAll();
+			return;
+		}
+	}
+
+	private void buildAll() throws CoreException
+	{
+		build(resources.resFolder);
+	}
+
+	private void build(IFolder folder) throws CoreException
+	{
+		//System.out.println("Rebuild " + folder);
+		IResource[] members = folder.members();
+		for (IResource res : members)
+		{
+			switch (res.getType())
+			{
+				case IResource.FOLDER:
+					build((IFolder) res);
+					break;
+				case IResource.FILE:
+					IFile file = (IFile) res;
+					if (file.getFileExtension().toLowerCase().equals("ui"))
+						compile(file);
+					break;
+			}
+		}
+	}
+
+	public boolean containsClass(String className)
+	{
+		ControlInfo ci = controls.get(className);
+		if (ci != null)
+			return true;
+
+		LayoutInfo li = layouts.get(className);
+		if (li != null)
+			return true;
+
+		LayoutSettingsInfo lsi = layoutSettings.get(className);
+		if (lsi != null)
+			return true;
+
+		return false;
 	}
 }

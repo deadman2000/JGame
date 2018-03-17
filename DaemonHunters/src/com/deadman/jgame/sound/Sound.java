@@ -110,7 +110,6 @@ public class Sound
 	
 	public void play()
 	{
-		System.out.println("Play " + sourceId);
 		al.alSourcePlay(sourceId);
 		try
 		{

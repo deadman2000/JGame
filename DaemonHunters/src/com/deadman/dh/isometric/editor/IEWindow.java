@@ -18,11 +18,11 @@ public class IEWindow extends Column
 	public IEWindow()
 	{
 		background = getDrawable(R.editor.ie_panel_9p);
-		columnLayout.heightByContent = true;
-		columnLayout.leftPadding = 4;
-		columnLayout.topPadding = 4;
-		columnLayout.rightPadding = 8;
-		columnLayout.bottomPadding = 8;
+		layout.heightByContent = true;
+		layout.leftPadding = 4;
+		layout.topPadding = 4;
+		layout.rightPadding = 8;
+		layout.bottomPadding = 8;
 		fillContent();
 		setSpacing(4);
 	}

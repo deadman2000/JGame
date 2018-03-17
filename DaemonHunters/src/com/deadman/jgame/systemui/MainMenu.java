@@ -71,9 +71,9 @@ public class MainMenu extends Row implements IOverlayListener
 		panel.setSpacing(1);
 		panel.width = SUBMENU_WIDTH;
 		panel.background = subMenuBackground;
-		panel.columnLayout.heightByContent = true;
-		panel.columnLayout.topPadding = 4;
-		panel.columnLayout.bottomPadding = 6;
+		panel.layout.heightByContent = true;
+		panel.layout.topPadding = 4;
+		panel.layout.bottomPadding = 6;
 		return panel;
 	}
 

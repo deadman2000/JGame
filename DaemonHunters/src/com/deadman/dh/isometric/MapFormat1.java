@@ -168,7 +168,7 @@ public class MapFormat1 extends MapFormat
 				int count = in.readIntPack();
 				ItemType t = ItemType.getItemType(tid);
 				if (t != null)
-					cell.items.add(t.generate()
+					cell.putOnFloor(t.generate()
 							.setCount(count));
 				break;
 

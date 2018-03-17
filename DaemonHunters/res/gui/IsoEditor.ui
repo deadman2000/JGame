@@ -7,8 +7,7 @@ Control
 		subMenuBackground = R.editor.ie_panel_9p
 		font = font3x5_d7ab34
 		height = 8
-		
-	
+
 		MainMenuItem(FILE)
 			MainMenuItem(NEW)
 				id = mmiNew
@@ -25,71 +24,172 @@ Control
 			MainMenuItem(RESIZE)
 				id = mmiResize
 			
-			
-	Row
+	Row       # Content row
 		L.fillHeight()
 		fillContent  # Вызов метода
 		
+		Control     # Left panel
+			width = 18
+			bgrColor = 0xff916a02
+			ColumnLayout
+				topPadding = 2
+				spacing = 2
+			
+			EditorButton
+				id = btSelect
+				x = 2
+				image = R.editor.ic_select
+			EditorButton
+				id = btBrush
+				x = 2
+				image = R.editor.ic_brush
+			
 		IsoViewer
 			id = mapViewer
 			L.fillWidth()
-			allow_drag = false
-			show_all = true
-			wall_blending = false
-			selectionInBounds = true
-			bgrColor = 0xff0000
+			allowDrag = false
+			showAll = true
+			wallBlending = false
+			focusInBounds = true
 			
-		Control  # Right panel
+    Row     # Selection
+    	id = rowSelect
+    	height = 90
+		background = R.editor.ie_select_bgr
+		spacing = 8
+		
+    	Control(R.editor.ie_select_left)
+    		
+		Column
+			y = 10
+			width = 38
+			heightByContent
+			spacing = 2
+			CellView
+				id = cellView
+			Label(font3x5_d7ab34)
+				id = laCellAddress
+								
+		Column
+			y = 10
 			width = 100
-			bgrColor = 0x916a02
+			heightByContent
+			spacing = 2
+			PropertyRow(OBJECT)
+				id = rciObject
+			PropertyRow(OBJ_L)
+				id = rciWObjectLeft
+			PropertyRow(OBJ_R)
+				id = rciWObjectRight
+			PropertyRow(WALL_L)
+				id = rciWallLeft
+			PropertyRow(WALL_R)
+				id = rciWallRight
+			PropertyRow(FLOOR)
+				id = rciFloor
+			PropertyRow(UNIT)
+				id = rciUnit
 		
-	Row
-		height = 20
-		background = R.editor.ie_tabs_bgr
-		spacing = -3
-		
-		Control(R.editor.ie_tabs_left)
-		
-		Button(R.editor.ie_tab_button_bgr, R.editor.ie_tab_button_pressed)
-			y = 3
-			check_on_click = true
-		Button(R.editor.ie_tab_button_bgr, R.editor.ie_tab_button_pressed)
-			y = 3
-			check_on_click = true
-		Button(R.editor.ie_tab_button_bgr, R.editor.ie_tab_button_pressed)
-			y = 3
-			check_on_click = true
-		
-		Control
-			L.fillWidth()
-		
-		Control(R.editor.ie_search_bgr)
-			RelativeLayout
+		Control  # Cell properties
+			y = 10
+			width = 100
+			height = 80
+			bgrColor = 0xff000000
 			
-			TextBox(font3x5_7c5b03)
-				id = tbSearch
-				L.alignLeft(0).alignTop(0).alignRight(13)
+		Control  # Cell items
+			y = 5
+			width = 100
+			height = 85
+			Label(font3x5_d7ab34, ITEMS)
+				y = 5
+			
+			EditorButton
+				id = btCellItemAdd
+				image = R.editor.ie_icon_add
+				x = 70
 				
-			Button(R.editor.ie_search_cancel)
-				id = btSearchCancel
-				L.alignTop(3).alignRight(2)
+			EditorButton
+				id = btCellItemRemove
+				image = R.editor.ie_icon_trash
+				x = 86
 			
-		Control
-			width = 6
+			VListView
+				id = lvCellItems
+				y = 16
+				height = 69
+				width = 100
+				bgrColor = 0xff000000
 			
-	Row
-		height = 70
+	Column  # Painting
+		id = colPaint
+    	height = 90
+    	fillContent
 		
-		Control(R.editor.ie_items_left)
+		Row         # Instr buttons row
+			height = 20
+			background = R.editor.ie_tabs_bgr
+			spacing = -3
 			
-		Control(R.editor.ie_items_bgr)
-			L.fillWidth()
-			RelativeLayout
+			Control(R.editor.ie_tabs_left)
 			
-		Control(R.editor.ie_items_right)
+			Button(R.editor.ie_tab_button_bgr, R.editor.ie_tab_button_pressed)
+				id = btTab0 
+				y = 3
+				image = R.editor.ie_tab_button_0
+			Button(R.editor.ie_tab_button_bgr, R.editor.ie_tab_button_pressed)
+				id = btTab1
+				y = 3
+				image = R.editor.ie_tab_button_1
+			Button(R.editor.ie_tab_button_bgr, R.editor.ie_tab_button_pressed)
+				id = btTab2
+				y = 3
+				image = R.editor.ie_tab_button_2
+			Button(R.editor.ie_tab_button_bgr, R.editor.ie_tab_button_pressed)
+				id = btTab3
+				y = 3
+				image = R.editor.ie_tab_button_3
+			
+			Control
+				L.fillWidth()
+			
+			Control(R.editor.ie_search_bgr)
+				RelativeLayout
+				width = 100
+				y = 4
+				
+				TextBox(font3x5_7c5b03)
+					id = tbSearch
+					L.alignLeft(0).alignTop(0).alignRight(13)
+					
+				Button(R.editor.ie_search_cancel)
+					id = btSearchCancel
+					L.alignTop(3).alignRight(2)
+				
+			Control
+				width = 6
+				
+		Row     # Items
+			height = 70
+			
+			Control(R.editor.ie_items_left)
+				id = ctlItemsLeft
+				
+			Control(R.editor.ie_items_bgr)
+				height = 70
+				L.fillWidth()
+				RelativeLayout
+				bgrColor = 0xffff0000
+				HListView
+					id = lvItems
+					y = 1
+					height = 68
+					L.fill(0, 1, 0, 1)
+					
+			Control(R.editor.ie_items_right)
+				id = ctlItemsRight
 			
 	StatusBar
 		id = statusBar
-		bgrColor = 0x916a02
+		bgrColor = 0xff916a02
 		font = font3x5_d7ab34
 		leftBackground = R.editor.ie_status_left

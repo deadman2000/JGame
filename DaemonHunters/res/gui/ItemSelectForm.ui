@@ -1,0 +1,50 @@
+IEWindow
+	width = 200
+	
+	Label(font3x5_d7ab34, ADD ITEM)
+	
+	Row
+		setRightToLeft
+		height = 7
+		spacing = 2
+		Label(font3x5_d7ab34, Filter)
+			y = 2
+		TextBox(font3x5_ffffff)
+			width = 50
+			bgrColor = 0xff000000
+			cursorColor = 0xffffffff
+	
+	VListView
+		id = lvItemTypes
+		height = 150
+		width = 150
+		bgrColor = 0xff000000
+	
+		
+	Row
+		height = 11
+		spacing = 4
+		
+		Label(font3x5_d7ab34, COUNT)
+			y = 2
+		TextBox(font3x5_ffffff)
+			id = tbCount
+			width = 30
+			bgrColor = 0xff000000
+			cursorColor = 0xffffffff
+			text = 1
+			
+		Control
+			L.fillWidth()
+		
+		EditorButton
+			id = btAdd
+			width = 38
+			height = 11
+			setLabel(font3x5_d7ab34, 3, ADD)
+		
+		EditorButton
+			id = btCancel
+			width = 38
+			height = 11
+			setLabel(font3x5_d7ab34, 3, CANCEL)

@@ -3,20 +3,37 @@ package com.deadman.jgame.drawing;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
+import java.awt.image.DataBuffer;
+import java.awt.image.DataBufferByte;
+import java.awt.image.DataBufferDouble;
+import java.awt.image.DataBufferFloat;
+import java.awt.image.DataBufferInt;
+import java.awt.image.DataBufferShort;
+import java.awt.image.DataBufferUShort;
+import java.awt.image.DirectColorModel;
+import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.Buffer;
+import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
+import java.nio.ShortBuffer;
 import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 
 import com.deadman.dh.resources.GameResources;
 import com.deadman.jgame.resources.XCF;
+import com.jogamp.nativewindow.util.PixelFormat;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
-import com.jogamp.opengl.GLProfile;
+import com.jogamp.opengl.util.GLPixelBuffer.GLPixelAttributes;
 import com.jogamp.opengl.util.texture.Texture;
-import com.jogamp.opengl.util.texture.awt.AWTTextureIO;
+import com.jogamp.opengl.util.texture.TextureData;
+import com.jogamp.opengl.util.texture.TextureIO;
 
 public class Picture extends Drawable
 {
@@ -44,7 +61,7 @@ public class Picture extends Drawable
 		this.anchorX = anchorX;
 		this.anchorY = anchorY;
 	}
-	
+
 	@Override
 	public String toString()
 	{
@@ -52,7 +69,7 @@ public class Picture extends Drawable
 			return String.format("PIC %s (%d:%d)", _fileName, anchorX, anchorY);
 		return String.format("PIC (%d:%d)", anchorX, anchorY);
 	}
-	
+
 	// Drawing
 
 	@Override
@@ -128,7 +145,6 @@ public class Picture extends Drawable
 		getTexture().bind(gl);
 
 		gl.glBegin(GL2.GL_QUADS);
-
 		gl.glTexCoord2f(1, 1);
 		gl.glVertex2i(x, y2);
 		gl.glTexCoord2f(1, 0);
@@ -307,55 +323,83 @@ public class Picture extends Drawable
 	}
 
 	// Resources
-	private Texture getTexture()
+
+	private static BufferedImage loadImage(String fileName, boolean warnings) throws IOException
+	{
+		File f = new File(fileName);
+		if (!f.exists())
+			throw new FileNotFoundException();
+		return ImageIO.read(f);
+	}
+
+	private Buffer wrapImageDataBuffer(final BufferedImage image)
+	{
+		final DataBuffer data = image	.getRaster()
+										.getDataBuffer();
+
+		if (data instanceof DataBufferInt)
+			return IntBuffer.wrap(((DataBufferInt) data).getData());
+		
+		if (data instanceof DataBufferByte)
+			return ByteBuffer.wrap(((DataBufferByte) data).getData());
+
+		if (data instanceof DataBufferDouble)
+			throw new RuntimeException("DataBufferDouble rasters not supported by OpenGL");
+
+		if (data instanceof DataBufferFloat)
+			return FloatBuffer.wrap(((DataBufferFloat) data).getData());
+
+		if (data instanceof DataBufferShort)
+			return ShortBuffer.wrap(((DataBufferShort) data).getData());
+
+		if (data instanceof DataBufferUShort)
+			return ShortBuffer.wrap(((DataBufferUShort) data).getData());
+
+		throw new RuntimeException("Unexpected DataBuffer type?");
+	}
+
+	protected Texture getTexture()
 	{
 		if (notFound) return null;
 
 		if (t == null)
 		{
-			synchronized (_buff)
-			{
-				_buff.add(this);
-			}
-
-			if (_img != null)
-			{
-				t = AWTTextureIO.newTexture(GLProfile.getDefault(), _img, false);
-				//if (_fileName != null) _img = null; // TODO Может быть проблема с методами, которые обращаются к пикселям
-			}
-			else if (_fileName != null)
-			{
-				/*try
-				{
-					t = AWTTextureIO.newTexture(new File(_fileName), false);
-				}
-				catch (Exception e)
-				{
-					e.printStackTrace();
-					notFound = true;
-					return null;
-				}*/
-
-				try
-				{
-					BufferedImage img = loadImage(_fileName, false);
-					t = AWTTextureIO.newTexture(GLProfile.getDefault(), img, false);
-				}
-				catch (Exception e)
-				{
-					System.err.println("Error load image " + _fileName);
-					e.printStackTrace();
-					notFound = true;
-					return null;
-				}
-			}
-			else
-			{
-				notFound = true;
-				return null;
-			}
-
 			GL2 gl = GameScreen.gl;
+
+			_buff.add(this);
+
+			if (_img == null)
+			{
+				if (_fileName != null)
+				{
+					try
+					{
+						_img = loadImage(_fileName, false);
+					}
+					catch (IOException e)
+					{
+						System.err.println("Error load image " + _fileName);
+						e.printStackTrace();
+						notFound = true;
+						return null;
+					}
+				}
+				else
+				{
+					notFound = true;
+					return null;
+				}
+			}
+
+			//System.out.println(_img);
+			final GLPixelAttributes glpa = new GLPixelAttributes(gl.getGLProfile(), PixelFormat.ABGR8888, false);
+			int internalFormat = _img	.getColorModel()
+										.hasAlpha() ? GL.GL_RGBA8 : GL.GL_RGB;
+			int pixelFormat = GL.GL_RGBA;
+			int pixelType = glpa.type;
+			Buffer buff = wrapImageDataBuffer(_img);
+			TextureData d = new TextureData(gl.getGLProfile(), internalFormat, _img.getWidth(), _img.getHeight(), 0, pixelFormat, pixelType, false, false, false, buff, null);
+			t = TextureIO.newTexture(d);
 
 			t.setTexParameteri(gl, GL.GL_TEXTURE_WRAP_S, GL.GL_REPEAT);
 			t.setTexParameteri(gl, GL.GL_TEXTURE_WRAP_T, GL.GL_REPEAT);
@@ -388,14 +432,6 @@ public class Picture extends Drawable
 			t = null;
 			_img = null;
 		}
-	}
-
-	public static BufferedImage loadImage(String fileName, boolean warnings) throws IOException
-	{
-		File f = new File(fileName);
-		if (!f.exists())
-			throw new FileNotFoundException();
-		return ImageIO.read(f);
 	}
 
 	public static Drawable load(String path)
@@ -599,8 +635,8 @@ public class Picture extends Drawable
 		width = right - left + 1;
 		height = bottom - top + 1;
 
-		BufferedImage cropped = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-		cropped.getGraphics()
+		BufferedImage cropped = createImage(width, height);
+		cropped	.getGraphics()
 				.drawImage(_img, 0, 0, width, height, left, top, right + 1, bottom + 1, null);
 		_img = cropped;
 		anchorX -= left;
@@ -611,7 +647,7 @@ public class Picture extends Drawable
 	{
 		width = 1;
 		height = 1;
-		_img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
+		_img = createImage(1, 1);
 	}
 
 	/*@Override
@@ -639,7 +675,7 @@ public class Picture extends Drawable
 	@Override
 	public Drawable replaceColors(int[] from, int[] to)
 	{
-		BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+		BufferedImage img = createImage(width, height);
 		for (int x = 0; x < width; x++)
 		{
 			for (int y = 0; y < height; y++)
@@ -673,7 +709,7 @@ public class Picture extends Drawable
 
 	public Drawable subpic2(int x, int y, int w, int h)
 	{
-		BufferedImage sub = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+		BufferedImage sub = createImage(w, h);
 		Graphics g = sub.getGraphics();
 		int dx = x + anchorX;
 		int dy = y + anchorY;
@@ -730,7 +766,7 @@ public class Picture extends Drawable
 
 	private void resize(int w, int h, int dx, int dy)
 	{
-		BufferedImage sub = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+		BufferedImage sub = createImage(w, h);
 		Graphics g = sub.getGraphics();
 		g.drawImage(_img, dx, dy, null);
 		_img = sub;
@@ -748,7 +784,7 @@ public class Picture extends Drawable
 	public Picture outline(int color)
 	{
 		if (_img == null) return null;
-		
+
 		Picture copy = copy();
 		copy.makeOutline(color);
 		return copy;
@@ -779,7 +815,7 @@ public class Picture extends Drawable
 			}
 		}
 	}
-	
+
 	public Picture shadow(int color)
 	{
 		if (_img == null) return null;
@@ -811,4 +847,13 @@ public class Picture extends Drawable
 		if (c != color && (c & 0xFF000000) == 0) // Прозрачный пиксель
 			_img.setRGB(x, y, color);
 	}
+
+	public static BufferedImage createImage(int width, int height)
+	{
+		WritableRaster raster = colorModelRGBA.createCompatibleWritableRaster(width, height);
+		return new BufferedImage(colorModelRGBA, raster, false, null);
+	}
+
+	static final ColorModel colorModelRGBA = new DirectColorModel(32, 0xff000000, 0xff0000, 0xff00, 0xff);
+
 }

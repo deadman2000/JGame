@@ -55,6 +55,7 @@ public class FontEntry extends ResourceEntry
 				letters.set(letter, l);
 			}
 			GameFont gf = new GameFont(path, letters.toArray(new Picture[letters.size()]));
+			gf.palette = pal;
 			_palFonts.add(gf);
 			return gf;
 		}

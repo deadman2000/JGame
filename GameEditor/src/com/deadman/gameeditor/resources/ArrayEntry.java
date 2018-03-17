@@ -1,36 +1,32 @@
 package com.deadman.gameeditor.resources;
 
-import java.util.HashMap;
-
-class ArrayEntry extends ResourceEntry {
+class ArrayEntry extends ResourceEntry
+{
 	// private ArrayList<Layer> _entries = new ArrayList<>();
-	private HashMap<Integer, ResourceEntry> _entries;
+	private ResourceEntry[] _entries;
 
-	public ArrayEntry(ResourceGroup group, String name, HashMap<Integer, ResourceEntry> arr) {
+	public ArrayEntry(ResourceGroup group, String name, ResourceEntry[] arr)
+	{
 		super(group, ARRAY, name, "");
 		_entries = arr;
 	}
 
 	@Override
-	public void writeJava(StringBuilder str) {
+	public void writeJava(StringBuilder str)
+	{
 		str.append("public static final int[] ").append(name).append("={");
 
-		int max = 0;
-		for (Integer i : _entries.keySet()) {
-			if (max < i)
-				max = i;
-		}
-
 		boolean first = true;
-		for (int i = 0; i <= max; i++) {
-			ResourceEntry e = _entries.get(i);
+		for (int i = 0; i < _entries.length; i++)
+		{
+			ResourceEntry e = _entries[i];
 
 			if (!first)
 				str.append(',');
 			if (e != null)
 				str.append(e.id);
 			else
-				str.append('0');
+				str.append("-1");
 			first = false;
 		}
 

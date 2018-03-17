@@ -12,8 +12,9 @@ public abstract class ItemEffect
 		return false;
 	}
 	
-	public void activate(GameCharacter owner, IsoObject target)
+	public boolean activate(GameCharacter owner, IsoObject target)
 	{
+		return false;
 	}
 	
 	// Пассивные эффекты

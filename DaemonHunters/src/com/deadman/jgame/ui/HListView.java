@@ -10,7 +10,7 @@ public class HListView extends BaseListView
 	private HScrollBar scrollBar;
 
 	public int item_top_padding = 0;
-	
+
 	class ContentItem extends Row
 	{
 		public ContentItem()
@@ -18,12 +18,12 @@ public class HListView extends BaseListView
 			layout.widthByContent = true;
 			layout.verticalMode = RowLayout.V_FILL;
 		}
-		
+
 		@Override
 		protected void onResize()
 		{
 			super.onResize();
-			update();
+			update(false);
 		}
 	}
 
@@ -51,7 +51,7 @@ public class HListView extends BaseListView
 			scrollBar.removeControlListener(scrollBar_listener);
 			scrollBar.remove();
 		}
-		
+
 		scrollBar = sb;
 		scrollBar.addControlListener(scrollBar_listener);
 		addControl(scrollBar);
@@ -89,12 +89,15 @@ public class HListView extends BaseListView
 	};
 
 	@Override
-	public void update()
+	public void update(boolean withLayout)
 	{
+		if (withLayout)
+			content.refreshLayout();
+		
 		if (scrollBar != null)
 			updateScrollBar();
 	}
-	
+
 	@Override
 	public void addItem(ListViewItem lvi)
 	{
@@ -113,6 +116,7 @@ public class HListView extends BaseListView
 	public void setItems(Collection<ListViewItem> list)
 	{
 		clear();
+
 		for (ListViewItem it : list)
 			addItem(it);
 	}
@@ -140,7 +144,7 @@ public class HListView extends BaseListView
 
 	public void scrollRight()
 	{
-		if (scrollBar.max <= 0) return;
+		if (scrollBar.max <= 0 || !scrollBar.visible) return;
 		ListViewItem first = getFirstVisible();
 		if (first != null)
 		{
@@ -168,7 +172,7 @@ public class HListView extends BaseListView
 	public void onMouseWheel(Point p, MouseWheelEvent e)
 	{
 		if (!intersectLocal(p)) return;
-		
+
 		if (e.getWheelRotation() > 0)
 			scrollBar.shift(10);
 		else

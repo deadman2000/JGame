@@ -19,16 +19,16 @@ public class Control
 	private ArrayList<Control> childs, childsReverse, controlsToAdd;
 
 	public int x, y, width, height;
-	
+
 	private Layout _layout;
 	public Layout.ChildSettings layoutChildSettings;
-	
+
 	public boolean isFocused = false;
 	public boolean isPressed;
 	public Drawable background;
-	
+
 	public int bgrColor = 0;
-	
+
 	public boolean clickOnBgr = false;
 
 	public boolean visible = true;
@@ -125,7 +125,7 @@ public class Control
 	public void setPosition(int x, int y)
 	{
 		if (x == this.x && y == this.y) return;
-		
+
 		this.x = x;
 		this.y = y;
 	}
@@ -133,16 +133,16 @@ public class Control
 	public void setSize(int width, int height)
 	{
 		if (width == this.width && height == this.height) return;
-		
+
 		this.width = width;
 		this.height = height;
 		onResize();
 	}
-	
+
 	public void setWidth(int width)
 	{
 		if (width == this.width) return;
-		
+
 		this.width = width;
 		onResize();
 	}
@@ -150,7 +150,7 @@ public class Control
 	public void setHeight(int height)
 	{
 		if (height == this.height) return;
-		
+
 		this.height = height;
 		onResize();
 	}
@@ -158,7 +158,7 @@ public class Control
 	public void setBounds(int x, int y, int width, int height)
 	{
 		if (x == this.x && y == this.y && width == this.width && height == this.height) return;
-		
+
 		this.x = x;
 		this.y = y;
 		this.width = width;
@@ -182,7 +182,7 @@ public class Control
 	public void show()
 	{
 		if (visible) return;
-		
+
 		visible = true;
 		if (parent != null)
 			parent.refreshLayout();
@@ -191,7 +191,7 @@ public class Control
 	public void hide()
 	{
 		if (!visible) return;
-		
+
 		visible = false;
 		if (parent != null)
 			parent.refreshLayout();
@@ -203,15 +203,15 @@ public class Control
 	{
 		if (type.isInstance(layoutChildSettings))
 			return type.cast(layoutChildSettings);
-		
+
 		return def;
 	}
-	
+
 	public <T extends Layout.ChildSettings> T getLayoutSettings(Class<T> type)
 	{
 		if (type.isInstance(layoutChildSettings))
 			return type.cast(layoutChildSettings);
-		
+
 		try
 		{
 			T s = type.newInstance();
@@ -224,7 +224,7 @@ public class Control
 			return null;
 		}
 	}
-	
+
 	// Пересчитывает компоновку элементов
 	public void refreshLayout()
 	{
@@ -347,8 +347,10 @@ public class Control
 
 	public void pressMouse(Point p, MouseEvent e)
 	{
+		//System.out.println(this + " press?");
 		if (intersectLocal(p))
 		{
+			//System.out.println("\tintersect");
 			if (childs != null)
 			{
 				for (Control c : childsReverse)
@@ -369,6 +371,7 @@ public class Control
 				pressBtn = e.getButton();
 				isPressed = true;
 
+				//System.out.println(this + " onPressed");
 				onPressed(p, e);
 				//e.consume(); // With Snow not work MapContextMenu 
 			}
@@ -545,7 +548,7 @@ public class Control
 	}
 
 	// sub controls
-	
+
 	public ArrayList<Control> childs()
 	{
 		return childs;
@@ -569,12 +572,13 @@ public class Control
 
 	public boolean containsControl(Control control)
 	{
-		return childs.contains(control);
+		return (childs != null && childs.contains(control)) || (controlsToAdd != null && controlsToAdd.contains(control));
 	}
 
 	private void setParent(Control control)
 	{
 		parent = control;
+		removed = false;
 	}
 
 	public void submitChilds()
@@ -588,7 +592,7 @@ public class Control
 				list = new ArrayList<Control>();
 				for (Control c : childs)
 				{
-					if (!c.removed)
+					if (!c.removed && !list.contains(c))
 						list.add(c);
 				}
 			}
@@ -597,7 +601,11 @@ public class Control
 
 			if (controlsToAdd != null)
 			{
-				list.addAll(controlsToAdd);
+				for (Control c : controlsToAdd)
+				{
+					if (!c.removed && !list.contains(c))
+						list.add(c);
+				}
 				controlsToAdd.clear();
 			}
 
@@ -651,7 +659,7 @@ public class Control
 		if (_listeners != null)
 			_listeners.remove(listener);
 	}
-	
+
 	// Resources
 
 	public static ResourceEntry getResource(int id)
@@ -673,9 +681,9 @@ public class Control
 	{
 		return GameFont.get(id, pal);
 	}
-	
+
 	// Actions
-	
+
 	public static final int ACTION_VALUE_CHANGED = 0;
 	public static final int ACTION_POSITION_CHANGED = 1;
 	public static final int ACTION_ITEM_SELECTED = 2;

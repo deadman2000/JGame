@@ -40,7 +40,7 @@ public class SelectSquad extends IGMPanel
 		for (Squad s : squads)
 			lv.addItem(new MenuRow(s.name, s));
 		if (lv.itemsCount() > 0)
-			lv.selectIndex(0);
+			lv.selectFirst();
 
 		int by = TOP_PAD + squads.size() * MenuRow.HEIGHT + 2;
 		addButton(0, "Отправить", 86, by, 70);

@@ -16,4 +16,8 @@ public abstract class ItemMovingValidator
 	{
 		return false;
 	}
+
+	public void useItem(Item item)
+	{
+	}
 }

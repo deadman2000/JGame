@@ -11,25 +11,9 @@ public class ControlDescription extends InstanceDescription
 		info = controlInfo;
 	}
 	
-	public boolean hasMethod(String name)
+	public LayoutInfo layoutInfo()
 	{
-		return info.hasMethod(name);
-	}
-
-	public boolean hasProperty(String name)
-	{
-		return info.hasProperty(name);
-	}
-
-	public void setProperty(String name, String value) throws ParseException
-	{
-		String code = info.resolvePropertySet(name, value);
-		appendCode("%1$s." + code + ";");
-	}
-
-	public void addCall(String name, String[] callArgs) throws ParseException
-	{
-		String code = info.resolveCall(name, callArgs);
-		appendCode("%1$s." + code + ";");
+		if (layout != null) return layout.info;
+		return info.defaultLayout;
 	}
 }

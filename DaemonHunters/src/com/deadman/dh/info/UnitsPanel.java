@@ -224,7 +224,7 @@ public class UnitsPanel extends Control
 		lviCraft.setValue(unit.skCraft);
 		lviScience.setValue(unit.skScience);
 		lviMagic.setValue(unit.skMagic);
-		lvSkills.update();
+		lvSkills.update(false);
 
 		igBackpack.setPage(unit.backpack);
 		agAmmunition.setPage(unit.ammunition);

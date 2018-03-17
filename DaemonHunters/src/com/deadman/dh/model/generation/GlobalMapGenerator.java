@@ -16,6 +16,7 @@ import com.deadman.dh.model.Poi;
 import com.deadman.dh.model.RiverNode;
 import com.deadman.dh.model.SubMap;
 import com.deadman.dh.model.Way;
+import com.deadman.jgame.drawing.Picture;
 import com.deadman.jgame.io.NullOutputStream;
 import com.deadman.jgame.ui.ProgressStatus;
 
@@ -104,7 +105,7 @@ public class GlobalMapGenerator
 
 	public BufferedImage getHeightsMap()
 	{
-		BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+		BufferedImage img = Picture.createImage(width, height);
 
 		for (int x = 0; x < width; x++)
 			for (int y = 0; y < height; y++)

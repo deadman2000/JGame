@@ -15,6 +15,7 @@ import com.deadman.dh.global.MapStyle;
 import com.deadman.dh.model.generation.GlobalMapGenerator;
 import com.deadman.jgame.drawing.Drawable;
 import com.deadman.jgame.drawing.Effects;
+import com.deadman.jgame.drawing.Picture;
 import com.deadman.jgame.ui.ProgressStatus;
 
 public class GlobalMap
@@ -76,7 +77,7 @@ public class GlobalMap
 
 	public BufferedImage fillBackground(MapStyle style, ProgressStatus status)
 	{
-		BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+		BufferedImage img = Picture.createImage(width, height);
 
 		int n = width / 50;
 

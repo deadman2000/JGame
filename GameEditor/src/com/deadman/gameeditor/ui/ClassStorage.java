@@ -36,12 +36,19 @@ public class ClassStorage<E extends ClassInfo>
 
 	public E register(IType t) throws JavaModelException
 	{
-		E ci = _map.get(t.getElementName());
+		String name = t.getElementName();
+		if (name.endsWith("_ui"))
+		{
+			System.out.println("Ignoring class " + name);
+			return null;
+		}
+
+		E ci = _map.get(name);
 		if (ci != null) return ci;
 
 		ci = createInstance();
 		ci.init(_compiler, t);
-		_map.put(t.getElementName(), ci);
+		_map.put(name, ci);
 		return ci;
 	}
 

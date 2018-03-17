@@ -190,7 +190,7 @@ class ResourceGroup
 
 		if (childs.size() > 0)
 		{
-			addEntry(new ArrayEntry(this, entryName, childs));
+			addEntry(new ArrayEntry(this, entryName, toArray(childs)));
 		}
 	}
 
@@ -219,9 +219,12 @@ class ResourceGroup
 		if (name != null)
 		{
 			XCF xcf = resources.getXCF(res);
-			ResourceGroup group = createSubGroup(name);
-			group.setPath(res);
-			group.scan(xcf);
+			if (xcf != null)
+			{
+				ResourceGroup group = createSubGroup(name);
+				group.setPath(res);
+				group.scan(xcf);
+			}
 		}
 	}
 
@@ -282,6 +285,8 @@ class ResourceGroup
 				{
 					int i = Integer.parseInt(ind);
 					ResourceEntry layerEntry = addLayer(sl);
+					if (layerEntry == null)
+						System.out.println("No entry for " + sl.name);
 					arr.put(i, layerEntry);
 				}
 				catch (Exception e)
@@ -292,8 +297,21 @@ class ResourceGroup
 
 		if (arr.size() > 0)
 		{
-			addEntry(new ArrayEntry(this, entryName, arr));
+			addEntry(new ArrayEntry(this, entryName, toArray(arr)));
 		}
+	}
+
+	private static ResourceEntry[] toArray(HashMap<Integer, ResourceEntry> map)
+	{
+		ArrayList<ResourceEntry> list = new ArrayList<>();
+		for (HashMap.Entry<Integer, ResourceEntry> entry : map.entrySet())
+		{
+			int i = entry.getKey();
+			while (list.size() <= i)
+				list.add(null);
+			list.set(i, entry.getValue());
+		}
+		return list.toArray(new ResourceEntry[list.size()]);
 	}
 
 	private ResourceEntry createEntry(int type, String entryName, IResource path)
@@ -310,17 +328,27 @@ class ResourceGroup
 		return addEntry(new ResourceEntry(this, type, entryName, path));
 	}
 
+	private HashMap<Layer, ResourceEntry> _layers;
+
 	private ResourceEntry addLayer(Layer layer)
 	{
-		if (layer.res != null)
-			return layer.res;
+		if (layer.name.startsWith("_"))
+			return null;
 
-		if (layer.name.startsWith("_")) return null;
+		if (_layers != null)
+		{
+			ResourceEntry e = _layers.get(layer);
+			if (e != null) return e;
+		}
 
 		String entryName = toFieldName(layer.name, true);
 		if (entryName == null)
+		{
+			System.out.println("No field name " + layer.name);
 			return null;
+		}
 
+		ResourceEntry entry;
 		if (layer.name.endsWith("-9p"))
 		{
 			String sourceName = layer.name.substring(0, layer.name.length() - 3);
@@ -329,15 +357,22 @@ class ResourceGroup
 			{
 				addLayer(source);
 
-				return addEntry(PicPartEntry.fromLayers(this, entryName, path + "?" + source.name, layer, source));
+				entry = addEntry(PicPartEntry.fromLayers(this, entryName, path + "?" + source.name, layer, source));
 			}
 			else
 			{
-				_xcf.getLayer(sourceName);
+				System.out.println("Not implemented");
+				entry = null;
+				//_xcf.getLayer(sourceName);
 			}
 		}
+		else
+			entry = addEntry(new LayerEntry(this, entryName, path, layer));
 
-		return addEntry(new LayerEntry(this, entryName, path, layer));
+		if (_layers == null)
+			_layers = new HashMap<>();
+		_layers.put(layer, entry);
+		return entry;
 	}
 
 	// Font
@@ -390,7 +425,7 @@ class ResourceGroup
 		{
 			if (fields.get(name) instanceof ResourceEntry)
 			{
-				System.err.println("Duplicate resource class name: " + n);
+				System.out.println("Duplicate resource class name: " + n);
 				return null;
 			}
 
@@ -419,11 +454,14 @@ class ResourceGroup
 
 		if (fields.containsKey(n))
 		{
-			// System.err.println("Duplicate field names: " + n);
+			System.out.println("Duplicate field names: " + n);
 			return null; // TODO Добавление числа в имя
 		}
 		if (isField && groups.containsKey(n))
+		{
+			System.out.println("Duplicate group names: " + n);
 			return null;
+		}
 
 		return n;
 	}
@@ -520,7 +558,7 @@ class ResourceGroup
 		IField f = _javaClass.getField(ent.name);
 		if (!f.exists())
 		{
-			System.err.println(className + "." + ent.name + " not found");
+			System.out.println(className + "." + ent.name + " not found");
 			return;
 		}
 

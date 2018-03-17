@@ -14,9 +14,10 @@ import com.deadman.jgame.drawing.Picture;
 public class TextBox extends Control
 {
 	public GameFont _font;
+	@Property("textValue")
 	public String text = "";
 	public Picture[] _chars;
-	public int maxLength = Integer.MAX_VALUE;
+	public int maxLength = -1;
 	public boolean textAlignLeft = true;
 	public int filter = FILTER_NONE;
 	private long cur_tick_begin;
@@ -24,7 +25,7 @@ public class TextBox extends Control
 	public TextBox()
 	{
 	}
-	
+
 	public TextBox(GameFont font)
 	{
 		setFont(font);
@@ -36,7 +37,7 @@ public class TextBox extends Control
 		setBounds(x, y, width, font.height + 5);
 		setText("");
 	}
-	
+
 	@Property("font")
 	public void setFont(GameFont font)
 	{
@@ -44,11 +45,16 @@ public class TextBox extends Control
 		setHeight(font.height + 5);
 		setText(text);
 	}
-	
+
 	@Override
 	protected void onResize()
 	{
 		super.onResize();
+		calcMaxLength();
+	}
+
+	private void calcMaxLength()
+	{
 		maxLength = (width - 4) / (_font.width + 1);
 	}
 
@@ -109,6 +115,7 @@ public class TextBox extends Control
 			GameScreen.screen.drawRect(cx, scrY + 2, 1, height - 4, cursorColor);
 	}
 
+	@Property("text")
 	public void setText(String str)
 	{
 		//System.out.println("Text: " + str);
@@ -201,6 +208,7 @@ public class TextBox extends Control
 		char ch = e.getKeyChar();
 		if (isPass(ch))
 		{
+			if (maxLength < 0) calcMaxLength();
 			if (text.length() < maxLength && _font.hasCharPic(ch))
 			{
 				String t;
@@ -250,14 +258,13 @@ public class TextBox extends Control
 		return (c >= '0' && c <= '9') || (c == '.' || c == ',');
 	}
 
-	private static final HashSet<Character> ILLEGAL_FILE_CHARACTERS = new HashSet<>(Arrays.asList(new Character[]{ '/', '\n', '\r', '\t', '\0', '\f', '`', '?', '*', '\\', '<', '>', '|', '\"', ':' }));
-	
+	private static final HashSet<Character> ILLEGAL_FILE_CHARACTERS = new HashSet<>(Arrays.asList(new Character[] { '/', '\n', '\r', '\t', '\0', '\f', '`', '?', '*', '\\', '<', '>', '|', '\"', ':' }));
+
 	private static boolean isFileName(char ch)
 	{
 		return !ILLEGAL_FILE_CHARACTERS.contains(ch);
 	}
-	
-	
+
 	@Override
 	public void onPressed(Point p, MouseEvent e)
 	{

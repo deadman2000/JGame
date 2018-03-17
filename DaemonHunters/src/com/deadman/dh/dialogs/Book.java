@@ -108,7 +108,7 @@ public class Book extends Control
 
 		iso = new IsoViewer();
 		iso.setBounds(141, 2, 120, 60);
-		iso.all_levels = true;
+		iso.allLevels = true;
 		buildingsPage.addControl(iso);
 		iso.bgrColor = 0xFF000000;
 
@@ -132,7 +132,7 @@ public class Book extends Control
 			}
 		});
 
-		lvBuildings.selectIndex(0);
+		lvBuildings.selectFirst();
 	}
 
 	GuildBuildingType _selectedBuildingType;

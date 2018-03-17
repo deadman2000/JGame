@@ -40,7 +40,7 @@ public class BuyHorse extends IGMPanel
 		for (int i = 0; i < COUNT; i++)
 			lv.addItem(new HorseRow(i, Horse.generate()));
 		if (lv.itemsCount() > 0)
-			lv.selectIndex(0);
+			lv.selectFirst();
 
 		height = TOP_PAD + CartRow.HEIGHT * lv.itemsCount() + BOTTOM_PAD;
 

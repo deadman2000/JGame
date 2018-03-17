@@ -21,8 +21,6 @@ public class Layer extends Picture {
 
 	public int globalX = -1, globalY = -1; // Позиция на общем пано
 
-	public LayerEntry res;
-
 	public Layer(String name, BufferedImage img, int x, int y) {
 		super(convertToSWT(img), -x, -y);
 		this.name = name;

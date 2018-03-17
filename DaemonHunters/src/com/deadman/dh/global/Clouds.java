@@ -165,7 +165,7 @@ public class Clouds
 		public int cx, cy; // Координаты в сетке
 
 		public Picture picture;
-		private BufferedImage img = new BufferedImage(TILE_SIZE, TILE_SIZE, BufferedImage.TYPE_INT_ARGB);
+		private BufferedImage img = Picture.createImage(TILE_SIZE, TILE_SIZE);
 
 		public CloudTile(int x, int y)
 		{

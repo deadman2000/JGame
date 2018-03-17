@@ -11,6 +11,7 @@ import java.util.Collection;
 import java.util.HashMap;
 
 import com.deadman.jgame.drawing.Drawable;
+import com.deadman.jgame.drawing.Picture;
 
 // https://git.gnome.org/browse/gimp/plain/devel-docs/xcf.txt?h=gimp-2-8
 // http://api.kde.org/4.x-api/kdelibs-apidocs/kimgio/html/gimp_8h.html
@@ -137,6 +138,7 @@ public class XCF
 			}
 
 			int[] colorMap = null;
+			@SuppressWarnings("unused")
 			IndexColorModel cm = null;
 
 			while (true) // Properties
@@ -300,9 +302,9 @@ public class XCF
 				BufferedImage img;
 				int colorType = getColorType(colorMode);
 				if (colorType == BufferedImage.TYPE_BYTE_BINARY || colorType == BufferedImage.TYPE_BYTE_INDEXED)
-					img = new BufferedImage(lW, lH, colorType, cm);
+					throw new RuntimeException("Indexed texture not texted"); //img = new BufferedImage(lW, lH, colorType, cm); // TODO Picture.createImage
 				else
-					img = new BufferedImage(lW, lH, colorType);
+					img = Picture.createImage(lW, lH); // , colorType
 
 				//for (int l = 0; l < levels.size(); l++)
 				int l = 0;

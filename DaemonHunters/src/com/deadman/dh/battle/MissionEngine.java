@@ -94,8 +94,8 @@ public class MissionEngine extends GameEngine
 			squad.setUnit(u, i);
 
 			Game.ItemTypes.red_potion
-					.generate()
-					.moveTo(u.backpack, 0, 0);
+										.generate()
+										.moveTo(u.backpack, 0, 0);
 			u.equip(Game.ItemTypes.armor);
 			u.equip(Game.ItemTypes.book);
 			u.give(Game.ItemTypes.torch);
@@ -106,9 +106,9 @@ public class MissionEngine extends GameEngine
 			{
 				u.equip(Game.ItemTypes.bow);
 				Game.ItemTypes.arrow
-						.generate()
-						.setCount(100)
-						.moveTo(u.backpack, 0, 0);
+									.generate()
+									.setCount(100)
+									.moveTo(u.backpack, 0, 0);
 			}
 		}
 
@@ -157,13 +157,14 @@ public class MissionEngine extends GameEngine
 		cursor = Game.ItemCursor;
 
 		addControl(mapViewer = new IsoViewer());
-		RelativeLayout.settings(mapViewer).fill();
+		RelativeLayout	.settings(mapViewer)
+						.fill();
 		mapViewer.cursor = IsoCursor.CURSOR_RECT;
 		mapViewer.addControlListener(mapViewer_listener);
 
 		Control p = new Control(R.ui.miss_portrait_bgr);
 		addControl(p);
-		
+
 		addControl(cPortrait = new Control(4, 4, Unit.PORTRAIT_WIDTH, Unit.PORTRAIT_HEIGHT));
 		cPortrait.addControlListener(action_listener);
 
@@ -180,7 +181,9 @@ public class MissionEngine extends GameEngine
 		// Панель с инвентарем
 		addControl(plUnitInfo = new Control());
 		plUnitInfo.width = 120;
-		RelativeLayout.settings(plUnitInfo).alignRight().fillHeight();
+		RelativeLayout	.settings(plUnitInfo)
+						.alignRight()
+						.fillHeight();
 		plUnitInfo.bgrColor = 0xffc3bca7;
 		plUnitInfo.visible = false;
 		plUnitInfo.consumeMouse = true;
@@ -197,7 +200,7 @@ public class MissionEngine extends GameEngine
 		igGround.setValidator(new MissionItemValidator(igGround));
 
 		messAnim = new MessageAnimation();
-		
+
 		submitChilds();
 	}
 
@@ -230,14 +233,30 @@ public class MissionEngine extends GameEngine
 		public boolean canUse(Item item, Object source)
 		{
 			if (page == igGround) return false; // Не можем использовать с земли!
-
-			if (item.canActivate())
-			{
-				useItem(item);
-				return true;
-			}
-			return false;
+			return item.canActivate();
 		}
+
+		@Override
+		public void useItem(Item item)
+		{
+			activateItem(item);
+		}
+	}
+
+	void activateItem(Item item)
+	{
+		if (item == null || !item.canActivate()) return;
+
+		if (selectedUnit.apCount >= ITEM_USE_COST) // Хватает ОД
+		{
+			if (item.activate(selectedUnit, selectedUnit)) // Активировалось успешно
+			{
+				selectedUnit.useAP(ITEM_USE_COST); // Тратим ОД
+				updateUnit(); // Обновляем интерфейс
+			}
+		}
+		else
+			noAPMessage();
 	}
 
 	UnitListener unitListener = new UnitListener()
@@ -253,28 +272,6 @@ public class MissionEngine extends GameEngine
 			showCellMessage(Integer.toString(value), fnt3x5_ol_green, ch.cell);
 		};
 	};
-
-	private boolean useItem(Item item)
-	{
-		if (item == null) return false;
-
-		if (item.canActivate())
-		{
-			if (selectedUnit.apCount >= ITEM_USE_COST) // Хватает ОД
-			{
-				if (item.activate(selectedUnit, selectedUnit)) // Активировалось успешно
-				{
-					selectedUnit.useAP(ITEM_USE_COST); // Тратим ОД
-					updateUnit(); // Обновляем интерфейс
-					return true;
-				}
-			}
-			else
-				noAPMessage();
-			return false;
-		}
-		return false;
-	}
 
 	private void showCellMessage(String msg, GameFont fnt, MapCell cell)
 	{
@@ -354,7 +351,7 @@ public class MissionEngine extends GameEngine
 				break;
 			case KeyEvent.VK_F2:
 				Book.inst()
-						.show();
+					.show();
 				break;
 			case KeyEvent.VK_I:
 				toggleUnitInfo();
@@ -387,7 +384,8 @@ public class MissionEngine extends GameEngine
 			{
 				if (ItemSlot.pickedItem() != null)
 				{
-					if (useItem(ItemSlot.pickedItem()))
+					activateItem(ItemSlot.pickedItem());
+					if (ItemSlot.pickedItem().count == 0)
 						ItemSlot.drop();
 					return;
 				}
@@ -641,7 +639,7 @@ public class MissionEngine extends GameEngine
 					hitCellLeft();
 					break;
 				case 2:
-					if (mapViewer.selected_cell != null) particles.add(new RedBall(mapViewer.selected_cell)); // TEST
+					if (mapViewer.focusedCell != null) particles.add(new RedBall(mapViewer.focusedCell)); // TEST
 					break;
 				case 3:
 					hitCellRight();
@@ -668,7 +666,7 @@ public class MissionEngine extends GameEngine
 		hideWay();
 		unblend();
 
-		MapCell c = mapViewer.selected_cell;
+		MapCell c = mapViewer.focusedCell;
 		if (c == null)
 		{
 			cursor = Game.ItemCursor;
@@ -751,7 +749,7 @@ public class MissionEngine extends GameEngine
 
 	private void hitCellLeft()
 	{
-		MapCell c = mapViewer.selected_cell;
+		MapCell c = mapViewer.focusedCell;
 		if (c == null) return;
 
 		if (ItemSlot.pickedItem() != null) // Бросаем предмет на землю
@@ -812,7 +810,7 @@ public class MissionEngine extends GameEngine
 
 	private void hitCellRight()
 	{
-		MapCell c = mapViewer.selected_cell;
+		MapCell c = mapViewer.focusedCell;
 		if (c == null) return;
 
 		if (selectedUnit.cell != c)

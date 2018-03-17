@@ -88,7 +88,7 @@ public class Button extends Control
 			background = _picDown;
 			if (label != null)
 				label.setPosition(1, labelY + 1);
-			if (check_on_click)
+			if (checkOnClick)
 				setChecked(true);
 			e.consume();
 		}
@@ -99,7 +99,7 @@ public class Button extends Control
 	{
 		super.onReleased(p, e);
 
-		if (check_on_click)
+		if (checkOnClick)
 			return;
 
 		if (e.getButton() == 1)
@@ -117,7 +117,7 @@ public class Button extends Control
 		e.consume();
 	}
 
-	public boolean check_on_click = false;
+	public boolean checkOnClick = false;
 
 	public boolean checked = false;
 

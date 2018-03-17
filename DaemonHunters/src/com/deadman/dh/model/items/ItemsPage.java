@@ -5,7 +5,6 @@ import java.util.ArrayList;
 /**
  * Класс для хранения предметов, типа рюкзаков, хранилища гильдии, экипировки экипажа
  * @author dead_man
- *
  */
 public class ItemsPage
 {
@@ -34,6 +33,11 @@ public class ItemsPage
 		return items[x + y * width];
 	}
 
+	public Item get(AmmunitionSlot slot)
+	{
+		return items[slot.id];
+	}
+	
 	public void set(Item item, int x, int y)
 	{
 		/*if (item != null)
@@ -44,6 +48,12 @@ public class ItemsPage
 		onItemMoved(item, x, y);
 	}
 
+	public void set(Item item, AmmunitionSlot slot)
+	{
+		items[slot.id] = item;
+		onItemMoved(item, slot.id, 0);
+	}
+	
 	/**
 	 * Кладет предмет в первый свободный слот
 	 * @param item
@@ -100,4 +110,5 @@ public class ItemsPage
 			l.onItemMoved(this, item, x, y);
 		}
 	}
+
 }

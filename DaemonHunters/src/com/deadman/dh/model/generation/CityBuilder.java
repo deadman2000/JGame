@@ -135,7 +135,7 @@ public class CityBuilder
 		if (picMap != null) return picMap;
 
 		// Перенос территории на карту города
-		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+		BufferedImage image = Picture.createImage(width, height);
 		MapStyle style = MapStyle.city;
 		for (int x = 0; x < width; x++)
 		{

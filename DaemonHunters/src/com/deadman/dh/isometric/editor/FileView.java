@@ -78,7 +78,7 @@ public class FileView extends VListView
 			}
 		}
 
-		selectIndex(0);
+		selectFirst();
 	}
 
 	private FileFilter filter;

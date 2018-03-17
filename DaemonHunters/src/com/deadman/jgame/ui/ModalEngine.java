@@ -3,6 +3,7 @@ package com.deadman.jgame.ui;
 import com.deadman.jgame.GameEngine;
 import com.deadman.jgame.GameLoop;
 import com.deadman.jgame.drawing.GameScreen;
+import com.deadman.jgame.drawing.ScreenEffect;
 
 public class ModalEngine extends GameEngine
 {
@@ -29,9 +30,9 @@ public class ModalEngine extends GameEngine
 	{
 		if (!_isModalEngine)
 		{
-			GameScreen.screen.beforeDrawFX();
+			GameScreen.screen.beginFX();
 			_engine.draw();
-			GameScreen.screen.afterDrawFX();
+			GameScreen.screen.endFX(ScreenEffect.DECOLORIZE);
 		}
 		else
 		{

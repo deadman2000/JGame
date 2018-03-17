@@ -1,7 +1,5 @@
 package com.deadman.dh.model;
 
-import com.deadman.dh.isometric.MoveArea;
-
 import com.deadman.dh.Game;
 import com.deadman.dh.R;
 import com.deadman.dh.battle.BattleSide;
@@ -11,7 +9,8 @@ import com.deadman.dh.isometric.IsoObject;
 import com.deadman.dh.isometric.IsoSprite;
 import com.deadman.dh.isometric.IsoWay;
 import com.deadman.dh.isometric.MapCell;
-import com.deadman.dh.model.items.AmmunitionGrid;
+import com.deadman.dh.isometric.MoveArea;
+import com.deadman.dh.model.items.AmmunitionSlot;
 import com.deadman.dh.model.items.Armor;
 import com.deadman.dh.model.items.IItemsPageListener;
 import com.deadman.dh.model.items.Item;
@@ -64,7 +63,7 @@ public class GameCharacter extends IsoObject implements IItemsPageListener
 	public GameCharacter()
 	{
 		id = Game.rnd.nextInt();
-		ammunition = new ItemsPage("Ammunition", AmmunitionGrid.AMMUNITION_COUNT, 1);
+		ammunition = new ItemsPage("Ammunition", AmmunitionSlot.COUNT, 1);
 		ammunition.addListener(this);
 		backpack = new ItemsPage("Backpack", 6, 5);
 	}
@@ -84,7 +83,7 @@ public class GameCharacter extends IsoObject implements IItemsPageListener
 		{
 			ch.male = false;
 			ch.body = GameResources.main.getIso("human_leather")
-					.colorize(ch.id);
+										.colorize(ch.id);
 
 			ch.equip(Game.ItemTypes.armor);
 			ch.hpMax = 50 + level * 10;
@@ -153,10 +152,10 @@ public class GameCharacter extends IsoObject implements IItemsPageListener
 	@Override
 	public void onItemMoved(ItemsPage page, Item item, int x, int y)
 	{
-		if (x == AmmunitionGrid.IND_RIGHTHAND)
+		if (x == AmmunitionSlot.RIGHTHAND.id)
 		{
 			if (item != null)
-				weaponSpr = body.weapons.get(item.getName()); // TODO переделать. брать класс предмета, а не его имя
+				weaponSpr = body.weapons.get(item.equipSprite()); // TODO переделать. брать класс предмета, а не его имя
 			else
 				weaponSpr = null;
 		}
@@ -167,7 +166,7 @@ public class GameCharacter extends IsoObject implements IItemsPageListener
 	public void equip(ItemType type)
 	{
 		type.generate()
-				.equip(this);
+			.equip(this);
 	}
 
 	public void give(ItemType type) // Тоже, что и equip, только в рюкзак
@@ -180,15 +179,15 @@ public class GameCharacter extends IsoObject implements IItemsPageListener
 		backpack.put(item);
 	}
 
-	public Item getAmmunition(int type)
+	public Item getAmmunition(AmmunitionSlot slot)
 	{
 		if (ammunition == null) return null;
-		return ammunition.get(type, 0);
+		return ammunition.get(slot);
 	}
 
 	public Weapon getWeapon()
 	{
-		Item it = getAmmunition(AmmunitionGrid.IND_RIGHTHAND);
+		Item it = getAmmunition(AmmunitionSlot.RIGHTHAND);
 		if (it != null && it instanceof Weapon)
 			return (Weapon) it;
 		return null;
@@ -196,7 +195,7 @@ public class GameCharacter extends IsoObject implements IItemsPageListener
 
 	public Armor getBodyArmor()
 	{
-		Armor it = (Armor) getAmmunition(AmmunitionGrid.IND_BODY);
+		Armor it = (Armor) getAmmunition(AmmunitionSlot.BODY);
 		if (it != null) return it;
 		return null;
 	}

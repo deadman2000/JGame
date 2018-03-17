@@ -14,7 +14,7 @@ public class InstanceDescription
 
 	private String _constuctCode;
 	private ArrayList<String> _code;
-	
+
 	//private boolean _parentInConstruct = false;
 
 	public InstanceDescription(ClassInfo classInfo, ControlDescription parent, int deep)
@@ -24,6 +24,8 @@ public class InstanceDescription
 		this.classInfo = classInfo;
 
 		_code = new ArrayList<>();
+		if (parent != null)
+			appendCode("%1$s.name = \"%1$s\";");
 
 		childs = new ArrayList<>();
 		if (parent != null)
@@ -41,10 +43,10 @@ public class InstanceDescription
 			varName = classInfo.generateVarName();
 
 		writeCode(parser, "public " + classInfo.fullClassName() + " %1$s;");
-		
+
 		writeChildsDeclaration(parser);
 	}
-	
+
 	public void writeChildsDeclaration(UIParser parser)
 	{
 		for (InstanceDescription child : childs)
@@ -53,19 +55,26 @@ public class InstanceDescription
 
 	public void writeCode(UIParser parser)
 	{
-		writeInitialize(parser);
-		writeParentAppend(parser);
-		
+		if (parent != null)
+		{
+			writeInitialize(parser);
+			writeParentAppend(parser);
+		}
+		else
+			varName = "this";
+
 		for (String line : _code)
 			writeCode(parser, line);
 
 		if (childs.size() > 0)
 		{
 			parser.appendLine();
-			writeChildsCode(parser);
+
+			for (InstanceDescription child : childs)
+				child.writeCode(parser);
 		}
 	}
-	
+
 	protected void writeInitialize(UIParser parser)
 	{
 		if (_constuctCode != null)
@@ -84,12 +93,6 @@ public class InstanceDescription
 			else
 				writeCode(parser, "%2$s.addControl(%1$s);");
 		}
-	}
-
-	public void writeChildsCode(UIParser parser)
-	{
-		for (InstanceDescription child : childs)
-			child.writeCode(parser);
 	}
 
 	protected void writeCode(UIParser parser, String line)
@@ -162,5 +165,27 @@ public class InstanceDescription
 		if (args == null)
 			return "";
 		return String.join(", ", args);
+	}
+
+	public boolean hasMethod(String name)
+	{
+		return classInfo.hasMethod(name);
+	}
+
+	public boolean hasProperty(String name)
+	{
+		return classInfo.hasProperty(name);
+	}
+
+	public void setProperty(String name, String value) throws ParseException
+	{
+		String code = classInfo.resolvePropertySet(name, value);
+		appendCode("%1$s." + code + ";");
+	}
+
+	public void addCall(String name, String[] callArgs) throws ParseException
+	{
+		String code = classInfo.resolveCall(name, callArgs);
+		appendCode("%1$s." + code + ";");
 	}
 }

@@ -11,6 +11,7 @@ import com.deadman.dh.model.items.ItemsGrid;
 import com.deadman.jgame.GameEngine;
 import com.deadman.jgame.drawing.GameFont;
 import com.deadman.jgame.ui.Button;
+import com.deadman.jgame.ui.CheckGroup;
 import com.deadman.jgame.ui.Control;
 import com.deadman.jgame.ui.ControlListener;
 import com.deadman.jgame.ui.Label;
@@ -71,13 +72,12 @@ public class GuildInfoEngine extends GameEngine
 		addControl(chbUnits = new Button(R.ui.bt_info_units, R.ui.bt_info_units_pr));
 		chbUnits.setPosition(217, 7);
 		chbUnits.addControlListener(chb_tabs_listener);
-		chbUnits.check_on_click = true;
 
 		addControl(new Control(getDrawable(R.ui.bt_border_info_9p), 260, 5, 41, 21));
 		addControl(chbSquads = new Button(R.ui.bt_info_squad, R.ui.bt_info_squad_pr));
 		chbSquads.setPosition(262, 7);
 		chbSquads.addControlListener(chb_tabs_listener);
-		chbSquads.check_on_click = true;
+		new CheckGroup(chbUnits, chbSquads);
 
 		// Рамка для кнопки
 		Control ctlBorderInfo = new Control(getDrawable(R.ui.bt_border_info_9p));
@@ -137,14 +137,12 @@ public class GuildInfoEngine extends GameEngine
 			{
 				if (sender == chbUnits)
 				{
-					chbSquads.setChecked(false);
 					plSquads.visible = false;
 					plUnits.visible = true;
 					plUnits.updateUnit();
 				}
 				else if (sender == chbSquads)
 				{
-					chbUnits.setChecked(false);
 					plUnits.visible = false;
 					plSquads.visible = true;
 					plSquads.updateSquad();

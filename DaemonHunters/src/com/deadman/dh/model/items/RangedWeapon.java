@@ -22,7 +22,6 @@ public class RangedWeapon extends Weapon
 	@Override
 	public boolean canAttack(GameCharacter attack, MapCell c)
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 }

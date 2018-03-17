@@ -53,7 +53,12 @@ public class GameScreen extends JFrame implements GLEventListener
 	public Point cursorPos;
 	public static Drawable defaultCursor;
 
+	public static GL2 gl;
 	public static GameScreen screen;
+
+	private GLU glu = new GLU();
+
+	private boolean _takeScreenshot;
 
 	public static void init(String title)
 	{
@@ -165,14 +170,10 @@ public class GameScreen extends JFrame implements GLEventListener
 		gl.glOrtho(0.0f, GAME_WIDTH, GAME_HEIGHT, 0.0f, 0.0f, 1.0f);
 
 		gl.glEnable(GL.GL_BLEND);
-		//gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
-		gl.glBlendFunc(GL.GL_ONE, GL.GL_ONE_MINUS_SRC_ALPHA);
+		gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
+
 		isScreenInit = true;
 	}
-
-	public static GL2 gl;
-	
-	private boolean _takeScreenshot;
 
 	@Override
 	public void display(GLAutoDrawable drawable)
@@ -184,15 +185,11 @@ public class GameScreen extends JFrame implements GLEventListener
 
 		gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_STENCIL_BUFFER_BIT);
 
-		//beforeDrawFX();
-
 		if (GameLoop.engine != null)
 			GameLoop.engine.draw();
 
 		drawCursor();
 
-		//afterDrawFX();
-		
 		if (_takeScreenshot)
 			saveScreenshot();
 
@@ -339,40 +336,7 @@ public class GameScreen extends JFrame implements GLEventListener
 	// FX
 
 	private int colorTexture = 0;
-	private int renderFBO;
-
-	private GLU glu = new GLU();
-
-	public void beforeDrawFX()
-	{
-		if (colorTexture == 0) initFX();
-
-		gl.glBindTexture(GL2.GL_TEXTURE_2D, 0);
-		gl.glBindFramebuffer(GL2.GL_FRAMEBUFFER, renderFBO);
-		gl.glClear(GL2.GL_COLOR_BUFFER_BIT);
-	}
-
-	public void afterDrawFX()
-	{
-		gl.glBindFramebuffer(GL2.GL_FRAMEBUFFER, 0);
-		gl.glClear(GL2.GL_COLOR_BUFFER_BIT);
-
-		if (shaderProgram == 0) initShaders();
-		gl.glUseProgram(shaderProgram);
-
-		gl.glBindTexture(GL2.GL_TEXTURE_2D, colorTexture);
-
-		gl.glUniform1i(gl.glGetUniformLocation(shaderProgram, "colorTexture"), 0);
-		//gl.glUniform1f(gl.glGetUniformLocation(shaderprogram, "time"), (float) (System.nanoTime() & 0xFFFFFF) / 0xFFFFFF);
-		gl.glUniform1i(gl.glGetUniformLocation(shaderProgram, "width"), GAME_WIDTH);
-		gl.glUniform1i(gl.glGetUniformLocation(shaderProgram, "height"), GAME_HEIGHT);
-
-		gl.glRecti(-1, -1, 1, 1);
-
-		gl.glUseProgram(0);
-
-		printError();
-	}
+	private int renderFBO = 0;
 
 	private void initFX()
 	{
@@ -400,6 +364,38 @@ public class GameScreen extends JFrame implements GLEventListener
 		printError();
 	}
 
+	public void beginFX()
+	{
+		if (colorTexture == 0) initFX();
+
+		gl.glBindTexture(GL2.GL_TEXTURE_2D, 0);
+		gl.glBindFramebuffer(GL2.GL_FRAMEBUFFER, renderFBO);
+		gl.glClear(GL2.GL_COLOR_BUFFER_BIT);
+	}
+	
+	public void endFX(ScreenEffect effect)
+	{
+		gl.glBindFramebuffer(GL2.GL_FRAMEBUFFER, 0);
+		gl.glClear(GL2.GL_COLOR_BUFFER_BIT);
+
+		if (shaderProgram == 0) initShaders();
+		gl.glUseProgram(shaderProgram);
+
+		gl.glBindTexture(GL2.GL_TEXTURE_2D, colorTexture);
+
+		gl.glUniform1i(gl.glGetUniformLocation(shaderProgram, "colorTexture"), 0);
+		//gl.glUniform1f(gl.glGetUniformLocation(shaderprogram, "time"), (float) (System.nanoTime() & 0xFFFFFF) / 0xFFFFFF);
+		gl.glUniform1i(gl.glGetUniformLocation(shaderProgram, "width"), GAME_WIDTH);
+		gl.glUniform1i(gl.glGetUniformLocation(shaderProgram, "height"), GAME_HEIGHT);
+		gl.glUniform1i(gl.glGetUniformLocation(shaderProgram, "effect"), effect.id);
+
+		gl.glRecti(-1, -1, 1, 1);
+
+		gl.glUseProgram(0);
+
+		printError();
+	}
+	
 	public int genFrameBuffer()
 	{
 		int[] ids = new int[1];
@@ -445,7 +441,7 @@ public class GameScreen extends JFrame implements GLEventListener
 	}
 
 	// Shaders
-
+	
 	private int vertexShader;
 	private int fragmentShader;
 	private int shaderProgram;
@@ -630,7 +626,7 @@ public class GameScreen extends JFrame implements GLEventListener
 	{
 		_takeScreenshot = true;
 	}
-	
+
 	private void saveScreenshot()
 	{
 		int width = getWidth();
@@ -665,6 +661,7 @@ public class GameScreen extends JFrame implements GLEventListener
 
 			File outputfile = new File("D:\\Download\\texture.png");
 			ImageIO.write(screenshot, "png", outputfile);
+			System.out.println("Screenshot in " + outputfile);
 		}
 		catch (Exception ex)
 		{
@@ -775,4 +772,5 @@ public class GameScreen extends JFrame implements GLEventListener
 	{
 		System.setProperty("sun.java2d.d3d", "False"); // To fix a black-fullscreen-bug
 	}
+
 }

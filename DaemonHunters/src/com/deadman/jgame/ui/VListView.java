@@ -9,30 +9,30 @@ public class VListView extends BaseListView
 	private ContentItem content;
 	private VScrollBar scrollBar;
 	public boolean heightByContent = false; // TODO MaxHeight
-	
-	class ContentItem extends Column 
+
+	class ContentItem extends Column
 	{
 		public ContentItem()
 		{
-			columnLayout.heightByContent = true;
-			columnLayout.horizontalMode = ColumnLayout.H_FILL;
+			layout.heightByContent = true;
+			layout.horizontalMode = ColumnLayout.H_FILL;
 		}
-		
+
 		@Override
 		protected void onResize()
 		{
 			super.onResize();
-			update();
+			update(false);
 		}
 	}
-	
+
 	public VListView()
 	{
 		clip = true;
-		RowLayout layout = new RowLayout();
+		RowLayout layout = new RowLayout(); // Строка для контента и скроллбара
 		layout.verticalMode = RowLayout.V_FILL;
 		setLayout(layout);
-		
+
 		addControl(content = new ContentItem());
 		RowLayout.settings(content).fillWidth();
 	}
@@ -88,11 +88,14 @@ public class VListView extends BaseListView
 	};
 
 	@Override
-	public void update()
+	public void update(boolean withLayout)
 	{
+		if (withLayout)
+			content.refreshLayout();
+
 		if (heightByContent)
 			setHeight(content.height);
-		
+
 		if (scrollBar != null)
 			updateScrollBar();
 	}
@@ -110,14 +113,12 @@ public class VListView extends BaseListView
 		int key = e.getKeyCode();
 		if (key == KeyEvent.VK_DOWN)
 		{
-			if (selectedInd < items.size() - 1)
-				selectIndex(selectedInd + 1);
+			selectNext();
 			e.consume();
 		}
 		else if (key == KeyEvent.VK_UP)
 		{
-			if (selectedInd > 0)
-				selectIndex(selectedInd - 1);
+			selectPrev();
 			e.consume();
 		}
 	}
@@ -140,8 +141,10 @@ public class VListView extends BaseListView
 	@Override
 	public void onMouseWheel(Point p, MouseWheelEvent e)
 	{
+		if (scrollBar == null) return;
+
 		if (!intersectLocal(p)) return;
-		
+
 		if (e.getWheelRotation() > 0)
 			scrollBar.shift(10);
 		else

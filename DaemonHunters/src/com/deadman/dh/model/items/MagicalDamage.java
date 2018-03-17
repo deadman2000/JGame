@@ -26,9 +26,11 @@ public class MagicalDamage extends ItemEffect
 	}
 
 	@Override
-	public void activate(GameCharacter owner, IsoObject target)
+	public boolean activate(GameCharacter owner, IsoObject target)
 	{
+		// TODO Проверить на возможность нанесения повреждений ?
 		target.hitDamage(owner, element, value + Game.rnd.nextInt(amp + 1));
+		return true;
 	}
 
 	@Override

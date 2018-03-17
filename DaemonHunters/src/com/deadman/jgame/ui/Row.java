@@ -20,6 +20,11 @@ public class Row extends Control
 	{
 		layout.spacing = value;
 	}
+	
+	public void widthByContent()
+	{
+		layout.widthByContent = true;
+	}
 
 	public void setRightToLeft()
 	{

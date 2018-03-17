@@ -32,24 +32,31 @@ public abstract class ClassInfo
 	{
 		this.compiler = compiler;
 		_type = type;
+		refresh();
+	}
+
+	public void refresh()
+	{
 		_properties = new HashMap<>();
 		constructors = new ArrayList<>();
 
-		_varPrefix = compiler.getVarPrefix(type);
+		_varPrefix = compiler.getVarPrefix(_type);
 
 		try
 		{
-			isAbstract = Flags.isAbstract(type.getFlags());
+			isAbstract = Flags.isAbstract(_type.getFlags());
 
-			IType base = UICompiler.getSuperclass(type);
+			IType base = UICompiler.getSuperclass(_type);
 			if (!base.getFullyQualifiedName().equals("java.lang.Object"))
 				_baseClass = getStorage().register(base);
 
 			for (IMethod m : _type.getMethods())
 			{
+				if (Flags.isStatic(m.getFlags()) || Flags.isPrivate(m.getFlags())) // Пропускаем статичные и приватные методы
+					continue;
 				//System.out.println(type.getElementName() + "  " + m.getElementName() + "  " + m.getReturnType() + "  " + String.join(", ", m.getParameterTypes()));
 
-				if (m.getElementName().equals(type.getElementName()))
+				if (m.getElementName().equals(_type.getElementName()))
 					constructors.add(m);
 
 				String prop = getPropertyName(m);
@@ -67,6 +74,10 @@ public abstract class ClassInfo
 
 			for (IField f : _type.getFields())
 			{
+				if (Flags.isStatic(f.getFlags()) || Flags.isPrivate(f.getFlags())) // Пропускаем статичные и приватные поля
+					continue;
+				//System.out.println(_type.getElementName() + "  " + f.getElementName());
+
 				String prop = getPropertyName(f);
 				if (prop == null || prop.isEmpty()) prop = f.getElementName();
 
@@ -201,19 +212,23 @@ public abstract class ClassInfo
 						}
 					}
 					call.append(")");
-					
+
 					String ol = m.group("ol");
 					if (ol != null)
 					{
-						ol = ol.substring(4); 
-						call.append(".outline(0x").append(ol).append(")");
+						ol = ol.substring(4);
+						call.append(".outline(0x");
+						if (ol.length() == 6) call.append("ff");
+						call.append(ol).append(")");
 					}
 
 					String sh = m.group("sh");
 					if (sh != null)
 					{
-						sh = sh.substring(4); 
-						call.append(".shadow(0x").append(sh).append(")");
+						sh = sh.substring(4);
+						call.append(".shadow(0x");
+						if (sh.length() == 6) call.append("ff");
+						call.append(sh).append(")");
 					}
 
 					return call.toString();
@@ -283,9 +298,18 @@ public abstract class ClassInfo
 		{
 			if (value.startsWith("0x"))
 			{
-				int i = Integer.parseInt(value.substring(2), 16);
-				return Integer.toString(i);
+				try
+				{
+					int i = Integer.parseInt(value.substring(2), 16);
+					return Integer.toString(i);
+				}
+				catch (Exception e)
+				{
+					long i = Long.parseLong(value.substring(2), 16);
+					return "(int)" + Long.toString(i) + "L";
+				}
 			}
+
 			int i = Integer.parseInt(value);
 			return Integer.toString(i);
 		}

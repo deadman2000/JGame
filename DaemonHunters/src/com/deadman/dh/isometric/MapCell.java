@@ -18,10 +18,11 @@ public class MapCell
 	public static final int Z_HEIGHT = 2; // Соотношение ширины клетки к высоте
 
 	public final short x, y, z;
-	public float light = 1.f; // Освещенность ячейки
 	public final IsoMap map;
 
-	public byte state, userState;
+	public float light = 1.f; // Освещенность ячейки
+	public byte state; // Флаги состояния ячейки (прозрачность, указатель пути и т.д.)
+	public byte userState;  // Выделение ячейки и пр.
 
 	public MapCell(IsoMap map, short x, short y, short z)
 	{
@@ -141,7 +142,8 @@ public class MapCell
 			if (unit.cell != null)
 				unit.cell.ch = null;
 			unit.cell = this;
-
+			unit.setShift(0, 0, getZShift());
+			
 			if (from != null)
 			{
 				onMoving(from); // Для просчета дверей
@@ -164,6 +166,13 @@ public class MapCell
 	public void putOnFloor(GameCharacter unit)
 	{
 		putOnFloor(new Corpse(unit));
+	}
+
+	public void removeFromFloor(Item item) 
+	{
+		if (items == null) return;
+		items.remove(item);
+		calcPassive();
 	}
 	
 	public boolean hasItems()
@@ -190,6 +199,8 @@ public class MapCell
 		c.obj_l = obj_l;
 		c.obj_r = obj_r;
 		c.obj = obj;
+		c.items = items;
+		c.ch = ch; // Может быть косяк, т.к. у персонажа есть указатель на ячейку
 		c.light = light;
 		target.cells[z][x][y] = c;
 		return c;

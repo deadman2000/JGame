@@ -21,7 +21,7 @@ public class ItemSlot extends Control
 
 	public ItemMovingValidator validator;
 
-	public int type = 0;
+	public ItemSlotType type = ItemSlotType.ALL;
 
 	public ItemSlot()
 	{
@@ -82,7 +82,7 @@ public class ItemSlot extends Control
 
 		p = clientToScreen(p);
 		Item item = getItem();
-		if (ItemInfoPanel.ENABLED && item != pickedItem()) ItemInfoPanel.showPanel(p.x, p.y, item);
+		if (ItemInfoPanel.ENABLED && _pickedItem == null) ItemInfoPanel.showPanel(p.x, p.y, item);
 	}
 
 	@Override
@@ -103,7 +103,7 @@ public class ItemSlot extends Control
 
 		if (picked != null) // В руках предмет
 		{
-			if (type != TYPE_ALL && !picked.type.canEquip(this))
+			if (type != ItemSlotType.ALL && !picked.type.canEquip(this))
 				return;
 
 			if (validator != null && !validator.canDrop(picked, this))
@@ -124,17 +124,30 @@ public class ItemSlot extends Control
 			}
 			else // Нажали в слот с предметом
 			{
-				if (item.type.isMultiply() && item.type == picked.type) // Тот же тип и возможность объединения
+				if (item.type.stackSize > 1 && item.type == picked.type) // Тот же тип и возможность объединения
 				{
 					if (e.getButton() == 3 && picked.count > 1) // ПКМ - Кладем 1 
 					{
-						item.count++;
-						picked.count--;
+						if (item.count < item.type.stackSize)
+						{
+							item.count++;
+							picked.count--;
+						}
 					}
 					else // Переносим сколько взяли
 					{
-						item.count += picked.count;
-						drop();
+						// Кладем не больше, чем помещается в стек
+						if (item.count + picked.count <= item.type.stackSize)
+						{
+							item.count += picked.count;
+							drop();
+						}
+						else
+						{
+							int cnt = item.type.stackSize - item.count;
+							item.count += cnt;
+							picked.count -= cnt;
+						}
 					}
 				}
 				else // Не можем объеденить. Меняем местами
@@ -157,6 +170,7 @@ public class ItemSlot extends Control
 			{
 				if (validator != null && validator.canUse(item, this))
 				{
+					validator.useItem(item);
 					if (item.count == 0)
 						setItem(null);
 					return;
@@ -166,14 +180,15 @@ public class ItemSlot extends Control
 			if (e.getButton() == 3 && item.count > 1) // ПКМ - берем половину
 			{
 				int cnt = item.count / 2;
-				pick(item.clone().setCount(cnt), this);
+				pick(item	.clone()
+							.setCount(cnt), this);
 				item.count -= cnt;
 			}
 			else if (e.isShiftDown() && item.count > 1) // GameScreen.KEY_SHIFT
 			{
 				int c = item.count / 2;
-				pick(item.clone()
-						.setCount(c), this);
+				pick(item	.clone()
+							.setCount(c), this);
 				item.count -= c;
 			}
 			else
@@ -221,18 +236,4 @@ public class ItemSlot extends Control
 		_pickedItem = null;
 		_pickedSource = null;
 	}
-
-	public static final short TYPE_ALL = 0;
-	public static final short TYPE_HEAD = 1;
-	public static final short TYPE_AMULET = 2;
-	public static final short TYPE_CLOAK = 3;
-	public static final short TYPE_BODY = 4;
-	public static final short TYPE_LEFTHAND = 5;
-	public static final short TYPE_RIGHTHAND = 6;
-	public static final short TYPE_GLOVE = 7;
-	public static final short TYPE_LEGGIN = 8;
-	public static final short TYPE_BRACER = 9;
-	public static final short TYPE_RING = 10;
-	public static final short TYPE_BOOT = 11;
-	public static final short TYPE_BACKPACK = 12;
 }

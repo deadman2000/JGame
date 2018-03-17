@@ -31,6 +31,8 @@ public class LoadingScreen extends GameEngine
 	@Override
 	public void draw()
 	{
+		screen.drawRect(0, 0, GameScreen.GAME_WIDTH, GameScreen.GAME_HEIGHT, 0xff000000);
+		
 		if (_status.progress == _status.max)
 		{
 			_engineOnFinish.show();

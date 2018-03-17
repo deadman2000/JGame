@@ -10,15 +10,16 @@ public abstract class BaseListView extends Control
 
 	protected int selectedInd = -1;
 	protected ListViewItem selectedItem;
+	protected Control content;
 
 	@Override
 	protected void onResize()
 	{
 		super.onResize();
-		update();
+		update(false);
 	}
 
-	public abstract void update();
+	public abstract void update(boolean withLayout);
 
 	public void addItem(ListViewItem lvi)
 	{
@@ -35,9 +36,12 @@ public abstract class BaseListView extends Control
 
 		if (items.size() > 0)
 		{
-			if (items.size() == selectedInd)
-				selectedInd--;
-			selectIndex(selectedInd);
+			selectedInd--;
+			if (!selectNext())
+			{
+				selectedInd++;
+				selectPrev();
+			}
 		}
 		else
 		{
@@ -78,23 +82,44 @@ public abstract class BaseListView extends Control
 		};
 	};
 
-	public void selectNext()
+	public boolean selectNext()
 	{
-		if (selectedInd >= items.size() - 1) return;
+		if (selectedInd >= items.size() - 1) return false;
 
-		selectIndex(selectedInd + 1);
+		for (int i = selectedInd + 1; i < items.size(); i++)
+		{
+			ListViewItem it = items.get(i);
+			if (it.visible)
+			{
+				selectItem(it);
+				return true;
+			}
+		}
+		
+		return false;
 	}
 
-	public void selectPrev()
+	public boolean selectPrev()
 	{
-		if (selectedInd <= 0) return;
-		selectIndex(selectedInd - 1);
+		if (selectedInd <= 0) return false;
+
+		for (int i = selectedInd - 1; i >= 0; i--)
+		{
+			ListViewItem it = items.get(i);
+			if (it.visible)
+			{
+				selectItem(it);
+				return true;
+			}
+		}
+		
+		return false;
 	}
 
 	public void selectItem(ListViewItem lvi)
 	{
 		if (lvi == selectedItem) return;
-		
+
 		if (selectedItem != null) selectedItem.onDeselected();
 		selectedItem = lvi;
 		if (lvi != null)
@@ -105,7 +130,7 @@ public abstract class BaseListView extends Control
 		onAction(ACTION_ITEM_SELECTED, lvi);
 	}
 
-	public void selectIndex(int i)
+	/*public void selectIndex(int i)
 	{
 		selectedInd = i;
 		if (i == -1 || i >= items.size())
@@ -114,6 +139,18 @@ public abstract class BaseListView extends Control
 		{
 			selectItem(items.get(i));
 			ensureSelectedVisible();
+		}
+	}*/
+
+	public void selectFirst()
+	{
+		for (ListViewItem it : items)
+		{
+			if (it.visible)
+			{
+				selectItem(it);
+				break;
+			}
 		}
 	}
 
@@ -137,14 +174,13 @@ public abstract class BaseListView extends Control
 			return;
 		}
 
-		for (int i = 0; i < items.size(); i++)
-		{
-			if (items.get(i).tag == tag)
+		for (ListViewItem lvi : items)
+			if (lvi.tag == tag)
 			{
-				selectIndex(i);
+				selectItem(lvi);
 				return;
 			}
-		}
-		selectIndex(0);
+
+		selectFirst();
 	}
 }

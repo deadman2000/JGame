@@ -17,13 +17,17 @@ public class InstrItem extends ListViewItem
 
 	private boolean drawFloor = true, drawWall = true;
 
+	public final IsoSprite sprite;
+
 	public InstrItem(IsoSprite spr)
 	{
+		sprite = spr;
 		tag = spr;
 		pic = spr.getPic();
+		name = spr.toString();
 		if (pic == null)
 			System.err.println("No pic " + spr);
-		
+
 		switch (spr.type)
 		{
 			case IsoSprite.FLOOR:
@@ -36,7 +40,7 @@ public class InstrItem extends ListViewItem
 				drawFloor = false;
 				break;
 		}
-		
+
 		if (spr instanceof IsoBigSprite)
 		{
 			IsoBigSprite bs = (IsoBigSprite) spr;

@@ -9,8 +9,6 @@ public class ControlInfo extends ClassInfo
 	public ControlDescription createDescription(ControlDescription parent, int deep) throws ParseException
 	{
 		ControlDescription control = new ControlDescription(this, parent, deep);
-		if (defaultLayout != null)
-			control.layout = defaultLayout.createDescription(control, deep + 1);
 		return control;
 	}
 

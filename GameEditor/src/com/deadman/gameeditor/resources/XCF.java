@@ -17,8 +17,10 @@ public class XCF
 	private HashMap<String, Layer> allLayers = new HashMap<>();
 	private ArrayList<Layer> layers = new ArrayList<>(); // Верхние слои
 	private int[] palette = null;
+	private int version;
 
 	private boolean debug = false;
+	private boolean debug_unknown_properties = false;
 
 	public XCF()
 	{
@@ -59,7 +61,7 @@ public class XCF
 		}
 		catch (Exception ex)
 		{
-			ex.printStackTrace();
+			System.err.println("Error on loading " + fileName + ": " + ex.getMessage());
 			return null;
 		}
 		return file;
@@ -75,6 +77,8 @@ public class XCF
 
 	private void load(String fileName) throws IOException
 	{
+		if (debug) System.out.println("Loading XCF " + fileName);
+
 		f = new RandomAccessFile(fileName, "r");
 		try
 		{
@@ -83,317 +87,24 @@ public class XCF
 			if (!new String(head).equals("gimp xcf "))
 				throw new IOException("Is not GIMP");
 
-			f.skipBytes(5);
-			int width = f.readInt();
-			int height = f.readInt();
-			int base_type = f.readInt();
-			if (debug)
-			{
-				System.out.print(String.format("Size: %d x %d   ", width, height));
-				switch (base_type)
-				{
-					case GimpImageBaseType.RGB:
-						System.out.println("RGB");
-						break;
-					case GimpImageBaseType.GRAY:
-						System.out.println("Grayscale");
-						break;
-					case GimpImageBaseType.INDEXED:
-						System.out.println("Indexed");
-						break;
+			byte[] versionBytes = new byte[4];
+			f.read(versionBytes);
+			String versionStr = new String(versionBytes);
 
-					default:
-						System.err.println("Unknown " + base_type);
-						break;
-				}
+			if (versionStr.equals("file"))
+				version = 0;
+			else if (versionStr.equals("v001"))
+				version = 1;
+			else if (versionStr.equals("v002"))
+				version = 2;
+			else if (versionStr.equals("v003"))
+				version = 3;
+			else
+				throw new IOException("Format version '" + versionStr + "' is not supported");
 
-				System.out.println("Properties:");
-			}
+			if (debug) System.out.println("Version " + versionStr + " (" + version + ")");
 
-			int[] colorMap = null;
-			IndexColorModel cm = null;
-
-			while (true) // Properties
-			{
-				int type_number = f.readInt();
-				int size = f.readInt();
-				if (type_number == 0)
-					break;
-
-				if (debug) System.out.println(String.format("Type: %d   Size: %d", type_number, size));
-				switch (type_number)
-				{
-					case PropType.PROP_COLORMAP:
-						if (palette != null)
-						{
-							f.skipBytes(size);
-							break;
-						}
-						int colorsCount = f.readInt();
-						colorMap = new int[colorsCount];
-						byte[] rA = new byte[colorsCount];
-						byte[] gA = new byte[colorsCount];
-						byte[] bA = new byte[colorsCount];
-						for (int i = 0; i < colorsCount; i++)
-						{
-							int r = (rA[i] = f.readByte()) & 0xff;
-							int g = (gA[i] = f.readByte()) & 0xff;
-							int b = (bA[i] = f.readByte()) & 0xff;
-							colorMap[i] = (r << 16) | (g << 8) | b;
-						}
-						cm = new IndexColorModel(8, colorsCount, rA, gA, bA);
-						break;
-					default:
-						if (debug)
-						{
-							byte[] data = readBytes(size);
-							System.out.println(getHexString(data));
-							System.out.println(getPrintableString(data));
-						}
-						else
-						{
-							f.skipBytes(size);
-						}
-						break;
-				}
-			}
-
-			ArrayList<Integer> layerOffsets = new ArrayList<>();
-			while (true)
-			{
-				int offset = f.readInt();
-				if (offset == 0)
-					break;
-				layerOffsets.add(offset);
-			}
-
-			// Channels
-			/*int chInd = 0;
-			while (true)
-			{
-				int offset = f.readInt();
-				if (offset == 0)
-					break;
-				chInd++;
-			}*/
-
-			for (int i = 0; i < layerOffsets.size(); i++)
-			{
-				f.seek(layerOffsets.get(i)); // Jump to layer
-
-				int lW = f.readInt();
-				int lH = f.readInt();
-				int colorMode = f.readInt();
-				String layerName = readString();
-
-				if (debug) System.out.println(String.format("%s\t%dx%d Color mode:%d", layerName, lW, lH, colorMode));
-
-				boolean isGroup = false;
-				int posX = 0, posY = 0;
-				Layer parent = null;
-				float opacity = 1f;
-
-				while (true)
-				{
-					int type_number = f.readInt();
-					int size = f.readInt();
-					if (type_number == 0)
-						break;
-
-					//if(debug)System.out.println(String.format("\tType: %d   Size: %d", type_number, size));
-					switch (type_number)
-					{
-						case PropType.PROP_OPACITY:
-							opacity = Math.round(f.readInt() * 1000 / 255) / 1000f;
-							break;
-
-						case PropType.PROP_OFFSETS:
-							posX = f.readInt();
-							posY = f.readInt();
-							break;
-
-						case PropType.PROP_GROUP_ITEM:
-							//System.out.println(layerName);
-							isGroup = true;
-							break;
-						case PropType.PROP_ITEM_PATH:
-							for (int k = 0; k < size / 4 - 1; k++)
-							{
-								int p = f.readInt();
-								if (parent == null)
-									parent = layers.get(p);
-								else
-									parent = parent.layers.get(p);
-							}
-							f.skipBytes(4);
-							break;
-
-						default:
-							if (debug)
-							{
-								byte[] data = readBytes(size);
-								System.out.println(String.format("\tProp %d\n\t\t%s\n\t\t%s", type_number, getHexString(data), getPrintableString(data)));
-							}
-							else
-								f.skipBytes(size);
-							break;
-					}
-				}
-
-				if (debug) System.out.println(String.format("\tAnchor: %d x %d   Opacity: %f", posX, posY, opacity));
-
-				if (isGroup)
-				{
-					Layer group = new Layer(layerName, posX, posY);
-					if (parent != null)
-						parent.addLayer(group);
-					else
-						layers.add(group);
-					allLayers.put(group.name, group);
-					continue;
-				}
-
-				int hptr = f.readInt();
-				//int mptr = f.readInt();
-
-				f.seek(hptr); // Jump to hierarchy structure
-				int aW = f.readInt();
-				int aH = f.readInt();
-				int bpp = f.readInt();
-
-				ArrayList<Integer> levels = new ArrayList<>();
-				while (true)
-				{
-					int lptr = f.readInt();
-					if (lptr == 0)
-						break;
-					levels.add(lptr);
-				}
-				if (debug) System.out.println(String.format("\tSize: %dx%d  bpp: %d  Levels: %d", aW, aH, bpp, levels.size()));
-
-				BufferedImage img;
-				int colorType = getColorType(colorMode);
-				if (colorType == BufferedImage.TYPE_BYTE_BINARY || colorType == BufferedImage.TYPE_BYTE_INDEXED)
-					img = new BufferedImage(lW, lH, colorType, cm);
-				else
-					img = new BufferedImage(lW, lH, colorType);
-
-				//for (int l = 0; l < levels.size(); l++)
-				int l = 0;
-				{
-					f.seek(levels.get(l)); // Jump to level
-
-					int lvlW = f.readInt();
-					int lvlH = f.readInt();
-
-					if (debug) System.out.println(String.format("\t\tLvl: %d  Size: %dx%d", levels.get(l), lvlW, lvlH));
-
-					ArrayList<Integer> tiles = new ArrayList<>();
-					while (true)
-					{
-						int tptr = f.readInt();
-						if (tptr == 0)
-							break;
-						tiles.add(tptr);
-					}
-
-					int rX = 0, rY = 0;
-
-					for (int t = 0; t < tiles.size(); t++)
-					{
-						byte[][] tileData = new byte[bpp][];
-						f.seek(tiles.get(t)); // Jump to tile
-
-						int rW = 64, rH = 64;
-						if (rX + rW > lvlW)
-							rW = lvlW % 64;
-						if (rY + rH > lvlH)
-							rH = lvlH % 64;
-
-						if (debug) System.out.println("\t\tRect: [" + rX + ":" + rY + ":" + rW + ":" + rH + "]");
-
-						for (int b = 0; b < bpp; b++)
-						{
-							int size = rW * rH;
-							ByteBuffer bb = ByteBuffer.allocate(size);
-
-							while (bb.remaining() > 0)
-							{
-								int opcode = f.readByte() & 0xff;
-
-								if (opcode < 127)
-								{
-									opcode++;
-
-									size -= opcode;
-									if (size < 0)
-										throw new IOException("Wrong RLE");
-
-									byte v = f.readByte();
-									for (int n = 0; n < opcode; n++)
-										bb.put(v);
-								}
-								else if (opcode == 127)
-								{
-									int count = f.readShort() & 0xFFFF;
-									byte v = f.readByte();
-
-									size -= count;
-									if (size < 0)
-										throw new IOException("Wrong RLE " + bb.remaining());
-
-									for (int n = 0; n < count; n++)
-										bb.put(v);
-								}
-								else
-								{
-									int count;
-									if (opcode == 128)
-										count = f.readShort() & 0xFFFF;
-									else
-										count = 256 - opcode;
-
-									size -= count;
-									if (size < 0)
-										throw new IOException("Wrong RLE");
-
-									bb.put(readBytes(count));
-								}
-							}
-
-							if (bb.remaining() != 0)
-								throw new IOException("Wrong RLE " + bb.remaining());
-
-							tileData[b] = bb.array();
-						}
-
-						for (int x = 0; x < rW; x++)
-							for (int y = 0; y < rH; y++)
-							{
-								int ind = x + y * rW;
-								int c = getColor(colorMode, tileData, ind, colorMap);
-								if (opacity != 1f && c != 0)
-									c = setAlpha(c, opacity);
-								img.setRGB(rX + x, rY + y, c);
-							}
-
-						rX += 64;
-						if (rX >= lvlW)
-						{
-							rX = 0;
-							rY += 64;
-						}
-					}
-				}
-
-				Layer layer = new Layer(layerName, img, posX, posY);
-				if (parent != null)
-					parent.addLayer(layer);
-				else
-					layers.add(layer);
-
-				allLayers.put(layer.name, layer);
-			}
+			loadContent();
 		}
 		finally
 		{
@@ -429,6 +140,321 @@ public class XCF
 				if (palette == null)
 					l.crop();
 			}
+		}
+	}
+
+	private void loadContent() throws IOException
+	{
+		f.skipBytes(1);
+		int width = f.readInt();
+		int height = f.readInt();
+		int base_type = f.readInt();
+		if (debug)
+		{
+			System.out.print(String.format("Size: %d x %d   ", width, height));
+			switch (base_type)
+			{
+				case GimpImageBaseType.RGB:
+					System.out.println("RGB");
+					break;
+				case GimpImageBaseType.GRAY:
+					System.out.println("Grayscale");
+					break;
+				case GimpImageBaseType.INDEXED:
+					System.out.println("Indexed");
+					break;
+
+				default:
+					System.err.println("Unknown " + base_type);
+					break;
+			}
+
+			System.out.println("Properties:");
+		}
+
+		int[] colorMap = null;
+		IndexColorModel cm = null;
+
+		while (true) // Properties
+		{
+			int type_number = f.readInt();
+			int size = f.readInt();
+			if (type_number == 0)
+				break;
+
+			if (debug) System.out.println(String.format("Type: %d   Size: %d", type_number, size));
+			switch (type_number)
+			{
+				case PropType.PROP_COLORMAP:
+					if (palette != null)
+					{
+						f.skipBytes(size);
+						break;
+					}
+					int colorsCount = f.readInt();
+					colorMap = new int[colorsCount];
+					byte[] rA = new byte[colorsCount];
+					byte[] gA = new byte[colorsCount];
+					byte[] bA = new byte[colorsCount];
+					for (int i = 0; i < colorsCount; i++)
+					{
+						int r = (rA[i] = f.readByte()) & 0xff;
+						int g = (gA[i] = f.readByte()) & 0xff;
+						int b = (bA[i] = f.readByte()) & 0xff;
+						colorMap[i] = (r << 16) | (g << 8) | b;
+					}
+					cm = new IndexColorModel(8, colorsCount, rA, gA, bA);
+					break;
+				default:
+					if (debug)
+					{
+						byte[] data = readBytes(size);
+						System.out.println(getHexString(data));
+						System.out.println(getPrintableString(data));
+					}
+					else
+					{
+						f.skipBytes(size);
+					}
+					break;
+			}
+		}
+
+		ArrayList<Integer> layerOffsets = new ArrayList<>();
+		while (true)
+		{
+			int offset = f.readInt();
+			if (offset == 0)
+				break;
+			layerOffsets.add(offset);
+		}
+
+		// Channels
+		/*int chInd = 0;
+		while (true)
+		{
+			int offset = f.readInt();
+			if (offset == 0)
+				break;
+			chInd++;
+		}*/
+
+		for (int i = 0; i < layerOffsets.size(); i++)
+		{
+			f.seek(layerOffsets.get(i)); // Jump to layer
+
+			int lW = f.readInt();
+			int lH = f.readInt();
+			int colorMode = f.readInt();
+			String layerName = readString();
+
+			if (debug) System.out.println(String.format("%s\t%dx%d Color mode:%d", layerName, lW, lH, colorMode));
+
+			boolean isGroup = false;
+			int posX = 0, posY = 0;
+			Layer parent = null;
+			float opacity = 1f;
+
+			while (true)
+			{
+				int type_number = f.readInt();
+				int size = f.readInt();
+				if (type_number == 0)
+					break;
+
+				//if(debug)System.out.println(String.format("\tType: %d   Size: %d", type_number, size));
+				switch (type_number)
+				{
+					case PropType.PROP_OPACITY:
+						opacity = Math.round(f.readInt() * 1000 / 255) / 1000f;
+						break;
+
+					case PropType.PROP_OFFSETS:
+						posX = f.readInt();
+						posY = f.readInt();
+						break;
+
+					case PropType.PROP_GROUP_ITEM:
+						//System.out.println(layerName);
+						isGroup = true;
+						break;
+					case PropType.PROP_ITEM_PATH:
+						for (int k = 0; k < size / 4 - 1; k++)
+						{
+							int p = f.readInt();
+							if (parent == null)
+								parent = layers.get(p);
+							else
+								parent = parent.layers.get(p);
+						}
+						f.skipBytes(4);
+						break;
+
+					default:
+						if (debug_unknown_properties)
+						{
+							byte[] data = readBytes(size);
+							System.out.println(String.format("\tProp %d\n\t\t%s\n\t\t%s", type_number, getHexString(data), getPrintableString(data)));
+						}
+						else
+							f.skipBytes(size);
+						break;
+				}
+			}
+
+			if (debug) System.out.println(String.format("\tAnchor: %d x %d   Opacity: %f", posX, posY, opacity));
+
+			if (isGroup)
+			{
+				Layer group = new Layer(layerName, posX, posY);
+				if (parent != null)
+					parent.addLayer(group);
+				else
+					layers.add(group);
+				allLayers.put(group.name, group);
+				continue;
+			}
+
+			int hptr = f.readInt();
+			//int mptr = f.readInt();
+
+			f.seek(hptr); // Jump to hierarchy structure
+			int aW = f.readInt();
+			int aH = f.readInt();
+			int bpp = f.readInt();
+
+			ArrayList<Integer> levels = new ArrayList<>();
+			while (true)
+			{
+				int lptr = f.readInt();
+				if (lptr == 0)
+					break;
+				levels.add(lptr);
+			}
+			if (debug) System.out.println(String.format("\tSize: %dx%d  bpp: %d  Levels: %d", aW, aH, bpp, levels.size()));
+
+			BufferedImage img;
+			int colorType = getColorType(colorMode);
+			if (colorType == BufferedImage.TYPE_BYTE_BINARY || colorType == BufferedImage.TYPE_BYTE_INDEXED)
+				img = new BufferedImage(lW, lH, colorType, cm);
+			else
+				img = new BufferedImage(lW, lH, colorType);
+
+			//for (int l = 0; l < levels.size(); l++)
+			int l = 0;
+			{
+				f.seek(levels.get(l)); // Jump to level
+
+				int lvlW = f.readInt();
+				int lvlH = f.readInt();
+
+				if (debug) System.out.println(String.format("\t\tLvl: %d  Size: %dx%d", levels.get(l), lvlW, lvlH));
+
+				ArrayList<Integer> tiles = new ArrayList<>();
+				while (true)
+				{
+					int tptr = f.readInt();
+					if (tptr == 0)
+						break;
+					tiles.add(tptr);
+				}
+
+				int rX = 0, rY = 0;
+
+				for (int t = 0; t < tiles.size(); t++)
+				{
+					byte[][] tileData = new byte[bpp][];
+					f.seek(tiles.get(t)); // Jump to tile
+
+					int rW = 64, rH = 64;
+					if (rX + rW > lvlW)
+						rW = lvlW % 64;
+					if (rY + rH > lvlH)
+						rH = lvlH % 64;
+
+					if (debug) System.out.println("\t\tRect: [" + rX + ":" + rY + ":" + rW + ":" + rH + "]");
+
+					for (int b = 0; b < bpp; b++)
+					{
+						int size = rW * rH;
+						ByteBuffer bb = ByteBuffer.allocate(size);
+
+						while (bb.remaining() > 0)
+						{
+							int opcode = f.readByte() & 0xff;
+
+							if (opcode < 127)
+							{
+								opcode++;
+
+								size -= opcode;
+								if (size < 0)
+									throw new IOException("Wrong RLE");
+
+								byte v = f.readByte();
+								for (int n = 0; n < opcode; n++)
+									bb.put(v);
+							}
+							else if (opcode == 127)
+							{
+								int count = f.readShort() & 0xFFFF;
+								byte v = f.readByte();
+
+								size -= count;
+								if (size < 0)
+									throw new IOException("Wrong RLE " + bb.remaining());
+
+								for (int n = 0; n < count; n++)
+									bb.put(v);
+							}
+							else
+							{
+								int count;
+								if (opcode == 128)
+									count = f.readShort() & 0xFFFF;
+								else
+									count = 256 - opcode;
+
+								size -= count;
+								if (size < 0)
+									throw new IOException("Wrong RLE");
+
+								bb.put(readBytes(count));
+							}
+						}
+
+						if (bb.remaining() != 0)
+							throw new IOException("Wrong RLE " + bb.remaining());
+
+						tileData[b] = bb.array();
+					}
+
+					for (int x = 0; x < rW; x++)
+						for (int y = 0; y < rH; y++)
+						{
+							int ind = x + y * rW;
+							int c = getColor(colorMode, tileData, ind, colorMap);
+							if (opacity != 1f && c != 0)
+								c = setAlpha(c, opacity);
+							img.setRGB(rX + x, rY + y, c);
+						}
+
+					rX += 64;
+					if (rX >= lvlW)
+					{
+						rX = 0;
+						rY += 64;
+					}
+				}
+			}
+
+			Layer layer = new Layer(layerName, img, posX, posY);
+			if (parent != null)
+				parent.addLayer(layer);
+			else
+				layers.add(layer);
+
+			allLayers.put(layer.name, layer);
 		}
 	}
 

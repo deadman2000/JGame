@@ -9,11 +9,18 @@ public class VampireEffect extends ItemEffect
 {
 	public int value;
 	public int amp;
-	
+
 	@Override
-	public void activate(GameCharacter owner, IsoObject target)
+	public boolean activate(GameCharacter owner, IsoObject target)
 	{
-		int dmg = target.hitDamage(owner, Element.PHYSICAL, value + Game.rnd.nextInt(amp + 1));
-		owner.heal(dmg);
+		if (target instanceof GameCharacter)
+		{
+			// TODO Проверить на нежить и механизмы
+			int dmg = target.hitDamage(owner, Element.PHYSICAL, value + Game.rnd.nextInt(amp + 1));
+			owner.heal(dmg);
+			return true;
+		}
+		else
+			return false;
 	}
 }

@@ -41,7 +41,7 @@ public class Item
 		else
 			type.icon.drawAt(x + 18 + it_shifts_x[hashCode() % IT_SHIFTS_COUNT], y + 38 + it_shifts_y[hashCode() % IT_SHIFTS_COUNT]);
 	}
-	
+
 	public Item setCount(int value)
 	{
 		count = value;
@@ -53,9 +53,9 @@ public class Item
 		return new Item(type);
 	}
 
-	public void moveTo(ItemsPage itemsPage, int x)
+	public void moveTo(ItemsPage itemsPage, AmmunitionSlot slot)
 	{
-		itemsPage.set(this, x, 0);
+		itemsPage.set(this, slot);
 	}
 
 	public void moveTo(ItemsPage itemsPage, int x, int y)
@@ -65,7 +65,19 @@ public class Item
 
 	public void equip(GameCharacter unit)
 	{
-		type.equip(this, unit);
+		for (ItemSlotType slot : type.slots)
+		{
+			for (int i = 0; i < slot.cells.length; i++)
+			{
+				if (unit.ammunition.get(slot.cells[i]) == null)
+				{
+					moveTo(unit.ammunition, slot.cells[i]);
+					return;
+				}
+			}
+		}
+
+		unit.moveToBackpack(this);
 	}
 
 	@Override
@@ -82,15 +94,21 @@ public class Item
 		return type.name;
 	}
 
-	public boolean canActivate() // TODO переделать. брать canActivate из эффектов 
+	public boolean canActivate() 
 	{
-		return false;
+		return type.canActivate();
 	}
 
 	public boolean activate(GameCharacter owner, IsoObject target)
 	{
-		type.activate(owner, target);
-		return true;
+		if (type.activate(owner, target)) // Используем эффекты
+		{
+			if (type.consumable)
+				count--; // Потребляем
+			return true;
+		}
+		else
+			return false;
 	}
 
 	public void applyPassive(MapCell cell)
@@ -102,8 +120,13 @@ public class Item
 	{
 		type.applyPassive(unit);
 	}
-	
+
 	public void appendDescription(StringBuilder sb)
 	{
+	}
+
+	public String equipSprite()
+	{
+		return type.equipSprite;
 	}
 }

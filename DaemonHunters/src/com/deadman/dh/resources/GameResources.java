@@ -12,6 +12,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import com.deadman.dh.Game;
 import com.deadman.dh.guild.GuildBuildingType;
 import com.deadman.dh.isometric.IsoSprite;
 import com.deadman.dh.model.MissionScenario;
@@ -28,6 +29,7 @@ public class GameResources
 
 		MissionScenario.initScenarios();
 		GuildBuildingType.initBuildings();
+		Game.ItemTypes.armor.generate();
 	}
 
 	// Iso

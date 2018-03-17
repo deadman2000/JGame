@@ -44,7 +44,7 @@ public class BuyCart extends IGMPanel
 			lv.addItem(new CartRow(i, c));
 		}
 		if (lv.itemsCount() > 0)
-			lv.selectIndex(0);
+			lv.selectFirst();
 
 		height = TOP_PAD + CartRow.HEIGHT * lv.itemsCount() + BOTTOM_PAD;
 

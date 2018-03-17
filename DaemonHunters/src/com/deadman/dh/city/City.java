@@ -90,11 +90,11 @@ public class City extends Poi
 
 	public long seed;
 
+	static final BufferedImage dumb_img = new BufferedImage(1, 1, BufferedImage.TYPE_4BYTE_ABGR);
 	// TODO Убрать когда будут шрифты для карты
 	public void genLabel(Font font, Color color, Color bgrColor)
 	{
-		BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_4BYTE_ABGR);
-		Graphics g = img.getGraphics();
+		Graphics g = dumb_img.getGraphics();
 		Graphics2D g2 = (Graphics2D) g;
 
 		//String title = name + " " + id;
@@ -104,7 +104,7 @@ public class City extends Poi
 		GlyphVector gv = font.createGlyphVector(frc, title);
 		Rectangle bounds = gv.getPixelBounds(null, 0, 0);
 
-		img = new BufferedImage(bounds.width + 2, bounds.height + 2, BufferedImage.TYPE_INT_ARGB);
+		BufferedImage img = Picture.createImage(bounds.width + 2, bounds.height + 2);
 		g = img.getGraphics();
 		g2 = (Graphics2D) g;
 

@@ -45,7 +45,7 @@ public class RecruitsTable extends IGMPanel
 		for (int i = 0; i < SIZE; i++)
 			lv.addItem(new RecruitRow(i, Unit.generate()));
 		if (lv.itemsCount() > 0)
-			lv.selectIndex(0);
+			lv.selectFirst();
 		
 		int by = TOP_PAD + SIZE * RecruitRow.HEIGHT + 2;
 		addButton(0, "Нанять", 86, by, 70);

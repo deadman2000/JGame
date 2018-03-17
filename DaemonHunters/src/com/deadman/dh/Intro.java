@@ -2,6 +2,7 @@ package com.deadman.dh;
 
 import com.deadman.dh.global.Snow;
 import com.deadman.jgame.GameEngine;
+import com.deadman.jgame.ui.Control;
 import com.deadman.jgame.ui.FillLayout;
 
 public class Intro extends GameEngine
@@ -11,6 +12,9 @@ public class Intro extends GameEngine
 	public Intro()
 	{
 		setLayout(new FillLayout());
+		Control bgr = new Control();
+		bgr.bgrColor = 0xff000000;
+		addControl(bgr);
 		addControl(snow = new Snow(100));
 	}
 
@@ -23,6 +27,7 @@ public class Intro extends GameEngine
 	@Override
 	public void draw()
 	{
-		snow.draw();
+		super.draw();
+		//snow.draw();
 	}
 }

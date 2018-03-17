@@ -73,6 +73,8 @@
 		<object id="18" name="Fireplace" width="2" height="1"  mirror="true"/>
 		<object id="19" name="CartPlatform" lightrate="0.7" zheight="9" material="wood"/>
 		
+		<object id="10001" name="Player1"/>
+		<object id="10002" name="Player2"/>
 		<object id="10003" name="Filler" lightrate="1"/>
 		<object id="10004" name="CellSelect"/>
 		<object id="10005" name="Build"/>

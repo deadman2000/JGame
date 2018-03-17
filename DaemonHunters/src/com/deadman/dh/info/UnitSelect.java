@@ -43,7 +43,7 @@ public class UnitSelect extends IGMPanel
 		for (int i = 0; i < g.squadFreeUnits.size(); i++)
 			lv.addItem(new RecruitRow(i, g.squadFreeUnits.get(i)));
 		if (lv.itemsCount() > 0)
-			lv.selectIndex(0);
+			lv.selectFirst();
 
 		int by = TOP_PAD + g.squadFreeUnits.size() * RecruitRow.HEIGHT + 2;
 		addButton(0, "Очистить", 12, by, 70);

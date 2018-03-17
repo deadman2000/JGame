@@ -6,22 +6,29 @@ import com.deadman.dh.model.GameCharacter;
 public class HealEffect extends ItemEffect
 {
 	private int val;
-	
+
 	public HealEffect(int value)
 	{
 		val = value;
 	}
-	
+
 	@Override
 	public boolean canActivate()
 	{
 		return true;
 	}
-	
+
 	@Override
-	public void activate(GameCharacter owner, IsoObject target)
+	public boolean activate(GameCharacter owner, IsoObject target)
 	{
-		GameCharacter ch = (GameCharacter)target;
-		ch.heal(val);
+		if (target instanceof GameCharacter)
+		{
+			GameCharacter ch = (GameCharacter) target;
+			if (ch.hpCount >= ch.hpMax) return false;
+			ch.heal(val);
+			return true;
+		}
+		else
+			return false;
 	}
 }

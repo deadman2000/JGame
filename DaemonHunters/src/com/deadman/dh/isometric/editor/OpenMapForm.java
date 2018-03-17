@@ -15,13 +15,13 @@ import com.deadman.jgame.ui.RowLayout;
 
 public class OpenMapForm extends IEWindow
 {
-	private IIsoEditor _editor;
+	private IsoEditor _editor;
 	private FileView fw;
 
 	private Column infoPanel;
 	private Label laWidth, laHeight, laZHeight;
 
-	public OpenMapForm(IIsoEditor editor)
+	public OpenMapForm(IsoEditor editor)
 	{
 		_editor = editor;
 		width = 230;

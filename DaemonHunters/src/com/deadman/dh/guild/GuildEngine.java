@@ -93,8 +93,8 @@ public class GuildEngine extends GameEngine implements ICellDrawer
 		addControl(mapViewer);
 		RelativeLayout.settings(mapViewer).fill();
 		mapViewer.addControlListener(mapViewer_listener);
-		mapViewer.allow_drag = true;
-		mapViewer.show_all = true;
+		mapViewer.allowDrag = true;
+		mapViewer.showAll = true;
 		mapViewer.customDrawer = this;
 		//mapViewer.setLight(0f);
 
@@ -171,9 +171,9 @@ public class GuildEngine extends GameEngine implements ICellDrawer
 			if (instrument == null) return;
 			if (e.getButton() == 1)
 			{
-				if (mapViewer.selected_cell == null) return;
+				if (mapViewer.focusedCell == null) return;
 
-				MapCell c = mapViewer.selected_cell;
+				MapCell c = mapViewer.focusedCell;
 				dragDir = -1;
 
 				if (bound_beg != null) // Проверяем что мы меняем уже созданный диапазон
@@ -576,7 +576,7 @@ public class GuildEngine extends GameEngine implements ICellDrawer
 		hideInfo();
 		unselectRect();
 		mapViewer.cursor = IsoCursor.CURSOR_RECT;
-		mapViewer.allow_drag = false;
+		mapViewer.allowDrag = false;
 		
 		laBuildingName.setText(bt.name);
 		laBuildingInfo.setText("");
@@ -629,7 +629,7 @@ public class GuildEngine extends GameEngine implements ICellDrawer
 		buildingBox.visible = false;
 		instrument = null;
 		mapViewer.cursor = null;
-		mapViewer.allow_drag = true;
+		mapViewer.allowDrag = true;
 	}
 
 	private void unselectRect()

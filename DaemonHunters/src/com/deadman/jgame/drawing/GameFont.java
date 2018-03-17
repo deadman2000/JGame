@@ -44,7 +44,7 @@ public class GameFont
 
 			if (frames[' '] == null)
 			{
-				BufferedImage img = new BufferedImage(p.width, 1, BufferedImage.TYPE_INT_ARGB);
+				BufferedImage img = Picture.createImage(p.width, 1);
 				frames[' '] = new Picture(img);
 			}
 		}
@@ -70,7 +70,8 @@ public class GameFont
 	public GameFont outline(int color)
 	{
 		for (GameFont f : _outlined)
-			if (f.outlineColor == color) return f;
+			if (f.outlineColor == color)
+				return f;
 
 		Picture[] newFrames = new Picture[frames.length];
 		for (int i = 0; i < frames.length; i++)
@@ -91,13 +92,14 @@ public class GameFont
 	public GameFont shadow(int color)
 	{
 		for (GameFont f : _shadowed)
-			if (f.shadowColor == color) return f;
+			if (f.shadowColor == color)
+				return f;
 
 		Picture[] newFrames = new Picture[frames.length];
 		for (int i = 0; i < frames.length; i++)
 			if (frames[i] != null)
 				newFrames[i] = frames[i].shadow(color);
-		
+
 		GameFont font = new GameFont(name + " shadow", newFrames);
 		font.shadowColor = color;
 		_shadowed.add(font);

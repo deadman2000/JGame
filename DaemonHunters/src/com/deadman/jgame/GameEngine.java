@@ -147,6 +147,7 @@ public class GameEngine
 	public void setContent(Control control)
 	{
 		root = content = control;
+		onSizeChanged();
 	}
 	
 	public void setLayout(Layout layout)
