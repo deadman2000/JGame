@@ -8,6 +8,7 @@ import com.deadman.dh.battle.MissionEngine;
 import com.deadman.dh.global.GlobalEngine;
 import com.deadman.dh.guild.Guild;
 import com.deadman.dh.isometric.IsoMap;
+import com.deadman.dh.isometric.IsoViewer;
 import com.deadman.dh.isometric.editor.IsoEditor;
 import com.deadman.dh.model.GlobalMap;
 import com.deadman.dh.model.Mission;
@@ -61,7 +62,12 @@ public class Game
 		{
 			GameScreen.init("--- Deamon Hunters v0.1 - programmed by dead_man ---");
 			ResourceManager.init();
+
+			IsoViewer.pic_floor = Drawable.get(R.iso.cursor_floor);
+			IsoViewer.pic_trace = Drawable.get(R.iso.cursor_trace);
+			IsoViewer.cellGrid = Drawable.get(R.iso.cellgrid);
 			Control.disabled_bgr = Drawable.get(R.ui.disabled_bgr);
+			
 			Sound.init();
 			GameScreen.defaultCursor = Drawable.get(R.cursors._default);
 			ItemCursor = new ItemCursor(GameScreen.defaultCursor);

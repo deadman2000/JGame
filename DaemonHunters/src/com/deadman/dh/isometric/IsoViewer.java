@@ -6,7 +6,6 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 import com.deadman.dh.Game;
-import com.deadman.dh.R;
 import com.deadman.dh.battle.BattleSide;
 import com.deadman.dh.model.Rectangle;
 import com.deadman.dh.model.items.Item;
@@ -49,12 +48,6 @@ public class IsoViewer extends Control
 	private ArrayList<IsoControl> isoControls = new ArrayList<>();
 
 	public ICellDrawer customDrawer;
-
-	static
-	{
-		pic_floor = getDrawable(R.iso.cursor_floor);
-		pic_trace = getDrawable(R.iso.cursor_trace);
-	}
 
 	public IsoViewer()
 	{
@@ -166,7 +159,7 @@ public class IsoViewer extends Control
 		return showAll || currentSide == null || currentSide.isDiscovered(cell);
 	}
 
-	private Drawable cellGrid = getDrawable(R.iso.cellgrid);
+	public static Drawable cellGrid;
 
 	private void drawFloor()
 	{

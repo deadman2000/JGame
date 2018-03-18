@@ -41,4 +41,11 @@ public class DrawingTests
 		new EngineTestMirroring().show();
 		TestTools.compareImages(GameScreen.screen.getScreenshot(), "test/sample_mirroring.png");
 	}
+	
+	@Test
+	public void testBigSprite() throws Exception
+	{
+		new EngineTestBigSprite().show();
+		TestTools.compareImages(GameScreen.screen.getScreenshot(), "test/sample_bigsprite.png");
+	}
 }

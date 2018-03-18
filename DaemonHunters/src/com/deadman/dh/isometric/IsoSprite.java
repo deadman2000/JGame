@@ -23,7 +23,7 @@ public class IsoSprite
 	public int id; // Идентификатор
 	public String name; // Название
 	public String owner; // Для оружия, название тела
-	private boolean mirrorRotation;
+	public boolean mirrorRotation;
 	public byte rotating; // Количество поворотов (для редактора)
 
 	public float light_rate; // Пропускание света
@@ -96,9 +96,9 @@ public class IsoSprite
 			}
 		}
 
-		loadSprites();
+		loadStates();
 	}
-	
+
 	public IsoSprite(byte type, int id, String owner, String name, boolean mirrorRotation)
 	{
 		this.type = type;
@@ -107,7 +107,7 @@ public class IsoSprite
 		this.name = name;
 		this.mirrorRotation = mirrorRotation;
 
-		loadSprites();
+		loadStates();
 	}
 
 	public IsoSprite(IsoSprite spr)
@@ -133,11 +133,15 @@ public class IsoSprite
 		pics = spr.pics;
 	}
 
-	private void loadSprites()
+	public void initStates()
 	{
 		pics = new Hashtable<>();
+		randomStatesCount = new byte[16];
+	}
 
-		byte[] stc = new byte[16];
+	private void loadStates()
+	{
+		initStates();
 
 		String path;
 		if (type == UNIT)
@@ -150,7 +154,7 @@ public class IsoSprite
 		else
 			path = "R.iso." + name;
 
-		byte r, s, lastS, maxR = 0;
+		byte r, s, lastS;
 		for (r = 0; r < 16; r++)
 		{
 			lastS = 0;
@@ -161,27 +165,34 @@ public class IsoSprite
 				{
 					d = Drawable.get(path + "_" + r);
 					if (d == null && r == 0)
-					{
 						d = Drawable.get(path);
-					}
 				}
 
 				if (d != null)
 				{
-					byte sid = getFullState(r, s);
-					pics.put(sid, d);
-					lastS = (byte)(s + 1);
-					if (maxR < r)
-						maxR = r;
+					pics.put(getFullState(r, s), d);
+					lastS = (byte) (s + 1);
 				}
 			}
-			stc[r] = lastS;
+			randomStatesCount[r] = lastS;
 		}
 
-		if (type == IsoSprite.UNIT) // Добавляем отзеркаленные для юнитов
+		completeStates();
+	}
+
+	public void completeStates()
+	{
+		byte r, s, maxR = 0;
+		for (s = 0; s < 16; s++)
+			for (r = maxR; r < 16; r++)
+			{
+				if (pics.get(getFullState(r, s)) != null)
+					maxR = r;
+			}
+
+		if (type == UNIT) // Добавляем отзеркаленные для юнитов
 		{
 			for (r = 5; r < 8; r++)
-			{
 				for (s = 0; s < 3; s++) // 0-стоя, 1-движение
 				{
 					byte fs = getFullState(r, s);
@@ -193,7 +204,6 @@ public class IsoSprite
 							pics.put(fs, original.getMirrored(-35));
 					}
 				}
-			}
 		}
 		else if (mirrorRotation && maxR == 0)
 		{
@@ -205,13 +215,12 @@ public class IsoSprite
 				else
 					break;
 			}
-
-			stc[1] = s;
+			randomStatesCount[1] = s;
 			maxR++;
 		}
 
 		maxR++;
-		randomStatesCount = Arrays.copyOf(stc, maxR);
+		randomStatesCount = Arrays.copyOf(randomStatesCount, maxR);
 		rotating = maxR;
 	}
 
@@ -287,7 +296,6 @@ public class IsoSprite
 		Drawable pic = getState(direction, state);
 		if (pic != null)
 		{
-			//GameScreen.screen.resetColorMask();
 			pic.drawAt(x, y);
 		}
 	}
@@ -297,7 +305,6 @@ public class IsoSprite
 		Drawable pic = pics.get(fullState);
 		if (pic != null)
 		{
-			//GameScreen.screen.resetColorMask();
 			pic.drawAt(x, y);
 		}
 	}
