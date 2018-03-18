@@ -1,9 +1,7 @@
 package com.deadman.jgame.drawing;
 
-import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
-import java.awt.Graphics;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
@@ -17,6 +15,7 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
@@ -27,7 +26,7 @@ import javax.swing.JFrame;
 import javax.swing.event.MouseInputAdapter;
 
 import com.deadman.dh.R;
-import com.deadman.jgame.GameLoop;
+import com.deadman.jgame.GameEngine;
 import com.deadman.jgame.resources.ResourceManager;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
@@ -58,49 +57,68 @@ public class GameScreen extends JFrame implements GLEventListener
 
 	private GLU glu = new GLU();
 
-	private boolean _takeScreenshot;
-
 	public static void init(String title)
 	{
-		screen = new GameScreen(title);
+		screen = new GameScreen(title, false);
 	}
 
-	public GameScreen(String title)
+	public static void initTesting()
+	{
+		if (screen != null) return;
+
+		SCALE_FACTOR = 1;
+		START_WIDTH = 200;
+		START_HEIGHT = 200;
+		screen = new GameScreen("Unit testing", true);
+	}
+
+	private GameScreen(String title, boolean testMode)
 	{
 		super(title);
 
-		gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+		gd = GraphicsEnvironment.getLocalGraphicsEnvironment()
+								.getDefaultScreenDevice();
 
 		createCanvas();
 
-		setIgnoreRepaint(true);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setPreferredSize(new Dimension(START_WIDTH, START_HEIGHT));
-		//setResizable(false);
 
-		try
+		if (!testMode)
 		{
-			Image image = ImageIO.read(new File("res/icon.png"));
-			setIconImage(image);
+			setIgnoreRepaint(true);
+			try
+			{
+				Image image = ImageIO.read(new File("res/icon.png"));
+				setIconImage(image);
+			}
+			catch (Exception e)
+			{
+			}
+
+			BufferedImage cursorImg = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
+			Cursor blankCursor = Toolkit.getDefaultToolkit()
+										.createCustomCursor(cursorImg, new Point(0, 0), "blank cursor");
+			setCursor(blankCursor);
+
+			pack();
+			setLocationRelativeTo(null);
+			setVisible(true);
+
+			requestFocus();
+
+			addKeyListener(keyListener);
+			canvas.addMouseListener(mouseListener);
+			canvas.addMouseMotionListener(mouseListener);
+			canvas.addMouseWheelListener(mouseListener);
 		}
-		catch (Exception e)
+		else
 		{
+			setUndecorated(true);
+			setResizable(false);
+			pack();
+			setVisible(true);
 		}
-
-		BufferedImage cursorImg = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
-		Cursor blankCursor = Toolkit.getDefaultToolkit().createCustomCursor(cursorImg, new Point(0, 0), "blank cursor");
-		setCursor(blankCursor);
-
-		pack();
-		setLocationRelativeTo(null);
-		setVisible(true);
-
-		requestFocus();
-
-		addKeyListener(keyListener);
-		canvas.addMouseListener(mouseListener);
-		canvas.addMouseMotionListener(mouseListener);
-		canvas.addMouseWheelListener(mouseListener);
 
 		//cursor = CURSOR_DEFAULT;
 
@@ -140,8 +158,8 @@ public class GameScreen extends JFrame implements GLEventListener
 		}
 		GAME_WIDTH = screen_width / SCALE_FACTOR;
 		GAME_HEIGHT = screen_height / SCALE_FACTOR;
-		if (GameLoop.engine != null)
-			GameLoop.engine.onSizeChanged();
+		if (GameEngine.current != null)
+			GameEngine.current.onSizeChanged();
 	}
 
 	// OpenGL
@@ -156,7 +174,8 @@ public class GameScreen extends JFrame implements GLEventListener
 	{
 		screen_width = canvas.getWidth();
 		screen_height = canvas.getHeight();
-		gl = drawable.getGL().getGL2();
+		gl = drawable	.getGL()
+						.getGL2();
 		gl.setSwapInterval(1); // v-sync
 	}
 
@@ -175,22 +194,28 @@ public class GameScreen extends JFrame implements GLEventListener
 		isScreenInit = true;
 	}
 
+	public GameEngine engine;
+
 	@Override
 	public void display(GLAutoDrawable drawable)
 	{
 		//long t = System.currentTimeMillis();
+		boolean ts = _takeScreenshot;
 
-		gl = drawable.getGL().getGL2();
+		gl = drawable	.getGL()
+						.getGL2();
 		if (!isScreenInit) initScreen();
 
 		gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_STENCIL_BUFFER_BIT);
 
-		if (GameLoop.engine != null)
-			GameLoop.engine.draw();
+		if (engine != null)
+			engine.draw();
+		else if (GameEngine.current != null)
+			GameEngine.current.draw();
 
 		drawCursor();
 
-		if (_takeScreenshot)
+		if (ts)
 			saveScreenshot();
 
 		Picture.clean(gl);
@@ -208,7 +233,8 @@ public class GameScreen extends JFrame implements GLEventListener
 		screen_width = width;
 		screen_height = height;
 		calcSize();
-		gl = drawable.getGL().getGL2();
+		gl = drawable	.getGL()
+						.getGL2();
 		disposeFX();
 		initScreen();
 	}
@@ -216,7 +242,8 @@ public class GameScreen extends JFrame implements GLEventListener
 	@Override
 	public void dispose(GLAutoDrawable drawable)
 	{
-		gl = drawable.getGL().getGL2();
+		gl = drawable	.getGL()
+						.getGL2();
 		disposeFX();
 		disposeShaders();
 	}
@@ -326,8 +353,8 @@ public class GameScreen extends JFrame implements GLEventListener
 	{
 		if (cursorPos != null)
 		{
-			if (GameLoop.engine != null && GameLoop.engine.cursor != null)
-				GameLoop.engine.cursor.drawAt(cursorPos);
+			if (GameEngine.current != null && GameEngine.current.cursor != null)
+				GameEngine.current.cursor.drawAt(cursorPos);
 			else if (defaultCursor != null)
 				defaultCursor.drawAt(cursorPos);
 		}
@@ -372,7 +399,7 @@ public class GameScreen extends JFrame implements GLEventListener
 		gl.glBindFramebuffer(GL2.GL_FRAMEBUFFER, renderFBO);
 		gl.glClear(GL2.GL_COLOR_BUFFER_BIT);
 	}
-	
+
 	public void endFX(ScreenEffect effect)
 	{
 		gl.glBindFramebuffer(GL2.GL_FRAMEBUFFER, 0);
@@ -395,7 +422,7 @@ public class GameScreen extends JFrame implements GLEventListener
 
 		printError();
 	}
-	
+
 	public int genFrameBuffer()
 	{
 		int[] ids = new int[1];
@@ -441,7 +468,7 @@ public class GameScreen extends JFrame implements GLEventListener
 	}
 
 	// Shaders
-	
+
 	private int vertexShader;
 	private int fragmentShader;
 	private int shaderProgram;
@@ -552,8 +579,8 @@ public class GameScreen extends JFrame implements GLEventListener
 			//System.out.println("Key pressed: " + e.getKeyCode() + " " + e.getKeyChar());
 			//if (e.getKeyCode() == KeyEvent.VK_SHIFT) KEY_SHIFT = true;
 
-			if (GameLoop.engine != null)
-				GameLoop.engine.onKeyPressed(e);
+			if (GameEngine.current != null)
+				GameEngine.current.onKeyPressed(e);
 
 			if (e.isConsumed()) return;
 
@@ -577,8 +604,8 @@ public class GameScreen extends JFrame implements GLEventListener
 						setFullscreen();
 					break;
 				case KeyEvent.VK_ESCAPE: // Esc
-					if (GameLoop.engine != null)
-						GameLoop.engine.close();
+					if (GameEngine.current != null)
+						GameEngine.current.close();
 					break;
 
 				case KeyEvent.VK_SUBTRACT:
@@ -615,59 +642,126 @@ public class GameScreen extends JFrame implements GLEventListener
 		{
 			//if (e.getKeyCode() == KeyEvent.VK_SHIFT) KEY_SHIFT = false;
 
-			if (GameLoop.engine != null)
-				GameLoop.engine.onKeyReleased(e);
+			if (GameEngine.current != null)
+				GameEngine.current.onKeyReleased(e);
 
 			if (e.isConsumed()) return;
 		}
 	};
 
+	private boolean _takeScreenshot;
+	private String _screenshotPath;
+	private Object _screenWaiting;
+	private BufferedImage _lastScreenshot;
+
 	public void takeScreenshot()
 	{
 		_takeScreenshot = true;
+		_screenshotPath = "D:\\Download\\texture.png";
+	}
+
+	public void waitScreenshot(String path) throws Exception
+	{
+		BufferedImage image = getScreenshot();
+		saveImage(image, path);
+	}
+
+	public BufferedImage getScreenshot() throws Exception
+	{
+		Object w = new Object();
+		_screenWaiting = w;
+		_screenshotPath = null;
+		_lastScreenshot = null;
+
+		_takeScreenshot = true;
+		canvas.repaint();
+
+		BufferedImage result = null;
+		try
+		{
+			synchronized (w)
+			{
+				w.wait(5000);
+			}
+			if (_lastScreenshot == null) throw new Exception("Timeout");
+
+			result = _lastScreenshot;
+		}
+		finally
+		{
+			_screenWaiting = null;
+			_lastScreenshot = null;
+		}
+
+		return result;
+	}
+
+	private BufferedImage getScreen()
+	{
+		int width = canvas.getWidth();
+		int height = canvas.getHeight();
+		try
+		{
+			BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+			ByteBuffer buffer = GLBuffers.newDirectByteBuffer(width * height * 4);
+			gl.glReadBuffer(GL.GL_BACK);
+			gl.glReadPixels(0, 0, width, height, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, buffer);
+
+			for (int y = 0; y < height; y++)
+			{
+				for (int x = 0; x < width; x++)
+				{
+					int r = buffer.get() & 0xff;
+					int g = buffer.get() & 0xff;
+					int b = buffer.get() & 0xff;
+					buffer.get(); // consume alpha
+
+					image.setRGB(x, height - y - 1, (r << 16) | (g << 8) | b);
+				}
+			}
+			return image;
+		}
+		catch (Exception ex)
+		{
+			ex.printStackTrace();
+			return null;
+		}
 	}
 
 	private void saveScreenshot()
 	{
-		int width = getWidth();
-		int height = getHeight();
 		try
 		{
-			BufferedImage screenshot = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-			Graphics graphics = screenshot.getGraphics();
+			BufferedImage image = getScreen();
 
-			ByteBuffer buffer = GLBuffers.newDirectByteBuffer(width * height * 4);
-			// be sure you are reading from the right fbo (here is supposed to be the default one)
-			// bind the right buffer to read from
-			gl.glReadBuffer(GL.GL_BACK);
-			// if the width is not multiple of 4, set unpackPixel = 1
-			gl.glReadPixels(0, 0, width, height, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, buffer);
-
-			for (int h = 0; h < height; h++)
+			if (_screenshotPath != null)
 			{
-				for (int w = 0; w < width; w++)
-				{
-					// The color are the three consecutive bytes, it's like referencing
-					// to the next consecutive array elements, so we got red, green, blue..
-					// red, green, blue, and so on..+ ", "
-					graphics.setColor(new Color((buffer.get() & 0xff), (buffer.get() & 0xff), (buffer.get() & 0xff)));
-					buffer.get(); // consume alpha
-					graphics.drawRect(w, height - h, 1, 1); // height - h is for flipping the image
-				}
+				saveImage(image, _screenshotPath);
+				System.out.println("Screenshot in " + _screenshotPath);
 			}
-
-			// This is one util of mine, it make sure you clean the direct buffer
-			//BufferUtils.destroyDirectBuffer(buffer);
-
-			File outputfile = new File("D:\\Download\\texture.png");
-			ImageIO.write(screenshot, "png", outputfile);
-			System.out.println("Screenshot in " + outputfile);
+			else
+			{
+				_lastScreenshot = image;
+			}
 		}
 		catch (Exception ex)
 		{
 			ex.printStackTrace();
 		}
+
 		_takeScreenshot = false;
+		if (_screenWaiting != null)
+		{
+			synchronized (_screenWaiting)
+			{
+				_screenWaiting.notify();
+			}
+		}
+	}
+
+	private void saveImage(BufferedImage image, String path) throws IOException
+	{
+		ImageIO.write(image, "png", new File(path));
 	}
 
 	private MouseInputAdapter mouseListener = new MouseInputAdapter()
@@ -675,15 +769,15 @@ public class GameScreen extends JFrame implements GLEventListener
 		@Override
 		public void mousePressed(MouseEvent e)
 		{
-			if (GameLoop.engine != null)
-				GameLoop.engine.onMousePressed(screenToGame(e.getPoint()), e);
+			if (GameEngine.current != null)
+				GameEngine.current.onMousePressed(screenToGame(e.getPoint()), e);
 		}
 
 		@Override
 		public void mouseReleased(MouseEvent e)
 		{
-			if (GameLoop.engine != null)
-				GameLoop.engine.onMouseReleased(screenToGame(e.getPoint()), e);
+			if (GameEngine.current != null)
+				GameEngine.current.onMouseReleased(screenToGame(e.getPoint()), e);
 		}
 
 		@Override
@@ -704,8 +798,8 @@ public class GameScreen extends JFrame implements GLEventListener
 
 			cursorPos = p;
 
-			if (GameLoop.engine != null)
-				GameLoop.engine.onMouseMoved(p, e);
+			if (GameEngine.current != null)
+				GameEngine.current.onMouseMoved(p, e);
 		}
 
 		@Override
@@ -717,8 +811,8 @@ public class GameScreen extends JFrame implements GLEventListener
 		@Override
 		public void mouseWheelMoved(MouseWheelEvent e)
 		{
-			if (GameLoop.engine != null)
-				GameLoop.engine.onMouseWheel(screenToGame(e.getPoint()), e);
+			if (GameEngine.current != null)
+				GameEngine.current.onMouseWheel(screenToGame(e.getPoint()), e);
 		}
 	};
 

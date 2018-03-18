@@ -9,5 +9,6 @@
 	<classpathentry kind="lib" path="lib/jogamp-all-platforms/jar/jogl-all.jar" sourcepath="lib/jogamp-all-platforms/jogl-java-src.zip"/>
 	<classpathentry kind="lib" path="lib/jogamp-all-platforms/jar/joal.jar"/>
 	<classpathentry kind="src" path="gen/src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/5"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

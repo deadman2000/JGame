@@ -3,7 +3,7 @@ package com.deadman.dh.model;
 import java.util.ArrayList;
 
 import com.deadman.dh.Game;
-import com.deadman.jgame.GameLoop;
+import com.deadman.dh.global.GlobalEngine;
 
 public class Poi extends MapObject
 {
@@ -19,7 +19,7 @@ public class Poi extends MapObject
 
 	public long getSeed()
 	{
-		return (x + y * GameLoop.GLOBAL_MAP_WIDTH) * Game.seed;
+		return (x + y * GlobalEngine.GLOBAL_MAP_WIDTH) * Game.seed;
 	}
 
 	public double distance(Poi p)

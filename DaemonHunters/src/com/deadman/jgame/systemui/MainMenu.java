@@ -5,7 +5,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
 import com.deadman.jgame.GameEngine;
-import com.deadman.jgame.GameLoop;
 import com.deadman.jgame.IOverlayListener;
 import com.deadman.jgame.drawing.Drawable;
 import com.deadman.jgame.drawing.GameFont;
@@ -92,7 +91,7 @@ public class MainMenu extends Row implements IOverlayListener
 	{
 		close();
 
-		engine = GameLoop.engine;
+		engine = GameEngine.current;
 		engine.showOverlay(this);
 		engine.overlay().addControl(control);
 		openedMenu = control;

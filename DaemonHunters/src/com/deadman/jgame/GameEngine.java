@@ -28,6 +28,8 @@ public class GameEngine
 	private Control content;
 	private Control root;
 
+	public static GameEngine current;
+
 	public GameEngine()
 	{
 		root = content = new Control();
@@ -42,20 +44,20 @@ public class GameEngine
 
 	public void show()
 	{
-		if (GameLoop.engine instanceof LoadingScreen)
-			parent = GameLoop.engine.parent;
+		if (current instanceof LoadingScreen)
+			parent = current.parent;
 		else
-			parent = GameLoop.engine;
+			parent = current;
 
 		onSizeChanged();
-		GameLoop.engine = this;
+		current = this;
 	}
 
 	public void close()
 	{
 		if (parent != null)
 		{
-			GameLoop.engine = parent;
+			current = parent;
 			parent.onSizeChanged();
 			parent.onChildClosed(this);
 		}

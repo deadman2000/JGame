@@ -1,6 +1,6 @@
 package com.deadman.dh.model.items;
 
-import com.deadman.dh.Game;
+import com.deadman.dh.ItemTypes;
 import com.deadman.dh.model.GameCharacter;
 
 /**
@@ -12,7 +12,7 @@ public class Corpse extends Item
 	
 	public Corpse(GameCharacter character)
 	{
-		super(Game.ItemTypes.dead_unit);
+		super(ItemTypes.dead_unit);
 		
 		this.character = character;
 	}

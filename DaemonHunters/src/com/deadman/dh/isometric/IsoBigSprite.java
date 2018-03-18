@@ -9,9 +9,13 @@ import org.w3c.dom.Node;
 
 public class IsoBigSprite extends IsoSprite
 {
-	public final byte width, height; // Размеры
+	public byte width, height; // Размеры
 
-	public final Hashtable<Byte, Drawable[]> subPics; // Нарезанные картинки
+	public Hashtable<Byte, Drawable[]> subPics; // Нарезанные картинки
+
+	public IsoBigSprite() // Конструктор для тестов
+	{
+	}
 
 	public IsoBigSprite(Node node)
 	{
@@ -19,7 +23,11 @@ public class IsoBigSprite extends IsoSprite
 
 		width = (byte) GameResources.getInt(node, "width", 1);
 		height = (byte) GameResources.getInt(node, "height", 1);
+		createSubPics();
+	}
 
+	public void createSubPics()
+	{
 		subPics = new Hashtable<>();
 
 		for (Byte s : pics.keySet())

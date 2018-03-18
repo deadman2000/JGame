@@ -329,7 +329,17 @@ public class Picture extends Drawable
 		File f = new File(fileName);
 		if (!f.exists())
 			throw new FileNotFoundException();
-		return ImageIO.read(f);
+		BufferedImage img = ImageIO.read(f);
+		if (img == null)
+			throw new IOException("File not opened");
+		if (img.getType() != BufferedImage.TYPE_4BYTE_ABGR)
+		{
+			BufferedImage replaced = createImage(img.getWidth(), img.getHeight());
+			Graphics2D g =  replaced.createGraphics();
+			g.drawImage(img, 0, 0, null);
+			return replaced;
+		}
+		return img;
 	}
 
 	private Buffer wrapImageDataBuffer(final BufferedImage image)
@@ -339,7 +349,7 @@ public class Picture extends Drawable
 
 		if (data instanceof DataBufferInt)
 			return IntBuffer.wrap(((DataBufferInt) data).getData());
-		
+
 		if (data instanceof DataBufferByte)
 			return ByteBuffer.wrap(((DataBufferByte) data).getData());
 
@@ -391,11 +401,13 @@ public class Picture extends Drawable
 				}
 			}
 
-			//System.out.println(_img);
-			final GLPixelAttributes glpa = new GLPixelAttributes(gl.getGLProfile(), PixelFormat.ABGR8888, false);
-			int internalFormat = _img	.getColorModel()
-										.hasAlpha() ? GL.GL_RGBA8 : GL.GL_RGB;
-			int pixelFormat = GL.GL_RGBA;
+			boolean alpha = _img.getColorModel()
+								.hasAlpha();
+			//System.out.println(_fileName + " : " + _img);
+			PixelFormat fmt = alpha ? PixelFormat.ABGR8888 : PixelFormat.BGR888;
+			int internalFormat = alpha ? GL.GL_RGBA8 : GL.GL_RGB8;
+			int pixelFormat = alpha ? GL.GL_RGBA : GL.GL_RGB;
+			final GLPixelAttributes glpa = new GLPixelAttributes(gl.getGLProfile(), fmt, false);
 			int pixelType = glpa.type;
 			Buffer buff = wrapImageDataBuffer(_img);
 			TextureData d = new TextureData(gl.getGLProfile(), internalFormat, _img.getWidth(), _img.getHeight(), 0, pixelFormat, pixelType, false, false, false, buff, null);
@@ -474,32 +486,6 @@ public class Picture extends Drawable
 		}
 	}
 
-	/*private static Dimension getDimensions(File f)
-	{
-		try (ImageInputStream in = ImageIO.createImageInputStream(f))
-		{
-			final Iterator<ImageReader> readers = ImageIO.getImageReaders(in);
-			if (readers.hasNext())
-			{
-				ImageReader reader = readers.next();
-				try
-				{
-					reader.setInput(in);
-					return new Dimension(reader.getWidth(0), reader.getHeight(0));
-				}
-				finally
-				{
-					reader.dispose();
-				}
-			}
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
-		return null;
-	}*/
-
 	// Buffer
 	private static ArrayList<Picture> _buff = new ArrayList<>();
 
@@ -541,11 +527,6 @@ public class Picture extends Drawable
 	public void drawAt(Graphics2D g2d, int x, int y)
 	{
 		g2d.drawImage(_img, x - anchorX, y - anchorY, null);
-	}
-
-	public void preload()
-	{
-		// TODO Auto-generated method stub
 	}
 
 	/**

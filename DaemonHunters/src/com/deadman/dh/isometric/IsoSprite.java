@@ -19,9 +19,9 @@ import com.deadman.jgame.drawing.Drawable;
  */
 public class IsoSprite
 {
-	public final byte type; // Тип
-	public final int id; // Идентификатор
-	public final String name; // Название
+	public byte type; // Тип
+	public int id; // Идентификатор
+	public String name; // Название
 	public String owner; // Для оружия, название тела
 	private boolean mirrorRotation;
 	public byte rotating; // Количество поворотов (для редактора)
@@ -44,10 +44,13 @@ public class IsoSprite
 
 	public byte material; // Материал (для звуков хотьбы / удара)
 
+	public IsoSprite() // Конструктор для тестов
+	{
+	}
+
 	public IsoSprite(Node node) // Конструктор для ресурсов
 	{
-		String className = node.getNodeName();
-		type = getObjClass(className);
+		type = getObjClass(node.getNodeName());
 
 		id = GameResources.getInt(node, "id");
 		name = GameResources.getString(node, "name");
@@ -95,7 +98,7 @@ public class IsoSprite
 
 		loadSprites();
 	}
-
+	
 	public IsoSprite(byte type, int id, String owner, String name, boolean mirrorRotation)
 	{
 		this.type = type;

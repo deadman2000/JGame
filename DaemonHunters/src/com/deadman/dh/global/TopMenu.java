@@ -8,7 +8,7 @@ import com.deadman.dh.dialogs.Book;
 import com.deadman.dh.dialogs.InGameMenu;
 import com.deadman.dh.guild.Guild;
 import com.deadman.dh.info.GuildInfoEngine;
-import com.deadman.jgame.GameLoop;
+import com.deadman.jgame.GameEngine;
 import com.deadman.jgame.ui.Button;
 import com.deadman.jgame.ui.Control;
 import com.deadman.jgame.ui.ControlListener;
@@ -78,7 +78,7 @@ public class TopMenu extends Control
 				@Override
 				public void onControlPressed(Control control, MouseEvent e)
 				{
-					GameLoop.engine.close();
+					GameEngine.current.close();
 				}
 			});
 		}

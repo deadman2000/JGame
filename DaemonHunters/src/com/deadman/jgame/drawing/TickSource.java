@@ -1,5 +1,6 @@
 package com.deadman.jgame.drawing;
 
+import com.deadman.jgame.GameEngine;
 import com.deadman.jgame.GameLoop;
 
 public enum TickSource
@@ -27,7 +28,7 @@ public enum TickSource
 			default:
 				return GameLoop.frames;
 			case ENGINE:
-				return GameLoop.engine.ticks;
+				return GameEngine.current.ticks;
 		}
 	}
 }

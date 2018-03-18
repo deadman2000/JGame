@@ -4,8 +4,9 @@ import java.awt.Point;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import com.deadman.dh.global.GlobalEngine;
-import com.deadman.jgame.GameLoop;
+import com.deadman.dh.R;
+import com.deadman.jgame.GameEngine;
+import com.deadman.jgame.drawing.GameFont;
 import com.deadman.jgame.drawing.GameScreen;
 import com.deadman.jgame.ui.Control;
 import com.deadman.jgame.ui.Label;
@@ -17,19 +18,20 @@ public class ItemInfoPanel extends Control
 	private Item _item;
 	private Label _itemName;
 	private Label _itemDescription;
+	
+	static GameFont fnt_info = getFont(R.fonts.font4x7, 0xFF3a2717).shadow(0xFFb8b2a1);
 
 	private ItemInfoPanel()
 	{
-		bgrColor = 0xffb5b5b5;
-		//setBounds(0, 0, 100, 100);
+		background = getDrawable(R.ui.iteminfo_bgr_9p);
 		visible = false;
 
 		Control picBgr = new Control(3, 3, 16, 16);
 		addControl(picBgr);
-		picBgr.bgrColor = 0xff000000;
+		picBgr.bgrColor = 0xff504430;
 
-		addControl(_itemName = new Label(GlobalEngine.fnt4x7_brown_sh, 21, 7));
-		addControl(_itemDescription = new Label(GlobalEngine.fnt4x7_brown_sh, 3, 22));
+		addControl(_itemName = new Label(fnt_info, 21, 7));
+		addControl(_itemDescription = new Label(fnt_info, 3, 22));
 	}
 
 	@Override
@@ -131,7 +133,7 @@ public class ItemInfoPanel extends Control
 		if (_panel == null)
 		{
 			_panel = new ItemInfoPanel();
-			if (!GameLoop.engine.containsControl(_panel)) GameLoop.engine.addControl(_panel);
+			if (!GameEngine.current.containsControl(_panel)) GameEngine.current.addControl(_panel);
 		}
 		return _panel;
 	}

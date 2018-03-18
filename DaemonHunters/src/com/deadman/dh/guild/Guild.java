@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import com.deadman.dh.Game;
 import com.deadman.dh.GameEvent;
+import com.deadman.dh.ItemTypes;
 import com.deadman.dh.R;
 import com.deadman.dh.city.City;
 import com.deadman.dh.isometric.IsoMap;
@@ -46,26 +47,26 @@ public class Guild
 		marker = Drawable.get(R.ui.red_flag); // .getShifted(city.id * 333)
 
 		storage = new ItemsPage("Storage", 10, 2);
-		Game.ItemTypes.sword
-				.generate()
-				.moveTo(storage, 0, 0);
-		Game.ItemTypes.bow
-				.generate()
-				.moveTo(storage, 0, 1);
-		Game.ItemTypes.red_potion
-				.generate()
-				.moveTo(storage, 1, 0);
-		Game.ItemTypes.bottle
-				.generate()
-				.setCount(5)
-				.moveTo(storage, 1, 1);
-		Game.ItemTypes.shield
-				.generate()
-				.moveTo(storage, 2, 0);
-		Game.ItemTypes.arrow
-				.generate()
-				.setCount(100)
-				.moveTo(storage, 2, 1);
+		ItemTypes.sword
+						.generate()
+						.moveTo(storage, 0, 0);
+		ItemTypes.bow
+						.generate()
+						.moveTo(storage, 0, 1);
+		ItemTypes.red_potion
+							.generate()
+							.moveTo(storage, 1, 0);
+		ItemTypes.bottle
+						.generate()
+						.setCount(5)
+						.moveTo(storage, 1, 1);
+		ItemTypes.shield
+						.generate()
+						.moveTo(storage, 2, 0);
+		ItemTypes.arrow
+						.generate()
+						.setCount(100)
+						.moveTo(storage, 2, 1);
 
 		width = 100;
 		height = 100;
@@ -143,27 +144,27 @@ public class Guild
 		{
 			Unit u = Unit.generate();
 
-			Game.ItemTypes.red_potion
-					.generate()
-					.equip(u);
+			ItemTypes.red_potion
+								.generate()
+								.equip(u);
 
-			Game.ItemTypes.torch
-					.generate()
-					.equip(u);
+			ItemTypes.torch
+							.generate()
+							.equip(u);
 
 			if (i < 2)
-				Game.ItemTypes.sword
-						.generate()
-						.equip(u);
+				ItemTypes.sword
+								.generate()
+								.equip(u);
 			else
 			{
-				Game.ItemTypes.bow
-						.generate()
-						.equip(u);
-				Game.ItemTypes.arrow
-						.generate()
-						.setCount(100)
-						.equip(u);
+				ItemTypes.bow
+								.generate()
+								.equip(u);
+				ItemTypes.arrow
+								.generate()
+								.setCount(100)
+								.equip(u);
 			}
 
 			addUnit(u);

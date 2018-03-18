@@ -9,15 +9,10 @@ import com.deadman.dh.global.GlobalEngine;
 import com.deadman.dh.guild.Guild;
 import com.deadman.dh.isometric.IsoMap;
 import com.deadman.dh.isometric.editor.IsoEditor;
-import com.deadman.dh.model.Element;
 import com.deadman.dh.model.GlobalMap;
 import com.deadman.dh.model.Mission;
 import com.deadman.dh.model.Squad;
-import com.deadman.dh.model.items.HealEffect;
 import com.deadman.dh.model.items.ItemCursor;
-import com.deadman.dh.model.items.ItemSlotType;
-import com.deadman.dh.model.items.LightEffect;
-import com.deadman.dh.model.itemtypes.ItemType;
 import com.deadman.dh.resources.GameResources;
 import com.deadman.jgame.GameLoop;
 import com.deadman.jgame.drawing.Drawable;
@@ -209,93 +204,5 @@ public class Game
 			_scrollTPaper.setVBgr(R.ui.scroll_paper_vbgr);
 		}
 		return _scrollTPaper;
-	}
-
-	public static final class ItemTypes
-	{
-		static
-		{
-			System.out.println("Init item types");
-		}
-
-		public static final ItemType sword = ItemType	.create(0)
-														.name("Sword")
-														.icon(R.items.sword)
-														.equipSprite("sword")
-														.meele(Element.PHYSICAL, 10, 5)
-														.slots(ItemSlotType.RIGHTHAND)
-														.attackTime(30)
-														.end();
-
-		public static final ItemType bow = ItemType	.create(1)
-													.name("Bow")
-													.icon(R.items.bow)
-													.slots(ItemSlotType.RIGHTHAND)
-													.twoHanded()
-													.ranged()
-													.attackTime(120)
-													.end();
-
-		public static final ItemType red_potion = ItemType	.create(2)
-															.name("Healing potion")
-															.icon(R.items.red_potion)
-															.consumable()
-															.effect(new HealEffect(50))
-															.end();
-
-		public static final ItemType armor = ItemType	.create(3)
-														.name("Armor")
-														.icon(R.items.armor)
-														.armor(ItemSlotType.BODY)
-														.defence(Element.PHYSICAL, 5)
-														.end();
-
-		public static final ItemType shield = ItemType	.create(4)
-														.name("Shield")
-														.icon(R.items.shield)
-														.armor(ItemSlotType.LEFTHAND)
-														.defence(Element.PHYSICAL, 1)
-														.end();
-
-		public static final ItemType arrow = ItemType	.create(5)
-														.name("Arrow")
-														.icon(R.items.arrow)
-														.stack(100)
-														.end();
-
-		public static final ItemType bottle = ItemType	.create(6)
-														.name("Empty bottle")
-														.icon(R.items.bottle)
-														.end();
-
-		public static final ItemType book = ItemType.create(7)
-													.name("Book")
-													.icon(R.items.book)
-													.end();
-
-		public static final ItemType torch = ItemType	.create(8)
-														.name("Torch")
-														.icon(R.items.torch)
-														.iso(R.iso.SmallTorh)
-														.effect(new LightEffect(10))
-														.handsEquip()
-														.end();
-
-		public static final ItemType dead_unit = ItemType	.create(9)
-															.name("Dead man")
-															.icon(R.items.dead_unit)
-															.end();
-
-		public static final ItemType player1 = ItemType	.create(10001)
-														.name("Player1")
-														.icon(R.items.player1)
-														.iso(R.iso.Player1)
-														.end();
-
-		public static final ItemType player2 = ItemType	.create(10002)
-														.name("Player2")
-														.icon(R.items.player2)
-														.iso(R.iso.Player2)
-														.end();
 	}
 }

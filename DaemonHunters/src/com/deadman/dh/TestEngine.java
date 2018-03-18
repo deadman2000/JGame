@@ -7,26 +7,22 @@ import java.awt.event.MouseEvent;
 import com.deadman.jgame.GameEngine;
 import com.deadman.jgame.drawing.Drawable;
 import com.deadman.jgame.drawing.GameScreen;
+import com.deadman.jgame.drawing.Picture;
 
 public class TestEngine extends GameEngine
 {
-	private Drawable pic, bgr;
+	Drawable pic;
 	
 	public TestEngine()
 	{
-		pic = getDrawable(R.test_alpha);
-		bgr = getDrawable(R.test_bgr);
+		pic = Picture.load("test\\pngs\\basi0g04.png");
 	}
 
 	@Override
 	public void draw()
 	{
 		super.draw();
-		
-		bgr.drawAt(0, 0);
-		
-		GameScreen.screen.drawRect(230, 10, 100, 100, 0x7fff0000);
-		pic.drawAt(120, 120);
+		pic.drawAt(10, 10);
 	}
 
 	@Override

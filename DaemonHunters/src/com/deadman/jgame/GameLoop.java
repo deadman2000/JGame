@@ -7,13 +7,8 @@ public class GameLoop
 	public static final int FPS = 50; // 50
 	public static final int TICK_DELAY = 1000 / FPS;
 
-	public static final int GLOBAL_MAP_WIDTH = 1187;
-	public static final int GLOBAL_MAP_HEIGHT = 1187;
-
 	public static long frames = 0;
 	public static boolean paused = false; // Установка в true не будет вызывать tick у текущего Engine
-
-	public static GameEngine engine;
 
 	public static void run()
 	{
@@ -23,10 +18,10 @@ public class GameLoop
 
 			frames++;
 
-			if (engine != null && !paused)
+			if (GameEngine.current != null && !paused)
 			{
-				engine.ticks++;
-				engine.tick();
+				GameEngine.current.ticks++;
+				GameEngine.current.tick();
 			}
 
 			GameScreen.screen.redraw();

@@ -37,6 +37,9 @@ public class GlobalEngine extends GameEngine
 	public static final GameFont fnt4x7_brown = getFont(R.fonts.font4x7, 0xFF3A2717);
 	public static final GameFont fnt4x7_brown_sh = getFont(R.fonts.font4x7, 0xFF3a2717).shadow(0xFF9f9a8a);
 
+	public static final int GLOBAL_MAP_WIDTH = 1187;
+	public static final int GLOBAL_MAP_HEIGHT = 1187;
+
 	private GlobalMapView mapView;
 	private TimePanel timePanel;
 	private TopMenu topMenu;
@@ -116,11 +119,10 @@ public class GlobalEngine extends GameEngine
 		System.out.println("Game Seed = " + seed);
 		rnd = new Random(seed);
 
-		GlobalMapGenerator gen = new GlobalMapGenerator(GameLoop.GLOBAL_MAP_WIDTH, GameLoop.GLOBAL_MAP_HEIGHT, rnd.nextLong());
+		GlobalMapGenerator gen = new GlobalMapGenerator(GLOBAL_MAP_WIDTH, GLOBAL_MAP_HEIGHT, rnd.nextLong());
 		Game.map = gen.generate(status);
 		//mapView = new Picture(gen.getHeightsMap());
 		Picture map = new Picture(Game.map.fillBackground(MapStyle.old, status));
-		map.preload();
 		mapView.setMap(map);
 
 		createGuid();

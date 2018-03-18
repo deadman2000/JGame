@@ -35,8 +35,8 @@ public class Clouds
 
 		perlin = PerlinNoise.create();
 
-		tw = (int) Math.round((GameLoop.GLOBAL_MAP_WIDTH * Z_FACTOR) / TILE_SIZE + 0.5) + 1;
-		th = (int) Math.round((GameLoop.GLOBAL_MAP_HEIGHT * Z_FACTOR) / TILE_SIZE + 0.5) + 1;
+		tw = (int) Math.round((GlobalEngine.GLOBAL_MAP_WIDTH * Z_FACTOR) / TILE_SIZE + 0.5) + 1;
+		th = (int) Math.round((GlobalEngine.GLOBAL_MAP_HEIGHT * Z_FACTOR) / TILE_SIZE + 0.5) + 1;
 		tiles = new CloudTile[tw][th];
 		for (int x = 0; x < tw; x++)
 			for (int y = 0; y < th; y++)

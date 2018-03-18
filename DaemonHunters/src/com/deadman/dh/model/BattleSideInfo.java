@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import com.deadman.dh.Game;
+import com.deadman.dh.ItemTypes;
 import com.deadman.dh.battle.BattleSide;
 import com.deadman.dh.battle.ComputerSide;
 import com.deadman.dh.battle.MissionEngine;
@@ -45,7 +46,7 @@ public class BattleSideInfo
 			{
 				GameCharacter ch = GameCharacter.generateClass(ui.type, engine.mission.level);
 				ch.name = "Unit #" + j;
-				ch.equip(Game.ItemTypes.sword);
+				ch.equip(ItemTypes.sword);
 				side.addUnit(ch);
 			}
 		}

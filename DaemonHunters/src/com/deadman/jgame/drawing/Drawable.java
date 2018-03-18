@@ -112,7 +112,7 @@ public abstract class Drawable
 	}
 
 	/**
-	 * Повернутая отрисовка
+	 * Повернутая против часовой стрелки отрисовка
 	 * @param x
 	 * @param y
 	 */
@@ -127,7 +127,7 @@ public abstract class Drawable
 	}
 
 	/**
-	 * Повернутая отрисовка
+	 * Повернутая по часовой стрелке отрисовка
 	 * @param x
 	 * @param y
 	 */

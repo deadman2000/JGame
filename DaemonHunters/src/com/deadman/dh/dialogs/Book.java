@@ -10,7 +10,6 @@ import com.deadman.dh.guild.GuildBuildingType;
 import com.deadman.dh.guild.GuildEngine;
 import com.deadman.dh.isometric.IsoViewer;
 import com.deadman.jgame.GameEngine;
-import com.deadman.jgame.GameLoop;
 import com.deadman.jgame.drawing.Drawable;
 import com.deadman.jgame.ui.Button;
 import com.deadman.jgame.ui.Control;
@@ -76,7 +75,7 @@ public class Book extends Control
 
 	public void show()
 	{
-		_engine = GameLoop.engine;
+		_engine = GameEngine.current;
 		showPage(buildingsPage);
 		btnBuild.visible = _engine instanceof GuildEngine;
 		showModal();

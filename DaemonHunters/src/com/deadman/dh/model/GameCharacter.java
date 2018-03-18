@@ -1,6 +1,7 @@
 package com.deadman.dh.model;
 
 import com.deadman.dh.Game;
+import com.deadman.dh.ItemTypes;
 import com.deadman.dh.R;
 import com.deadman.dh.battle.BattleSide;
 import com.deadman.dh.battle.EnemySearch;
@@ -85,7 +86,7 @@ public class GameCharacter extends IsoObject implements IItemsPageListener
 			ch.body = GameResources.main.getIso("human_leather")
 										.colorize(ch.id);
 
-			ch.equip(Game.ItemTypes.armor);
+			ch.equip(ItemTypes.armor);
 			ch.hpMax = 50 + level * 10;
 			ch.hpCount = ch.hpMax;
 
@@ -94,7 +95,7 @@ public class GameCharacter extends IsoObject implements IItemsPageListener
 			ch.intl = 10;
 			ch.calcAttributes();
 
-			ch.equip(Game.ItemTypes.red_potion);
+			ch.equip(ItemTypes.red_potion);
 		}
 		else
 		{

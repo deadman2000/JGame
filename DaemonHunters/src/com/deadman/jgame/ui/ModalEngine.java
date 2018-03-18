@@ -1,7 +1,6 @@
 package com.deadman.jgame.ui;
 
 import com.deadman.jgame.GameEngine;
-import com.deadman.jgame.GameLoop;
 import com.deadman.jgame.drawing.GameScreen;
 import com.deadman.jgame.drawing.ScreenEffect;
 
@@ -14,9 +13,9 @@ public class ModalEngine extends GameEngine
 
 	public ModalEngine(Control control)
 	{
-		assert(GameLoop.engine != null);
+		assert(GameEngine.current != null);
 		
-		_engine = GameLoop.engine;
+		_engine = GameEngine.current;
 		_isModalEngine = _engine instanceof ModalEngine;
 
 		topControl = control;

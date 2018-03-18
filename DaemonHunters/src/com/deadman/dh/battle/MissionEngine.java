@@ -6,6 +6,7 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 import com.deadman.dh.Game;
+import com.deadman.dh.ItemTypes;
 import com.deadman.dh.R;
 import com.deadman.dh.dialogs.Book;
 import com.deadman.dh.dialogs.InGameMenu;
@@ -37,10 +38,8 @@ import com.deadman.dh.model.items.ItemsGrid;
 import com.deadman.dh.model.items.ItemsGridList;
 import com.deadman.dh.model.items.Weapon;
 import com.deadman.jgame.GameEngine;
-import com.deadman.jgame.GameLoop;
 import com.deadman.jgame.drawing.Drawable;
 import com.deadman.jgame.drawing.GameFont;
-import com.deadman.jgame.drawing.GameScreen;
 import com.deadman.jgame.ui.Button;
 import com.deadman.jgame.ui.Control;
 import com.deadman.jgame.ui.ControlListener;
@@ -93,22 +92,22 @@ public class MissionEngine extends GameEngine
 			Unit u = Unit.generate();
 			squad.setUnit(u, i);
 
-			Game.ItemTypes.red_potion
-										.generate()
-										.moveTo(u.backpack, 0, 0);
-			u.equip(Game.ItemTypes.armor);
-			u.equip(Game.ItemTypes.book);
-			u.give(Game.ItemTypes.torch);
+			ItemTypes.red_potion
+								.generate()
+								.moveTo(u.backpack, 0, 0);
+			u.equip(ItemTypes.armor);
+			u.equip(ItemTypes.book);
+			u.give(ItemTypes.torch);
 
 			if (i < 2)
-				u.equip(Game.ItemTypes.sword);
+				u.equip(ItemTypes.sword);
 			else
 			{
-				u.equip(Game.ItemTypes.bow);
-				Game.ItemTypes.arrow
-									.generate()
-									.setCount(100)
-									.moveTo(u.backpack, 0, 0);
+				u.equip(ItemTypes.bow);
+				ItemTypes.arrow
+								.generate()
+								.setCount(100)
+								.moveTo(u.backpack, 0, 0);
 			}
 		}
 
@@ -611,7 +610,7 @@ public class MissionEngine extends GameEngine
 	@Override
 	public void tick()
 	{
-		if (GameLoop.engine == this)
+		if (GameEngine.current == this)
 		{
 			if (currentAction != null)
 			{
@@ -677,7 +676,7 @@ public class MissionEngine extends GameEngine
 		RouteNode rn = moveArea.getCalc(c);
 		if (rn != null) t += " RN: " + rn;
 		t += "  LS: " + c.getLightSource();
-		GameScreen.screen.setTitle(t);
+		screen.setTitle(t);
 
 		if (ItemSlot.pickedItem() != null) // В руках предмет
 		{

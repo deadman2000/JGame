@@ -6,7 +6,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.util.ArrayList;
 
-import com.deadman.jgame.GameLoop;
+import com.deadman.jgame.GameEngine;
 import com.deadman.jgame.drawing.Drawable;
 import com.deadman.jgame.drawing.GameFont;
 import com.deadman.jgame.drawing.GameScreen;
@@ -106,7 +106,7 @@ public class Control
 
 	public void close()
 	{
-		GameLoop.engine.close();
+		GameEngine.current.close();
 	}
 
 	public final void destroy()
@@ -282,9 +282,11 @@ public class Control
 	// Координаты контрола на экране
 	public int scrX, scrY; // TODO Убрать. Сделать glTranslate
 
-	public byte bgrMode = BGR_FILL;
 	public static final byte BGR_FILL = 0;
 	public static final byte BGR_ONE = 1;
+
+	public byte bgrMode = BGR_FILL;
+	
 	public boolean clip = false;
 
 	public void draw()
@@ -299,7 +301,8 @@ public class Control
 			switch (bgrMode)
 			{
 				case BGR_FILL:
-					background.drawAt(scrX, scrY, width, height);
+					//background.drawAt(scrX, scrY, width, height);
+					background.fillAt(scrX, scrY, width, height);
 					break;
 				case BGR_ONE:
 					background.drawAt(scrX, scrY);

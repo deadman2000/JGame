@@ -4,7 +4,6 @@ import java.awt.event.KeyEvent;
 
 import com.deadman.dh.R;
 import com.deadman.jgame.GameEngine;
-import com.deadman.jgame.GameLoop;
 import com.deadman.jgame.ui.Column;
 import com.deadman.jgame.ui.RelativeLayout;
 
@@ -30,7 +29,7 @@ public class IEWindow extends Column
 	@Override
 	public void showModal()
 	{
-		_eng = GameLoop.engine;
+		_eng = GameEngine.current;
 		_eng.showOverlay();
 		
 		RelativeLayout.settings(this).center();

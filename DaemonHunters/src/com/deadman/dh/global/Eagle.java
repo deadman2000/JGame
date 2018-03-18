@@ -92,8 +92,8 @@ public class Eagle
 	void genPos()
 	{
 		z_factor = 1.1f + Game.rnd.nextFloat() * 0.4f; // 1.1 ... 1.5
-		width = (int) (GameLoop.GLOBAL_MAP_WIDTH * z_factor);
-		height = (int) (GameLoop.GLOBAL_MAP_HEIGHT * z_factor);
+		width = (int) (GlobalEngine.GLOBAL_MAP_WIDTH * z_factor);
+		height = (int) (GlobalEngine.GLOBAL_MAP_HEIGHT * z_factor);
 		
 		while (true)
 		{
