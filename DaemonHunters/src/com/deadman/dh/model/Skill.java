@@ -1,19 +1,20 @@
 package com.deadman.dh.model;
 
+/**
+ * Скилл конкретного юнита
+ * @author ivamar
+ *
+ */
 public class Skill
 {
 	private final Unit unit;
-	private final double _fs, _fd, _fi;
-	public final String name;
-	public int value;
+	private final SkillType type;
+	public int value; // Уровень прокачки в % (100 на каждый уровень)
 
-	public Skill(String name, Unit owner, double fs, double fd, double fi)
+	public Skill(Unit owner, SkillType type)
 	{
-		this.name = name;
 		unit = owner;
-		_fs = fs;
-		_fd = fd;
-		_fi = fi;
+		this.type = type;
 	}
 
 	/**
@@ -26,7 +27,7 @@ public class Skill
 		int lvl100 = unit.lvl * 100;
 		if (value > lvl100) return;
 
-		double ds = dt * ((unit.str * _fs + unit.dex * _fd + unit.intl * _fi + square / 100.) / 10000.);
+		double ds = dt * ((unit.str * type.fs + unit.dex * type.fd + unit.intl * type.fi + square / 100.) / 10000.);
 		if (ds > lvl100 - value)
 			ds = lvl100 - value;
 
@@ -35,7 +36,7 @@ public class Skill
 
 		if ((int) (value / 100) != s)
 		{
-			System.out.println(unit.name + " " + name + " => " + (int) value / 100);
+			System.out.println(unit.name + " " + type.name + " => " + (int) value / 100);
 		}
 	}
 }

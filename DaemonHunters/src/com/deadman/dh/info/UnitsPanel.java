@@ -23,7 +23,7 @@ import com.deadman.jgame.ui.VListView;
 public class UnitsPanel extends Control
 {
 	private Guild guild;
-	
+
 	private int _unitIndex = 0;
 	private Unit _currUnit;
 
@@ -44,6 +44,7 @@ public class UnitsPanel extends Control
 
 	public UnitsPanel()
 	{
+		setLayout(new RelativeLayout());
 		addControl(new Control(R.ui.unit_stat_bgr, 4, 0));
 
 		Button btUnitWork = new Button(R.ui.bt_unit_work);

@@ -36,6 +36,13 @@ public class Unit extends GameCharacter
 		return new Unit();
 	}
 
+	public static final SkillType stSword = new SkillType("sword", 0.033, 0.016, 0);
+	public static final SkillType stShield = new SkillType("shield", 0.033, 0, 0);
+	public static final SkillType stThrow = new SkillType("throw", 0.016, 0.033, 0);
+	public static final SkillType stCraft = new SkillType("craft", 0, 0.05, 0);
+	public static final SkillType stScience = new SkillType("science", 0, 0, 0.05);
+	public static final SkillType stMagic = new SkillType("magic", 0, 0, 0.08);
+
 	public Unit()
 	{
 		setRandomName(Game.rnd);
@@ -52,12 +59,16 @@ public class Unit extends GameCharacter
 		dex = 10 + Game.rnd.nextInt(5);
 		intl = 10 + Game.rnd.nextInt(5);
 
-		skSword = new Skill("sword", this, 0.033, 0.016, 0);
-		skShield = new Skill("shield", this, 0.033, 0, 0);
-		skThrow = new Skill("throw", this, 0.016, 0.033, 0);
-		skCraft = new Skill("craft", this, 0, 0.05, 0);
-		skScience = new Skill("science", this, 0, 0, 0.05);
-		skMagic = new Skill("magic", this, 0, 0, 0.08);
+		skSword = new Skill(this, stSword);
+		skShield = new Skill(this, stShield);
+		skThrow = new Skill(this, stThrow);
+		skCraft = new Skill(this, stCraft);
+		skScience = new Skill(this, stScience);
+		skMagic = new Skill(this, stMagic);
+
+		skSword.value = 524;
+		skShield.value = 105;
+		skMagic.value = 55;
 
 		calcAttributes();
 		mpCount = mpMax;
@@ -78,7 +89,7 @@ public class Unit extends GameCharacter
 	{
 		return expTable[lvl];
 	}
-	
+
 	@Override
 	public void giveExperience(int val)
 	{

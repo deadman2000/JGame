@@ -14,7 +14,7 @@ public final class ItemTypes
 	}
 
 	public static final ItemType sword = ItemType	.create(0)
-													.name("Sword")
+													.name("Меч")
 													.icon(R.items.sword)
 													.equipSprite("sword")
 													.meele(Element.PHYSICAL, 10, 5)
@@ -23,7 +23,7 @@ public final class ItemTypes
 													.end();
 
 	public static final ItemType bow = ItemType	.create(1)
-												.name("Bow")
+												.name("Лук")
 												.icon(R.items.bow)
 												.slots(ItemSlotType.RIGHTHAND)
 												.twoHanded()
@@ -32,45 +32,45 @@ public final class ItemTypes
 												.end();
 
 	public static final ItemType red_potion = ItemType	.create(2)
-														.name("Healing potion")
+														.name("Злье лечения")
 														.icon(R.items.red_potion)
 														.consumable()
 														.effect(new HealEffect(50))
 														.end();
 
 	public static final ItemType armor = ItemType	.create(3)
-													.name("Armor")
+													.name("Доспех")
 													.icon(R.items.armor)
 													.armor(ItemSlotType.BODY)
 													.defence(Element.PHYSICAL, 5)
 													.end();
 
 	public static final ItemType shield = ItemType	.create(4)
-													.name("Shield")
+													.name("Щит")
 													.icon(R.items.shield)
 													.armor(ItemSlotType.LEFTHAND)
 													.defence(Element.PHYSICAL, 1)
 													.end();
 
 	public static final ItemType arrow = ItemType	.create(5)
-													.name("Arrow")
+													.name("Стрела")
 													.icon(R.items.arrow)
 													.stack(100)
 													.end();
 
 	public static final ItemType bottle = ItemType	.create(6)
-													.name("Empty bottle")
+													.name("Пустая склянка")
 													.icon(R.items.bottle)
 													.stack(10)
 													.end();
 
 	public static final ItemType book = ItemType.create(7)
-												.name("Book")
+												.name("Книга")
 												.icon(R.items.book)
 												.end();
 
 	public static final ItemType torch = ItemType	.create(8)
-													.name("Torch")
+													.name("Факел")
 													.icon(R.items.torch)
 													.iso(R.iso.SmallTorh)
 													.effect(new LightEffect(10))
@@ -78,7 +78,7 @@ public final class ItemTypes
 													.end();
 
 	public static final ItemType dead_unit = ItemType	.create(9)
-														.name("Dead man")
+														.name("Труп")
 														.icon(R.items.dead_unit)
 														.end();
 

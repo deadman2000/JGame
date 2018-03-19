@@ -27,7 +27,7 @@ public class BuildingSelect extends IGMPanel
 		for (int i = 0; i < u.guild.buildings.size(); i++)
 		{
 			GuildBuilding gb = u.guild.buildings.get(i);
-			if (gb.build_progress == -1)
+			if (!gb.isBuild() && gb.getMaxUnits() > 0)
 				lv.addItem(new ListItemGuildBuilding(i, gb));
 		}
 		

@@ -77,7 +77,7 @@ public class GameScreen extends JFrame implements GLEventListener
 		super(title);
 
 		gd = GraphicsEnvironment.getLocalGraphicsEnvironment()
-								.getDefaultScreenDevice();
+				.getDefaultScreenDevice();
 
 		createCanvas();
 
@@ -98,7 +98,7 @@ public class GameScreen extends JFrame implements GLEventListener
 
 			BufferedImage cursorImg = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
 			Cursor blankCursor = Toolkit.getDefaultToolkit()
-										.createCustomCursor(cursorImg, new Point(0, 0), "blank cursor");
+					.createCustomCursor(cursorImg, new Point(0, 0), "blank cursor");
 			setCursor(blankCursor);
 
 			pack();
@@ -174,8 +174,8 @@ public class GameScreen extends JFrame implements GLEventListener
 	{
 		screen_width = canvas.getWidth();
 		screen_height = canvas.getHeight();
-		gl = drawable	.getGL()
-						.getGL2();
+		gl = drawable.getGL()
+				.getGL2();
 		gl.setSwapInterval(1); // v-sync
 	}
 
@@ -202,8 +202,8 @@ public class GameScreen extends JFrame implements GLEventListener
 		//long t = System.currentTimeMillis();
 		boolean ts = _takeScreenshot;
 
-		gl = drawable	.getGL()
-						.getGL2();
+		gl = drawable.getGL()
+				.getGL2();
 		if (!isScreenInit) initScreen();
 
 		gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_STENCIL_BUFFER_BIT);
@@ -233,8 +233,8 @@ public class GameScreen extends JFrame implements GLEventListener
 		screen_width = width;
 		screen_height = height;
 		calcSize();
-		gl = drawable	.getGL()
-						.getGL2();
+		gl = drawable.getGL()
+				.getGL2();
 		disposeFX();
 		initScreen();
 	}
@@ -242,8 +242,8 @@ public class GameScreen extends JFrame implements GLEventListener
 	@Override
 	public void dispose(GLAutoDrawable drawable)
 	{
-		gl = drawable	.getGL()
-						.getGL2();
+		gl = drawable.getGL()
+				.getGL2();
 		disposeFX();
 		disposeShaders();
 	}
@@ -653,11 +653,30 @@ public class GameScreen extends JFrame implements GLEventListener
 	private String _screenshotPath;
 	private Object _screenWaiting;
 	private BufferedImage _lastScreenshot;
+	private int _screenInd = 0;
 
 	public void takeScreenshot()
 	{
+		File screensDir = new File("screens");
+		if (!screensDir.exists())
+			if (!screensDir.mkdir())
+			{
+				System.err.println("Cannot create screens dir");
+				return;
+			}
+
+		for (int i = _screenInd; i < Integer.MAX_VALUE; i++)
+		{
+			File f = new File(screensDir, "screen_" + i + ".png");
+			if (!f.exists())
+			{
+				_screenshotPath = f.getAbsolutePath();
+				_screenInd = i + 1;
+				break;
+			}
+		}
+
 		_takeScreenshot = true;
-		_screenshotPath = "D:\\Download\\texture.png";
 	}
 
 	public void waitScreenshot(String path) throws Exception

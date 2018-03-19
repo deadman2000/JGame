@@ -38,7 +38,12 @@ public class TestTools
 
 		for (int x = 0; x < img1.getWidth(); x++)
 			for (int y = 0; y < img1.getHeight(); y++)
-				if (img1.getRGB(x, y) != img2.getRGB(x, y)) throw new Exception("Different images");
+			{
+				int c1 = img1.getRGB(x, y);
+				int c2 = img2.getRGB(x, y);
+				if (colorCompare(c1, c2, 1))
+					throw new Exception("Different images (" + c1 + " != " + c2 + " at " + x + ":" + y + ")");
+			}
 	}
 
 	public static void compareSubImage(File file, BufferedImage img) throws Exception
@@ -128,6 +133,8 @@ public class TestTools
 	private static void clearFails()
 	{
 		File dir = new File("test/fails/");
+		if (!dir.exists())
+			dir.mkdirs();
 		for (File f : dir.listFiles())
 			f.delete();
 	}

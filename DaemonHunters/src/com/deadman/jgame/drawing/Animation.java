@@ -18,6 +18,8 @@ public class Animation extends Drawable
 		this.delays = delays;
 		this.duration = delays[delays.length - 1];
 		this.tickSource = tickSource;
+		width = frames[0].width;
+		height = frames[0].height;
 	}
 
 	public Animation(ArrayList<Drawable> frames, ArrayList<Integer> delays, TickSource tickSource)
