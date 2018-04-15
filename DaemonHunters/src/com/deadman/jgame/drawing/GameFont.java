@@ -98,7 +98,7 @@ public class GameFont
 		Picture[] newFrames = new Picture[frames.length];
 		for (int i = 0; i < frames.length; i++)
 			if (frames[i] != null)
-				newFrames[i] = frames[i].shadow(color);
+				newFrames[i] = frames[i].shadow(color, -1, 1);
 
 		GameFont font = new GameFont(name + " shadow", newFrames);
 		font.shadowColor = color;

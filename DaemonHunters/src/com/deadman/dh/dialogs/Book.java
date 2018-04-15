@@ -55,7 +55,7 @@ public class Book extends Control
 		});
 
 		createBuildingsPage();
-		
+
 		submitChilds();
 	}
 

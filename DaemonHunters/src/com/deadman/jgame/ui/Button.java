@@ -152,8 +152,11 @@ public class Button extends Control
 		label.autosize = false;
 		label.y = laY;
 		label.height = font.height;
-		RelativeLayout.settings(label).fillWidth();
 		label.halign = Label.ALIGN_CENTER;
+		
+		setLayout(new RelativeLayout());
+		RelativeLayout.settings(label).fillWidth();
+		
 		addControl(label);
 		labelY = laY;
 	}

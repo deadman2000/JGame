@@ -16,6 +16,7 @@ import com.deadman.dh.model.items.Armor;
 import com.deadman.dh.model.items.IItemsPageListener;
 import com.deadman.dh.model.items.Item;
 import com.deadman.dh.model.items.ItemsPage;
+import com.deadman.dh.model.items.UnitItemsPage;
 import com.deadman.dh.model.items.Weapon;
 import com.deadman.dh.model.itemtypes.ItemType;
 import com.deadman.dh.resources.GameResources;
@@ -64,9 +65,9 @@ public class GameCharacter extends IsoObject implements IItemsPageListener
 	public GameCharacter()
 	{
 		id = Game.rnd.nextInt();
-		ammunition = new ItemsPage("Ammunition", AmmunitionSlot.COUNT, 1);
+		ammunition = new UnitItemsPage(this, "Ammunition", AmmunitionSlot.COUNT, 1);
 		ammunition.addListener(this);
-		backpack = new ItemsPage("Backpack", 6, 5);
+		backpack = new UnitItemsPage(this, "Backpack", 6, 5);
 	}
 
 	/**
@@ -147,8 +148,8 @@ public class GameCharacter extends IsoObject implements IItemsPageListener
 
 	// Inventory
 
-	public ItemsPage backpack; // Рюкзак
-	public ItemsPage ammunition; // Обмундирование
+	public UnitItemsPage backpack; // Рюкзак
+	public UnitItemsPage ammunition; // Обмундирование
 
 	@Override
 	public void onItemMoved(ItemsPage page, Item item, int x, int y)

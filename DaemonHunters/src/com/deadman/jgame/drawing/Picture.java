@@ -335,7 +335,7 @@ public class Picture extends Drawable
 		if (img.getType() != BufferedImage.TYPE_4BYTE_ABGR)
 		{
 			BufferedImage replaced = createImage(img.getWidth(), img.getHeight());
-			Graphics2D g =  replaced.createGraphics();
+			Graphics2D g = replaced.createGraphics();
 			g.drawImage(img, 0, 0, null);
 			return replaced;
 		}
@@ -797,25 +797,26 @@ public class Picture extends Drawable
 		}
 	}
 
-	public Picture shadow(int color)
+	@Override
+	public Picture shadow(int color, int sx, int sy)
 	{
 		if (_img == null) return null;
 
 		Picture copy = copy();
-		copy.makeShadow(color);
+		copy.makeShadow(color, sx, sy);
 		return copy;
 	}
 
-	private void makeShadow(int color)
+	private void makeShadow(int color, int sx, int sy)
 	{
-		resize(width + 1, height + 1, 1, 0);
+		resize(width + Math.abs(sx), height + Math.abs(sy), sx < 0 ? -sx : 0, sy < 0 ? -sy : 0);
 		for (int y = 0; y < height; y++)
 		{
 			for (int x = 0; x < width; x++)
 			{
 				int c = _img.getRGB(x, y);
 				if (c != color && (c & 0xFF000000) != 0) // Непрозрачный пиксель
-					setIfEmpty(x - 1, y + 1, color);
+					setIfEmpty(x + sx, y + sy, color);
 			}
 		}
 	}

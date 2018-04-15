@@ -14,13 +14,18 @@ public class TimePanel extends Control
 	Label laDate, laTime;
 	Label laSeconds;
 	Drawable picBubbles;
-
+	
 	public TimePanel()
 	{
-		super(R.ui.time_bgr);
-
 		RelativeLayout.settings(this).alignRight(5).alignBottom(5);
 		clickOnBgr = true;
+		
+		setLayout(new RelativeLayout());
+		setSize(102, 82);
+		
+		Control bgr = new Control(getDrawable(R.ui.time_bgr).shadow(0x30000000, -2, 2));
+		RelativeLayout.settings(bgr).alignRight().alignBottom(-2);
+		addControl(bgr);
 
 		GameFont fnt = getFont(R.fonts.font4x7, 0xff312013).shadow(0xff646443);
 		addControl(laDate = new Label(fnt, 9, 67));
@@ -33,8 +38,6 @@ public class TimePanel extends Control
 		laSeconds.char_interval = 0;
 
 		picBubbles = getDrawable(R.ui.bubbles);
-
-		//img_time_pos.drawAt(border_right - img_time_bgr.width + 11 + (timeSpeedLvl - 1) * 10, border_bottom - img_time_bgr.height - 3);
 	}
 
 	public void update()
@@ -61,7 +64,6 @@ public class TimePanel extends Control
 		super.draw();
 		int tshift = (int) ((Game.global.ticks * GlobalEngine.timeSpeedLvl) / 4) % picBubbles.height;
 
-		picBubbles.drawAt(scrX + 91, scrY + 3, 0, tshift, picBubbles.width, picBubbles.height);
-		//bubbles.drawAt(sx + 89, sy + 3);
+		picBubbles.drawAt(scrX + 89, scrY + 3, 0, tshift, picBubbles.width, picBubbles.height);
 	}
 }

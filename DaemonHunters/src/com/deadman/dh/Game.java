@@ -50,7 +50,7 @@ public class Game
 	public static boolean VIEW_ALL = false; // Просмотр всей карты
 	public static boolean VISION_AREA = false; // На карте видно только те ячейки, которые в области видимости
 	public static boolean AI_CONTROL = false; // Контроллирование врага
-	public static boolean FREE_MOVINGS = false; // Бесконечное перемещение
+	public static boolean FREE_MOVINGS = true; // Бесконечное перемещение
 	public static boolean NO_EVENTS = false; // Отключение событий на глобальной карте 
 
 	public static int PLAYER_UNITS = 3;

@@ -28,12 +28,13 @@ public class ItemTypeBuilder
 	private int _stackSize = 1;
 	private boolean _consumable;
 	private String _equipSprite;
+	private boolean _isTwoHanded;
 
 	private Element _damageElement;
 	private int _damageValue;
 	private int _damageAmp;
 	private int _attackTime;
-
+	
 	private int[] _armor = new int[Element.MAX_INDEX];
 
 	public ItemTypeBuilder(int id)
@@ -55,6 +56,7 @@ public class ItemTypeBuilder
 		it.stackSize = _stackSize;
 		it.consumable = _consumable;
 		it.equipSprite = _equipSprite;
+		it.isTwoHanded = _isTwoHanded;
 
 		if (it instanceof WeaponType)
 		{
@@ -207,6 +209,7 @@ public class ItemTypeBuilder
 
 	public ItemTypeBuilder twoHanded()
 	{
+		_isTwoHanded = true;
 		return this;
 	}
 }

@@ -26,14 +26,12 @@ public class TopMenu extends Control
 
 	public TopMenu(int mode)
 	{
-		super(R.ui.top_menu);
+		setSize(135, 44);
 		RelativeLayout.settings(this).alignRightTop();
-
 		clickOnBgr = true;
-
-		laGold = new Label(getFont(R.fonts.font4x7, 0xff3a2717).shadow(0xff82825b), 28, 4);
-		addControl(laGold);
-
+		
+		setLayout(new RelativeLayout());
+		
 		Button btRed = new Button(R.ui.bt_red_arms, R.ui.bt_red_arms_pr);
 		btRed.clickOnBgr = true;
 		btRed.setPosition(9, 17);
@@ -51,6 +49,13 @@ public class TopMenu extends Control
 		btBlue.clickOnBgr = true;
 		btBlue.setPosition(27, 20);
 		addControl(btBlue);
+
+		Control bgr = new Control(getDrawable(R.ui.top_menu).shadow(0x30000000, -2, 2));
+		RelativeLayout.settings(bgr).alignTop(-2).alignRight(-2);
+		addControl(bgr);
+
+		laGold = new Label(getFont(R.fonts.font4x7, 0xff3a2717).shadow(0xff82825b), 28, 4);
+		addControl(laGold);
 
 		if (mode == MODE_MENU)
 		{

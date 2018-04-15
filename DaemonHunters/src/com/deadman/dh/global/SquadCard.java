@@ -19,7 +19,7 @@ public class SquadCard extends Control
 	private static final Drawable ic_move = getDrawable(R.ui.ic_squad_move);
 	private static final Drawable ic_stand = getDrawable(R.ui.ic_squad_stand);
 
-	public static final int HEIGHT = img_bgr.height + 2;
+	public static final int HEIGHT = 11;
 
 	public SquadCard(Squad s)
 	{

@@ -37,7 +37,7 @@ public class ItemsPage
 	{
 		return items[slot.id];
 	}
-	
+
 	public void set(Item item, int x, int y)
 	{
 		/*if (item != null)
@@ -53,7 +53,7 @@ public class ItemsPage
 		items[slot.id] = item;
 		onItemMoved(item, slot.id, 0);
 	}
-	
+
 	/**
 	 * Кладет предмет в первый свободный слот
 	 * @param item
@@ -85,6 +85,13 @@ public class ItemsPage
 				put(it);
 			}
 		}
+	}
+
+	public boolean isFull()
+	{
+		for (int i = 0; i < items.length; i++)
+			if (items[i] == null) return false;
+		return true;
 	}
 
 	private ArrayList<IItemsPageListener> _listeners;

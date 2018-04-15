@@ -24,6 +24,7 @@ public class ItemType
 	public Drawable isoDrawable;
 	public boolean consumable;
 	public String equipSprite;
+	public boolean isTwoHanded;
 
 	public boolean canEquip(ItemSlot slot)
 	{

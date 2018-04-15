@@ -43,6 +43,11 @@ public class Squad extends MapObject
 	}
 
 	// Перемещение
+	
+	public boolean isMoving()
+	{
+		return location != null;
+	}
 
 	public Poi location;
 	private double _x, _y; // Точная позиция

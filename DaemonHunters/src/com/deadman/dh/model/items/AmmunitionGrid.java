@@ -13,7 +13,7 @@ import com.deadman.jgame.ui.Control;
  */
 public class AmmunitionGrid extends Control
 {
-	private ItemsPage page;
+	private UnitItemsPage page;
 	private Drawable _bgItem;
 	private ArrayList<ItemSlot> _slots = new ArrayList<>();
 
@@ -59,8 +59,36 @@ public class AmmunitionGrid extends Control
 	ItemSlotBind bind = new ItemSlotBind()
 	{
 		@Override
-		public void setItem(ItemSlot slot, Item item)
+		public void setItem(ItemSlot slot, Item item) throws Exception
 		{
+			if (item != null && item.type.isTwoHanded)
+			{
+				if (slot.pageX == AmmunitionSlot.LEFTHAND.id)
+				{
+					Item right = page.get(AmmunitionSlot.RIGHTHAND);
+					if (right != null)
+					{
+						if (page.unit.backpack.isFull())
+							throw new Exception();
+
+						page.set(null, AmmunitionSlot.RIGHTHAND);
+						page.unit.backpack.put(right);
+					}
+				}
+				else if (slot.pageX == AmmunitionSlot.RIGHTHAND.id)
+				{
+					Item left = page.get(AmmunitionSlot.LEFTHAND);
+					if (left != null)
+					{
+						if (page.unit.backpack.isFull())
+							throw new Exception();
+
+						page.set(null, AmmunitionSlot.LEFTHAND);
+						page.unit.backpack.put(left);
+					}
+				}
+			}
+
 			page.set(item, slot.pageX, slot.pageY);
 		}
 
@@ -71,7 +99,7 @@ public class AmmunitionGrid extends Control
 		}
 	};
 
-	public void setPage(ItemsPage page)
+	public void setPage(UnitItemsPage page)
 	{
 		this.page = page;
 	}

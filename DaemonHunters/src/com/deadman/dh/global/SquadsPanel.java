@@ -57,6 +57,8 @@ public class SquadsPanel extends Control
 
 	public void addSquad(Squad s)
 	{
+		if (!s.isMoving() && s.inHome()) return;
+		
 		SquadCard card = new SquadCard(s);
 		card.setPosition(3 + 2, top_pad + squadCards.size() * SquadCard.HEIGHT);
 		addControl(card);

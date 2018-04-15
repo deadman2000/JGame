@@ -185,4 +185,10 @@ public abstract class Drawable
 		System.err.println(this.getClass().getSimpleName() + " replaceColors not implemented");
 		return null;
 	}
+	
+	public Picture shadow(int color, int sx, int sy)
+	{
+		System.err.println(this.getClass().getSimpleName() + " shadow not implemented");
+		return null;
+	}
 }

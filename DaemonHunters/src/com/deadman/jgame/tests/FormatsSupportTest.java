@@ -12,7 +12,10 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 
+import com.deadman.jgame.GameEngine;
 import com.deadman.jgame.drawing.GameScreen;
+import com.deadman.jgame.drawing.Picture;
+import com.deadman.jgame.ui.Control;
 
 @RunWith(Parameterized.class)
 public class FormatsSupportTest
@@ -29,7 +32,9 @@ public class FormatsSupportTest
 	@Test
 	public void test() throws Exception
 	{
-		GameScreen.screen.engine = new EngineTestImage(file.getPath());
+		GameEngine eng = new GameEngine();
+		eng.addControl(new Control(Picture.load(file.getPath())));
+		GameScreen.screen.engine = eng;
 		TestTools.compareSubImage(file, GameScreen.screen.getScreenshot());
 	}
 

@@ -35,7 +35,7 @@ public class ItemSlot extends Control
 		return null;
 	}
 
-	public void setItem(Item item)
+	public void setItem(Item item) throws Exception
 	{
 		if (_bind != null)
 			_bind.setItem(this, item);
@@ -82,7 +82,9 @@ public class ItemSlot extends Control
 
 		p = clientToScreen(p);
 		Item item = getItem();
-		if (ItemInfoPanel.ENABLED && _pickedItem == null) ItemInfoPanel.panel().show(this, item);
+		if (ItemInfoPanel.ENABLED && _pickedItem == null)
+			ItemInfoPanel	.panel()
+							.show(this, item);
 	}
 
 	@Override
@@ -101,101 +103,108 @@ public class ItemSlot extends Control
 		Item item = getItem();
 		Item picked = pickedItem();
 
-		if (picked != null) // В руках предмет
+		try
 		{
-			if (type != ItemSlotType.ALL && !picked.type.canEquip(this))
-				return;
-
-			if (validator != null && !validator.canDrop(picked, this))
-				return;
-
-			if (item == null) // Нажали в пустую
+			if (picked != null) // В руках предмет
 			{
-				if (e.getButton() == 3 && picked.count > 1) // ПКМ - Кладем 1
+				if (type != ItemSlotType.ALL && !picked.type.canEquip(this))
+					return;
+
+				if (validator != null && !validator.canDrop(picked, this))
+					return;
+
+				if (item == null) // Нажали в пустую
 				{
-					setItem(picked.cloneOne());
-					picked.count--;
+					if (e.getButton() == 3 && picked.count > 1) // ПКМ - Кладем 1
+					{
+						setItem(picked.cloneOne());
+						picked.count--;
+					}
+					else // Кладем все что взяли
+					{
+						setItem(picked);
+						drop();
+					}
 				}
-				else // Кладем все что взяли
+				else // Нажали в слот с предметом
 				{
-					setItem(picked);
-					drop();
+					if (item.type.stackSize > 1 && item.type == picked.type) // Тот же тип и возможность объединения
+					{
+						if (e.getButton() == 3 && picked.count > 1) // ПКМ - Кладем 1 
+						{
+							if (item.count < item.type.stackSize)
+							{
+								item.count++;
+								picked.count--;
+							}
+						}
+						else // Переносим сколько взяли
+						{
+							// Кладем не больше, чем помещается в стек
+							if (item.count + picked.count <= item.type.stackSize)
+							{
+								item.count += picked.count;
+								drop();
+							}
+							else
+							{
+								int cnt = item.type.stackSize - item.count;
+								item.count += cnt;
+								picked.count -= cnt;
+							}
+						}
+					}
+					else // Не можем объеденить. Меняем местами
+					{
+						pick(item, this);
+						setItem(picked);
+					}
 				}
 			}
-			else // Нажали в слот с предметом
+			else // В руках ничего нет
 			{
-				if (item.type.stackSize > 1 && item.type == picked.type) // Тот же тип и возможность объединения
+				if (item == null) return; // В ячейке тоже ничего нет
+
+				if (validator != null && !validator.canPick(item, this))
+					return;
+
+				// Нажали на предмет
+
+				if (e.getButton() == 3) // ПКМ - проверяем, можно ли использовать итем
 				{
-					if (e.getButton() == 3 && picked.count > 1) // ПКМ - Кладем 1 
+					if (validator != null && validator.canUse(item, this))
 					{
-						if (item.count < item.type.stackSize)
-						{
-							item.count++;
-							picked.count--;
-						}
-					}
-					else // Переносим сколько взяли
-					{
-						// Кладем не больше, чем помещается в стек
-						if (item.count + picked.count <= item.type.stackSize)
-						{
-							item.count += picked.count;
-							drop();
-						}
-						else
-						{
-							int cnt = item.type.stackSize - item.count;
-							item.count += cnt;
-							picked.count -= cnt;
-						}
+						validator.useItem(item);
+						if (item.count == 0)
+							setItem(null);
+						return;
 					}
 				}
-				else // Не можем объеденить. Меняем местами
+
+				if (e.getButton() == 3 && item.count > 1) // ПКМ - берем половину
 				{
-					pick(item, this);
-					setItem(picked);
+					int cnt = item.count / 2;
+					pick(item	.cloneOne()
+								.setCount(cnt), this);
+					item.count -= cnt;
+				}
+				else if (e.isShiftDown() && item.count > 1) // GameScreen.KEY_SHIFT
+				{
+					int c = item.count / 2;
+					pick(item	.cloneOne()
+								.setCount(c), this);
+					item.count -= c;
+				}
+				else
+				{
+					pick(item, this); // Берем все
+					setItem(null);
 				}
 			}
 		}
-		else // В руках ничего нет
+		catch (Exception ex)
 		{
-			if (item == null) return; // В ячейке тоже ничего нет
-
-			if (validator != null && !validator.canPick(item, this))
-				return;
-
-			// Нажали на предмет
-
-			if (e.getButton() == 3) // ПКМ - проверяем, можно ли использовать итем
-			{
-				if (validator != null && validator.canUse(item, this))
-				{
-					validator.useItem(item);
-					if (item.count == 0)
-						setItem(null);
-					return;
-				}
-			}
-
-			if (e.getButton() == 3 && item.count > 1) // ПКМ - берем половину
-			{
-				int cnt = item.count / 2;
-				pick(item	.cloneOne()
-							.setCount(cnt), this);
-				item.count -= cnt;
-			}
-			else if (e.isShiftDown() && item.count > 1) // GameScreen.KEY_SHIFT
-			{
-				int c = item.count / 2;
-				pick(item	.cloneOne()
-							.setCount(c), this);
-				item.count -= c;
-			}
-			else
-			{
-				pick(item, this); // Берем все
-				setItem(null);
-			}
+			return;
 		}
 	}
 
